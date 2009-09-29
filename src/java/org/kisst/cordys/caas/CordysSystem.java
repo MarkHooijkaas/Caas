@@ -7,15 +7,20 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
-public class CordysSystem extends CordysObject {
+public class CordysSystem {
 	private final String rootdn;
 	private final SoapCaller caller;
 
+	public CordysSystem() {
+		this.caller = new HttpClientCaller("user.properties");
+		this.rootdn=((HttpClientCaller) caller).props.getProperty("cordys.rootdn");
+	}
+
 	public CordysSystem(String dn, SoapCaller caller) {
-		super(dn);
 		this.caller=caller;
 		this.rootdn=dn;
 	}
@@ -23,7 +28,10 @@ public class CordysSystem extends CordysObject {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
-		return caller.call(soap);
+		//System.out.println(soap);
+		String response = caller.call(soap);
+		//System.out.println(response);
+		return response;
 	}
 	
 	public List<Organization> getOrganizations() {
@@ -36,10 +44,10 @@ public class CordysSystem extends CordysObject {
 		int pos=0;
 		String key="entry dn=\"";
 		while ((pos=response.indexOf(key, pos))>0) {
-			pos=pos+key.length()+1;
+			pos=pos+key.length();
 			String dn=response.substring(pos,response.indexOf("\"", pos));
 			result.add(new Organization(dn));
-			System.out.println(dn);
+			//System.out.println(dn);
 		}
 		return result;
 	}
@@ -58,7 +66,7 @@ public class CordysSystem extends CordysObject {
 
 	public void createCustomRole(String org, String name ) {
 		String template=loadTemplate("CreateCustomRole.template");
-		template = template.replaceAll("\\$\\{dn}",dn);
+		//template = template.replaceAll("\\$\\{dn}",dn);
 		template = template.replaceAll("\\$\\{name}",name);
 		template = template.replaceAll("\\$\\{org}",org);
 		System.out.println(call(template));
@@ -66,7 +74,7 @@ public class CordysSystem extends CordysObject {
 
 	public void createAuthUser(String login, String name, String fullname) {
 		String template=loadTemplate("CreateAuthUser.template");
-		template = template.replaceAll("\\$\\{dn}",dn);
+		//template = template.replaceAll("\\$\\{dn}",dn);
 		template = template.replaceAll("\\$\\{name}",name);
 		template = template.replaceAll("\\$\\{fullname}",fullname);
 		template = template.replaceAll("\\$\\{login}",login);
@@ -75,7 +83,7 @@ public class CordysSystem extends CordysObject {
 
 	public void createOrgUser(String org, String authname, String name, String fullname, String role) {
 		String template=loadTemplate("CreateOrgUser.template");
-		template = template.replaceAll("\\$\\{dn}",dn);
+		//template = template.replaceAll("\\$\\{dn}",dn);
 		template = template.replaceAll("\\$\\{org}",org);
 		template = template.replaceAll("\\$\\{name}",name);
 		template = template.replaceAll("\\$\\{authname}",authname);

@@ -20,15 +20,15 @@ public class HttpClientCaller implements SoapCaller {
 	private final String password;
 	private final String ntlmhost;
 	private final String ntlmdomain;
-	private final Properties properties=new Properties();
+	public final Properties props=new Properties();
 
 	public HttpClientCaller(String filename)
 	{
-		properties.clear();
+		props.clear();
 		FileInputStream inp = null;
 		try {
 			inp =new FileInputStream(filename);
-			properties.load(inp);
+			props.load(inp);
 		} 
 		catch (java.io.IOException e) { throw new RuntimeException(e);  }
 		finally {
@@ -39,11 +39,11 @@ public class HttpClientCaller implements SoapCaller {
 			catch (java.io.IOException e) { throw new RuntimeException(e);  }
 		}
 
-		url =(String) properties.get("cordys.gateway.url");
-		username=(String) properties.get("cordys.gateway.username");
-		password=(String) properties.get("cordys.gateway.password");
-		ntlmhost=(String) properties.get("cordys.gateway.ntlmhost");
-		ntlmdomain=(String) properties.get("cordys.gateway.ntlmdomain");
+		url =(String) props.get("cordys.gateway.url");
+		username=(String) props.get("cordys.gateway.username");
+		password=(String) props.get("cordys.gateway.password");
+		ntlmhost=(String) props.get("cordys.gateway.ntlmhost");
+		ntlmdomain=(String) props.get("cordys.gateway.ntlmdomain");
 		if (ntlmdomain==null)
 			client.getState().setCredentials(AuthScope.ANY,	new UsernamePasswordCredentials(username, password));
 		else
