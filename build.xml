@@ -1,0 +1,62 @@
+
+<project name="Caas" default="jar" basedir=".">
+	<target name="init">
+		<property file="user.properties"/>
+		<property name="projectfile" value="project.xml"/>
+		<xmlproperty file="${projectfile}" semanticAttributes="true"/>
+		<property file="buildnumber.properties"/>
+		<property name="srcdir" value="src"/>
+		<property name="libdir" value="lib"/>
+		<property name="builddir" value="build"/>
+		<mkdir dir="${builddir}" />
+		<mkdir dir="${builddir}/classes" />
+	</target>
+		
+
+	<target name="compile" description="Compiles Java files" depends="init">
+		<javac srcdir="${srcdir}/java" includes="${project.javafiles}" destdir="${builddir}/classes" debug="on" optimize="on" target="1.5">
+		    <compilerarg value="-Xlint"/>
+			<classpath>
+				<pathelement path="${libdir}/commons-httpclient-3.1.jar" />
+				<pathelement path="${libdir}/freemarker-2.3.15.jar" />
+				<pathelement path="${libdir}/log4j-1.2.13.jar" />
+				<pathelement path="${libdir}/groovy-all-1.6.2.jar" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" description="creates a jar file" depends="compile">
+		<jar jarfile="${builddir}/caas.jar"  basedir="${builddir}/classes"/>
+	</target>
+
+	<target name="proxy" if="proxy.host">
+		<property name="proxy.port" value="80"/>
+		<property name="proxy.user" value=""/>
+		<property name="proxy.pass" value=""/>
+		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+	</target>
+
+	<target name="setup-commons" depends="init,proxy">
+		<get src="http://repo2.maven.org/maven2/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar" dest="lib/commons-httpclient-3.1.jar"/>
+		<get src="http://repo2.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar" dest="lib/commons-logging-1.0.4.jar"/>
+		<get src="http://repo2.maven.org/maven2/commons-codec/commons-codec/1.2/commons-codec-1.2.jar" dest="lib/commons-codec-1.2.jar"/>
+	</target>
+
+	<target name="setup-log4j" depends="init,proxy">
+		<get src="http://repo2.maven.org/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar" dest="lib/log4j-1.2.13.jar"/>
+	</target>
+
+	<target name="setup-freemarker" depends="init,proxy">
+		<get src="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/freemarker/freemarker/2.3.15/freemarker-2.3.15.jar" dest="lib/freemarker-2.3.15.jar"/>
+	</target>
+
+	<target name="setup-groovy" depends="init,proxy">
+		<get src="http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.6.2/groovy-all-1.6.2.jar" dest="lib/groovy-all-1.6.2.jar"/>
+	</target>
+
+	<target name="setup" depends="setup-commons,setup-log4j,setup-freemarker,setup-groovy"/>
+
+	<target name="clean" depends="init">
+  		<delete dir="${builddir}" />
+  	</target>
+</project>
