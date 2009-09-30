@@ -1,9 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import org.kisst.cordys.caas.soap.HttpClientCaller;
@@ -38,79 +34,5 @@ public class CordysSystem  extends LdapObject{
 	
 	public List<Organization> getOrganizations() {
 		return getChildren(this, "GetOrganizations", Organization.class);
-	}
-
-
-	
-	private String loadTemplate(String name) {
-		InputStream instream=CordysSystem.class.getClassLoader().getResourceAsStream("org/kisst/cordys/sbf/templates/"+name);
-		BufferedReader inp = new BufferedReader(new InputStreamReader(instream));
-		String result="";
-		String line;
-		try {
-			while ((line=inp.readLine()) != null)
-				result+=line+"\n";
-		} catch (IOException e) { throw new RuntimeException(e); }
-		return result;
-	}
-
-	public void createCustomRole(String org, String name ) {
-		String template=loadTemplate("CreateCustomRole.template");
-		//template = template.replaceAll("\\$\\{dn}",dn);
-		template = template.replaceAll("\\$\\{name}",name);
-		template = template.replaceAll("\\$\\{org}",org);
-		System.out.println(call(template));
-	}
-
-	public void createAuthUser(String login, String name, String fullname) {
-		String template=loadTemplate("CreateAuthUser.template");
-		//template = template.replaceAll("\\$\\{dn}",dn);
-		template = template.replaceAll("\\$\\{name}",name);
-		template = template.replaceAll("\\$\\{fullname}",fullname);
-		template = template.replaceAll("\\$\\{login}",login);
-		System.out.println(call(template));
-	}
-
-	public void createOrgUser(String org, String authname, String name, String fullname, String role) {
-		String template=loadTemplate("CreateOrgUser.template");
-		//template = template.replaceAll("\\$\\{dn}",dn);
-		template = template.replaceAll("\\$\\{org}",org);
-		template = template.replaceAll("\\$\\{name}",name);
-		template = template.replaceAll("\\$\\{authname}",authname);
-		template = template.replaceAll("\\$\\{fullname}",fullname);
-		template = template.replaceAll("\\$\\{role}",role);
-		System.out.println(call(template));
-	}
-
-	
-	public void createMethodSet(String conntype, String name, String namespace) {
-		String template=loadTemplate("CreateMethodSet.template");
-		template = template.replaceAll("\\$\\{org}",dn);
-		template = template.replaceAll("\\$\\{name}",name);
-		template = template.replaceAll("\\$\\{namespace\\}",namespace);
-		template = template.replaceAll("\\$\\{type\\}",conntype);
-		System.out.println(call(template));
-	}
-	public void deleteMethodSet(String conntype, String name, String namespace) {
-		String template=loadTemplate("DeleteMethodSet.template");
-		template = template.replaceAll("\\$\\{org}",dn);
-		template = template.replaceAll("\\$\\{name}",name);
-		template = template.replaceAll("\\$\\{namespace\\}",namespace);
-		template = template.replaceAll("\\$\\{type\\}",conntype);
-		System.out.println(template);
-		System.out.println(call(template));
-	}	
-	public void createMethod(String methodset, String name, String impl, String wsdl) {
-		String template=loadTemplate("CreateMethod.template");
-		template = template.replaceAll("\\$\\{org}",dn);
-		template = template.replaceAll("\\$\\{methodset}",methodset);
-		template = template.replaceAll("\\$\\{name\\}",name);
-		template = template.replaceAll("\\$\\{impl\\}",xmlEscape(impl));
-		template = template.replaceAll("\\$\\{wsdl\\}",xmlEscape(wsdl));
-		System.out.println(template);
-		System.out.println(call(template));
-	}
-	private String xmlEscape(String str) {
-		return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	}
 }
