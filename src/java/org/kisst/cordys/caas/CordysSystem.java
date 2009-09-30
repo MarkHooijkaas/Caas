@@ -4,27 +4,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
-public class CordysSystem {
-	private final String rootdn;
+public class CordysSystem  extends LdapObject{
 	private final SoapCaller caller;
 
-	public CordysSystem() {
-		this.caller = new HttpClientCaller("user.properties");
-		this.rootdn=((HttpClientCaller) caller).props.getProperty("cordys.rootdn");
+	public static CordysSystem connect() {
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
+		HttpClientCaller caller = new HttpClientCaller("user.properties");
+		String rootdn= caller.props.getProperty("cordys.rootdn");
+		return new CordysSystem(rootdn, caller);
 	}
 
 	public CordysSystem(String dn, SoapCaller caller) {
+		super(dn);
 		this.caller=caller;
-		this.rootdn=dn;
 	}
-	private String call(String input) {
+	public CordysSystem getSystem() { return this; }
+	
+	public String call(String input) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
@@ -35,23 +37,11 @@ public class CordysSystem {
 	}
 	
 	public List<Organization> getOrganizations() {
-		String msg="<GetAllOrganizations xmlns=\"http://schemas.cordys.com/1.0/ldap\">"
-			+"<dn>${rootdn}</dn>"
-		    +"</GetAllOrganizations>";
-		msg = msg.replaceAll("\\$\\{rootdn}",rootdn);
-		String response=call(msg);
-		ArrayList<Organization> result=new ArrayList<Organization>();
-		int pos=0;
-		String key="entry dn=\"";
-		while ((pos=response.indexOf(key, pos))>0) {
-			pos=pos+key.length();
-			String dn=response.substring(pos,response.indexOf("\"", pos));
-			result.add(new Organization(dn));
-			//System.out.println(dn);
-		}
-		return result;
+		return getChildren(this, "GetOrganizations", Organization.class);
 	}
 
+
+	
 	private String loadTemplate(String name) {
 		InputStream instream=CordysSystem.class.getClassLoader().getResourceAsStream("org/kisst/cordys/sbf/templates/"+name);
 		BufferedReader inp = new BufferedReader(new InputStreamReader(instream));
@@ -95,7 +85,7 @@ public class CordysSystem {
 	
 	public void createMethodSet(String conntype, String name, String namespace) {
 		String template=loadTemplate("CreateMethodSet.template");
-		template = template.replaceAll("\\$\\{org}",rootdn);
+		template = template.replaceAll("\\$\\{org}",dn);
 		template = template.replaceAll("\\$\\{name}",name);
 		template = template.replaceAll("\\$\\{namespace\\}",namespace);
 		template = template.replaceAll("\\$\\{type\\}",conntype);
@@ -103,7 +93,7 @@ public class CordysSystem {
 	}
 	public void deleteMethodSet(String conntype, String name, String namespace) {
 		String template=loadTemplate("DeleteMethodSet.template");
-		template = template.replaceAll("\\$\\{org}",rootdn);
+		template = template.replaceAll("\\$\\{org}",dn);
 		template = template.replaceAll("\\$\\{name}",name);
 		template = template.replaceAll("\\$\\{namespace\\}",namespace);
 		template = template.replaceAll("\\$\\{type\\}",conntype);
@@ -112,7 +102,7 @@ public class CordysSystem {
 	}	
 	public void createMethod(String methodset, String name, String impl, String wsdl) {
 		String template=loadTemplate("CreateMethod.template");
-		template = template.replaceAll("\\$\\{org}",rootdn);
+		template = template.replaceAll("\\$\\{org}",dn);
 		template = template.replaceAll("\\$\\{methodset}",methodset);
 		template = template.replaceAll("\\$\\{name\\}",name);
 		template = template.replaceAll("\\$\\{impl\\}",xmlEscape(impl));
@@ -123,5 +113,4 @@ public class CordysSystem {
 	private String xmlEscape(String str) {
 		return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	}
-
 }
