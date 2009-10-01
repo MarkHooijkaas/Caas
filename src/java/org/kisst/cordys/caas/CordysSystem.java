@@ -21,8 +21,6 @@ public class CordysSystem  extends Organization {
 		super(null,dn);
 		this.caller=caller;
 	}
-	public CordysSystem getSystem() { return this; }
-	
 	public String call(String input) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
@@ -35,12 +33,12 @@ public class CordysSystem  extends Organization {
 	}
 	
 	public List<Organization> getOrganizations() {
-		Element method=new Element("GetOrganizations", nsldap);
+		Element method=new Element("GetOrganizations", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method), Organization.class);
 	}
 	public List<AuthenticatedUser> getAuthenticatedUsers() {
-		Element method=new Element("GetAuthenticatedUsers", nsldap);
+		Element method=new Element("GetAuthenticatedUsers", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
 		return createObjects(call(method), AuthenticatedUser.class);

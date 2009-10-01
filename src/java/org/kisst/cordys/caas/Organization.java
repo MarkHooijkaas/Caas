@@ -10,13 +10,13 @@ public class Organization extends CordysObject {
 	}
 
 	public List<User> getUsers() {	
-		Element method=new Element("GetOrganizationalUsers", nsldap);
+		Element method=new Element("GetOrganizationalUsers", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method), User.class);
 	}
 	
 	public List<SoapNode> getSoapNodes() {	
-		Element method=new Element("GetSoapNodes", nsldap);
+		Element method=new Element("GetSoapNodes", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method), SoapNode.class);
 	}
