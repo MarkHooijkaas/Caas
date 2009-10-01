@@ -15,6 +15,7 @@ public class CordysObject {
 	private final CordysObject parent; 
 	private final CordysSystem system;
 	protected final String dn;
+	protected Element entry;
 
 	protected CordysObject(CordysObject parent, String dn) {
 		this.parent=parent;
@@ -27,7 +28,7 @@ public class CordysObject {
 	public CordysObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
 	public final Namespace nsldap10=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
-	public final Namespace nsldap11=Namespace.getNamespace("http://schemas.cordys.com/1.1/ldap");
+	//public final Namespace nsldap11=Namespace.getNamespace("http://schemas.cordys.com/1.1/ldap");
 	
 	public String getDn() { return dn; }
 	public String getName() {
@@ -76,6 +77,7 @@ public class CordysObject {
 			CordysObject obj;
 			try {
 				obj = (CordysObject) cons.newInstance(new Object[]{this, dn2});
+				obj.entry=elm;
 			}
 			catch (IllegalArgumentException e) { throw new RuntimeException(e); }
 			catch (InstantiationException e) { throw new RuntimeException(e); }
