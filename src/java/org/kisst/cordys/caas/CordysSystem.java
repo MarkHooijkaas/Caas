@@ -5,11 +5,13 @@ import java.util.List;
 import org.jdom.Element;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
+import org.kisst.cordys.caas.util.DynamicProperty;
 
 
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
-
+	public final DynamicProperty<Organization> org;
+	
 	public static CordysSystem connect() {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
 		HttpClientCaller caller = new HttpClientCaller("user.properties");
@@ -20,6 +22,7 @@ public class CordysSystem  extends Organization {
 	public CordysSystem(String dn, SoapCaller caller) {
 		super(null,dn);
 		this.caller=caller;
+		org=new DynamicProperty<Organization>(this, Organization.class, "o=", dn);
 	}
 	public String call(String input) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
@@ -31,7 +34,12 @@ public class CordysSystem  extends Organization {
 			System.out.println(response);
 		return response;
 	}
-	
+
+	public Organization getOrganization(String name) {
+		// TODO: validate if it really exists
+		return new Organization(this, "o="+name+","+dn);
+	}
+
 	public List<Organization> getOrganizations() {
 		Element method=new Element("GetOrganizations", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
