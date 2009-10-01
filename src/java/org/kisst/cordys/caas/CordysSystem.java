@@ -51,4 +51,11 @@ public class CordysSystem  extends Organization {
 		method.addContent(new Element("filter").setText("*"));
 		return createObjects(call(method), AuthenticatedUser.class);
 	}
+	
+	public List<Isvp> getIsvps() {
+		Element method=new Element("GetSoftwarePackages", nsldap10);
+		method.addContent(new Element("dn").setText(dn));
+		return createObjects(call(method), Isvp.class);
+	}
+	 
 }

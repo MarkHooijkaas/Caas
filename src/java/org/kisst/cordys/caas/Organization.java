@@ -24,4 +24,11 @@ public class Organization extends CordysObject {
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method), SoapNode.class);
 	}
+	
+	public List<MethodSet> getMethodSets() {	
+		Element method=new Element("GetMethodSets", nsldap10);
+		method.addContent(new Element("dn").setText(dn));
+		method.addContent(new Element("labeleduri").setText("*"));
+		return createObjects(call(method), MethodSet.class);
+	}
 }
