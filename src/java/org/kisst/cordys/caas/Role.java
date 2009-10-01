@@ -1,8 +1,8 @@
 package org.kisst.cordys.caas;
 
 public class Role extends CordysObject {
-	public Role(CordysSystem system, String dn) {
-		super(system, dn);
+	public Role(CordysObject parent, String dn) {
+		super(parent, dn);
 	}
 
 }

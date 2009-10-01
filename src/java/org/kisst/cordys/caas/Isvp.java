@@ -6,8 +6,8 @@ import org.jdom.Element;
 
 public class Isvp extends CordysObject {
 
-	public Isvp(CordysSystem system, String dn) {
-		super(system, dn);
+	public Isvp(CordysObject parent, String dn) {
+		super(parent, dn);
 	}
 
 	public List<MethodSet> getMethodSets() {	

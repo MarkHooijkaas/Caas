@@ -6,8 +6,8 @@ import org.jdom.Element;
 
 public class CordysContainer extends CordysObject {
 
-	public CordysContainer(CordysSystem system, String dn) {
-		super(system, dn);
+	public CordysContainer(CordysObject parent, String dn) {
+		super(parent, dn);
 	}
 
 	public List<User> getUsers() {	

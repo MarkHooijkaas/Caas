@@ -6,8 +6,8 @@ import org.jdom.Element;
 
 public class User extends CordysObject {
 
-	public User(CordysSystem system, String dn) {
-		super(system, dn);
+	public User(CordysObject parent, String dn) {
+		super(parent, dn);
 	}
 	// does not work in C2
 	public List<Role> getRoles() {

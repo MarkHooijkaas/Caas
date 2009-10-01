@@ -2,8 +2,8 @@ package org.kisst.cordys.caas;
 
 public class AuthenticatedUser extends CordysObject {
 
-	public AuthenticatedUser(CordysSystem system, String dn) {
-		super(system, dn);
+	public AuthenticatedUser(CordysObject parent, String dn) {
+		super(parent, dn);
 	}
 
 }
