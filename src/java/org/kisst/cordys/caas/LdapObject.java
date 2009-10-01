@@ -26,7 +26,8 @@ public abstract class LdapObject {
 	abstract protected CordysSystem getSystem(); 
 	protected String call(String input) { return getSystem().call(input); }
 
-	public List<CordysObject> getChildren() {
+	public List<CordysObject> getChildren() { return getChildren("entry dn=\""); }
+	public List<CordysObject> getChildren(String key) {
 		String msg="<GetChildren xmlns=\"http://schemas.cordys.com/1.0/ldap\">"
 			+"<dn>${dn}</dn>"
 		    +"</GetChildren>";
@@ -34,7 +35,6 @@ public abstract class LdapObject {
 		String response=call(msg);
 		ArrayList<CordysObject> result=new ArrayList<CordysObject>();
 		int pos=0;
-		String key="entry dn=\"";
 		while ((pos=response.indexOf(key, pos))>0) {
 			pos=pos+key.length();
 			String dn2=response.substring(pos,response.indexOf("\"", pos));
@@ -51,8 +51,11 @@ public abstract class LdapObject {
 		return call(msg);
 	}
 	
+	public <T> List<T> getChildren(CordysSystem system, String method, Class resultClass) { 
+		return getChildren(system, method, resultClass, "entry dn=\""); 
+	}
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getChildren(CordysSystem system, String method, Class resultClass) {
+	public <T> List<T> getChildren(CordysSystem system, String method, Class resultClass, String key) {
 		String msg="<${method} xmlns=\"http://schemas.cordys.com/1.0/ldap\">"
 			+"<dn>${dn}</dn>"
 		    +"</${method}>";
@@ -61,7 +64,6 @@ public abstract class LdapObject {
 		String response=call(msg);
 		ArrayList<T> result=new ArrayList<T>();
 		int pos=0;
-		String key="entry dn=\"";
 		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysSystem.class, String.class});
 		while ((pos=response.indexOf(key, pos))>0) {
 			pos=pos+key.length();

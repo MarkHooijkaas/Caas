@@ -7,7 +7,6 @@ public class Organization extends CordysObject {
 		super(system, dn);
 	}
 
-	public List<User> getUsers() {
-		return getChildren(system, "GetOrganizationalUsers", User.class);
-	}
+	public List<User> getUsers() {	return getChildren(system, "GetOrganizationalUsers", User.class); }
+	public List<SoapNode> getSoapNodes() {	return getChildren(system, "GetSoapNodes", SoapNode.class); }
 }

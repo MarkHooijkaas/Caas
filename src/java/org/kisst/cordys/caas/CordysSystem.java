@@ -6,7 +6,7 @@ import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
-public class CordysSystem  extends LdapObject{
+public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
 
 	public static CordysSystem connect() {
@@ -17,7 +17,7 @@ public class CordysSystem  extends LdapObject{
 	}
 
 	public CordysSystem(String dn, SoapCaller caller) {
-		super(dn);
+		super(null,dn);
 		this.caller=caller;
 	}
 	public CordysSystem getSystem() { return this; }
@@ -28,11 +28,15 @@ public class CordysSystem  extends LdapObject{
 			+ "</SOAP:Body></SOAP:Envelope>";
 		//System.out.println(soap);
 		String response = caller.call(soap);
-		//System.out.println(response);
+		if (response.indexOf("SOAP:Fault")>0)
+			System.out.println(response);
 		return response;
 	}
 	
 	public List<Organization> getOrganizations() {
 		return getChildren(this, "GetOrganizations", Organization.class);
+	}
+	public List<AuthenticatedUser> getAuthenticatedUsers() {
+		return getChildren(this, "GetAuthenticatedUsers", AuthenticatedUser.class);
 	}
 }
