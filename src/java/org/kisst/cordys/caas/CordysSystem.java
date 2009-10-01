@@ -35,13 +35,14 @@ public class CordysSystem  extends Organization {
 	}
 	
 	public List<Organization> getOrganizations() {
-		return getChildren(this, "GetOrganizations", Organization.class);
+		Element method=new Element("GetOrganizations", nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		return createObjects(call(method), Organization.class);
 	}
 	public List<AuthenticatedUser> getAuthenticatedUsers() {
 		Element method=new Element("GetAuthenticatedUsers", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
-		Element response = call(method);
-		return createObjects(response, AuthenticatedUser.class, "entry dn=\"");
+		return createObjects(call(method), AuthenticatedUser.class);
 	}
 }
