@@ -93,7 +93,7 @@ public class CordysObject {
 				toRemove=e;
 		}
 		if (toRemove!=null)
-		children.remove(toRemove);
+			children.remove(toRemove);
 		updateLdap(newEntry);
 	}
 
