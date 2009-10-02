@@ -11,7 +11,7 @@ public class ObjectRegistry {
 	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
 	static {
 		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
-		ldapObjectTypes.put("groupOfNames", Isvp.class); // ???
+		//ldapObjectTypes.put("groupOfNames", Isvp.class); 
 		ldapObjectTypes.put("busmethod", Method.class);
 		ldapObjectTypes.put("busmethodset", MethodSet.class);
 		ldapObjectTypes.put("organization", Organization.class);
@@ -100,5 +100,8 @@ public class ObjectRegistry {
 			if (c!=null)
 				return c;
 		}
+		String dn=entry.getAttributeValue("dn");
+		if (dn.substring(dn.indexOf(",")+1).equals(system.dn) && dn.startsWith("cn="))
+			return Isvp.class;
 		return null;
 	}}
