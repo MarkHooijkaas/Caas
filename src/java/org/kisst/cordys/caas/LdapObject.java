@@ -4,28 +4,21 @@ import java.util.List;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.kisst.cordys.caas.util.JdomUtil;
 
 
-public class LdapObject {
+public class LdapObject extends CordysObject {
 	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 
 	private final LdapObject parent; 
-	private final CordysSystem system;
 	protected final String dn;
 	private Element entry;
 
 	protected LdapObject(LdapObject parent, String dn) {
+		super(parent);
 		this.parent=parent;
 		this.dn=dn;
-		if (parent==null)
-			this.system=(CordysSystem) this; // workaround to be used by constructor of CordysSytem
-		else
-			this.system=parent.getSystem();
 	}
 	public LdapObject getParent() { return parent; }
-	public CordysSystem getSystem() { return system; }
-	//public final Namespace nsldap11=Namespace.getNamespace("http://schemas.cordys.com/1.1/ldap");
 	
 	public String getDn() { return dn; }
 	public String getName() {
@@ -40,17 +33,6 @@ public class LdapObject {
 		return c; 
 	}
 
-	public String call(String input) { return getSystem().call(input); }
-	public Element call(Element method) { 
-		String xml = JdomUtil.toString(method);
-		String response= getSystem().call(xml);
-		Element output=JdomUtil.fromString(response);
-		if (output.getName().equals("Envelope"))
-			output=output.getChild("Body",null).getChild(null,null);
-		return output;
-	}
-
-
 	public NamedObjectList<LdapObject> getChildren() {
 		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
@@ -64,7 +46,7 @@ public class LdapObject {
 	public void refresh() {
 		Element method=new Element("GetLDAPObject", nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		Element response = system.call(method);
+		Element response = call(method);
 		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
 	}
 	public void setEntry(Element entry) {
