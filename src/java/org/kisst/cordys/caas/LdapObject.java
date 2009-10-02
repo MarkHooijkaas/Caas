@@ -7,15 +7,15 @@ import org.jdom.Namespace;
 import org.kisst.cordys.caas.util.JdomUtil;
 
 
-public class CordysObject {
+public class LdapObject {
 	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 
-	private final CordysObject parent; 
+	private final LdapObject parent; 
 	private final CordysSystem system;
 	protected final String dn;
 	private Element entry;
 
-	protected CordysObject(CordysObject parent, String dn) {
+	protected LdapObject(LdapObject parent, String dn) {
 		this.parent=parent;
 		this.dn=dn;
 		if (parent==null)
@@ -23,7 +23,7 @@ public class CordysObject {
 		else
 			this.system=parent.getSystem();
 	}
-	public CordysObject getParent() { return parent; }
+	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
 	//public final Namespace nsldap11=Namespace.getNamespace("http://schemas.cordys.com/1.1/ldap");
 	
@@ -51,13 +51,13 @@ public class CordysObject {
 	}
 
 
-	public NamedObjectList<CordysObject> getChildren() {
+	public NamedObjectList<LdapObject> getChildren() {
 		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}
 	
-	protected <T extends CordysObject> NamedObjectList<T> createObjects(Element element) {
+	protected <T extends LdapObject> NamedObjectList<T> createObjects(Element element) {
 		return getSystem().registry.createObjectsFromEntries(element);
 	}
 	

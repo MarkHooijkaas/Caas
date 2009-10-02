@@ -2,9 +2,9 @@ package org.kisst.cordys.caas;
 
 import org.jdom.Element;
 
-public class MethodSet extends CordysObject {
+public class MethodSet extends LdapObject {
 
-	protected MethodSet(CordysObject parent, String dn) {
+	protected MethodSet(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 	

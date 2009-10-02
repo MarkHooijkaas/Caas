@@ -6,9 +6,9 @@ import java.util.List;
 import org.jdom.Element;
 
 
-public class SoapNode extends CordysObject {
+public class SoapNode extends LdapObject {
 
-	protected SoapNode(CordysObject parent, String dn) {
+	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 	

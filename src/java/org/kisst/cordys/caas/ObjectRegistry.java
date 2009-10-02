@@ -20,7 +20,7 @@ public class ObjectRegistry {
 		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
 		ldapObjectTypes.put("busorganizationaluser", User.class);
 	}
-	private final HashMap<String, CordysObject> tree=new HashMap<String, CordysObject>();
+	private final HashMap<String, LdapObject> tree=new HashMap<String, LdapObject>();
 	private final CordysSystem system;
 	
 	ObjectRegistry(CordysSystem system) {
@@ -29,9 +29,9 @@ public class ObjectRegistry {
 	}
 	
 	
-	public synchronized CordysObject getObject(String newdn) {
+	public synchronized LdapObject getObject(String newdn) {
 		//System.out.println("get "+newdn);
-		CordysObject result=tree.get(newdn);
+		LdapObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(newdn);
 			if (result!=null)
@@ -39,44 +39,44 @@ public class ObjectRegistry {
 		}
 		return result;
 	}
-	public synchronized CordysObject getObject(Element entry) {
+	public synchronized LdapObject getObject(Element entry) {
 		//System.out.println("get "+JdomUtil.toString(entry));
 		String newdn=entry.getAttributeValue("dn");
-		CordysObject result=tree.get(newdn);
+		LdapObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(entry);
 			remember(result);
 		}
 		return result;
 	}
-	private void remember(CordysObject obj) {
+	private void remember(LdapObject obj) {
 		tree.put(obj.dn, obj);
 		if (system.debug)
 			System.out.println("remembering "+obj);
 	}
 	
-	private CordysObject createObject(String newdn) {
+	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", CordysObject.nsldap);
+		Element method=new Element("GetLDAPObject", LdapObject.nsldap);
 		method.addContent(new Element("dn").setText(newdn));
 		Element response = system.call(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
 		return createObject(entry);
 	}
 	
-	private CordysObject createObject(Element entry) {
+	private LdapObject createObject(Element entry) {
 		//System.out.println("create "+JdomUtil.toString(entry));
 		String newdn=entry.getAttributeValue("dn");
-		CordysObject parent = getParent(entry);
+		LdapObject parent = getParent(entry);
 		Class resultClass = determineClass(entry);
 		if (resultClass==null)
 			return null;
-		CordysObject result;
+		LdapObject result;
 		//System.out.println(resultClass+","+parent+","+newdn);
-		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
+		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {LdapObject.class, String.class});
 		cons.setAccessible(true);
 		try {
-			result = (CordysObject) cons.newInstance(new Object[]{parent, newdn});
+			result = (LdapObject) cons.newInstance(new Object[]{parent, newdn});
 			result.setEntry(entry);
 		}
 		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
@@ -87,12 +87,12 @@ public class ObjectRegistry {
 		return result;
 	}
 
-	private CordysObject getParent(Element entry) {
+	private LdapObject getParent(Element entry) {
 		String dn=entry.getAttributeValue("dn");
 		//System.out.println("getParent "+dn);
 		do {
 			dn=dn.substring(dn.indexOf(",")+1);
-			CordysObject parent=getObject(dn);
+			LdapObject parent=getObject(dn);
 			if (parent!=null)
 				return parent;
 		} while (dn.length()>0);
@@ -113,26 +113,26 @@ public class ObjectRegistry {
 		return null;
 	}
 	@SuppressWarnings("unchecked")
-	public <T extends CordysObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+	public <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
 		for (Object tuple : response.getChildren("tuple", null)) {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			CordysObject obj=system.getObject(elm);
+			LdapObject obj=system.getObject(elm);
 			result.put(obj.getName(),(T) obj);
 			//System.out.println(dn);
 		}
 		return result;
 	}
 	@SuppressWarnings("unchecked")
-	public <T extends CordysObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
+	public <T extends LdapObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		start=start.getChild(group,null);
 		for (Object s: start.getChildren("string", null)) {
 			String dn=((Element) s).getText();
-			CordysObject obj=system.getObject(dn);
+			LdapObject obj=system.getObject(dn);
 			result.put(obj.getName(),(T) obj);
 			//System.out.println(dn);
 		}

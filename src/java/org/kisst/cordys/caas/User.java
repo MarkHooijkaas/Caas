@@ -1,9 +1,9 @@
 package org.kisst.cordys.caas;
 
 
-public class User extends CordysObject {
+public class User extends LdapObject {
 
-	protected User(CordysObject parent, String dn) {
+	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

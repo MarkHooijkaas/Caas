@@ -3,7 +3,7 @@ package org.kisst.cordys.caas;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class NamedObjectList<T extends CordysObject> extends HashMap<String,T>{
+public class NamedObjectList<T extends LdapObject> extends HashMap<String,T>{
 	private static final long serialVersionUID = 1L;
 	
 	public Iterator<T> iterator() { return values().iterator(); }

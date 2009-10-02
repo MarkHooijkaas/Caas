@@ -3,11 +3,11 @@ package org.kisst.cordys.caas;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class SoapProcessor extends CordysObject {
+public class SoapProcessor extends LdapObject {
 
 	private static final Namespace nsmonitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 
-	protected SoapProcessor(CordysObject parent, String dn) {
+	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

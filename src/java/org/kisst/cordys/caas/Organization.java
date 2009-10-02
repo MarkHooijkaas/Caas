@@ -4,7 +4,7 @@ import org.jdom.Element;
 
 public class Organization extends CordysContainer {
 
-	protected Organization(CordysObject parent, String dn) {
+	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

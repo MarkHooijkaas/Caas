@@ -2,9 +2,9 @@ package org.kisst.cordys.caas;
 
 import org.jdom.Element;
 
-public class Isvp extends CordysObject {
+public class Isvp extends LdapObject {
 
-	protected Isvp(CordysObject parent, String dn) {
+	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

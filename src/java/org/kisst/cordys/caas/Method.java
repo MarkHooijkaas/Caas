@@ -1,8 +1,8 @@
 package org.kisst.cordys.caas;
 
-public class Method extends CordysObject {
+public class Method extends LdapObject {
 
-	protected Method(CordysObject parent, String dn) {
+	protected Method(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

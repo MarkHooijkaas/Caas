@@ -5,7 +5,7 @@ import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
-public class CordysSystem  extends CordysObject {
+public class CordysSystem  extends LdapObject {
 	private final SoapCaller caller;
 	final ObjectRegistry registry=new ObjectRegistry(this);
 	public boolean debug=false;
@@ -22,8 +22,8 @@ public class CordysSystem  extends CordysObject {
 		this.caller=caller;
 	}
 
-	public CordysObject getObject(Element elm) { return registry.getObject(elm); }
-	public CordysObject getObject(String dn)   { return registry.getObject(dn); }
+	public LdapObject getObject(Element elm) { return registry.getObject(elm); }
+	public LdapObject getObject(String dn)   { return registry.getObject(dn); }
 
 	public String call(String input) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
