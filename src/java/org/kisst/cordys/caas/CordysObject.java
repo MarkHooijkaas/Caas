@@ -55,7 +55,7 @@ public class CordysObject {
 	public List<CordysObject> getChildren() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), CordysObject.class);
+		return createObjects(call(method));
 	}
 	
 	public Element getDetails() {
@@ -66,7 +66,7 @@ public class CordysObject {
 	
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> createObjects(Element response, Class resultClass) {
+	public <T> List<T> createObjects(Element response) {
 		ArrayList<T> result=new ArrayList<T>();
 
 		if (response.getName().equals("Envelope"))

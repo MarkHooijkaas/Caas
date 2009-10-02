@@ -50,18 +50,18 @@ public class CordysSystem  extends Organization {
 	public List<Organization> getOrganizations() {
 		Element method=new Element("GetOrganizations", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), Organization.class);
+		return createObjects(call(method));
 	}
 	public List<AuthenticatedUser> getAuthenticatedUsers() {
 		Element method=new Element("GetAuthenticatedUsers", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
-		return createObjects(call(method), AuthenticatedUser.class);
+		return createObjects(call(method));
 	}
 	
 	public List<Isvp> getIsvps() {
 		Element method=new Element("GetSoftwarePackages", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), Isvp.class);
+		return createObjects(call(method));
 	}
 }

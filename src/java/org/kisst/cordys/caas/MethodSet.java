@@ -13,7 +13,7 @@ public class MethodSet extends CordysObject {
 	public List<Method> getMethods() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), Method.class);
+		return createObjects(call(method));
 	}
 
 }

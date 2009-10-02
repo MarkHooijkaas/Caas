@@ -13,7 +13,7 @@ public class CordysContainer extends CordysObject {
 	public List<User> getUsers() {	
 		Element method=new Element("GetOrganizationalUsers", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), User.class);
+		return createObjects(call(method));
 	}
 
 
@@ -21,6 +21,6 @@ public class CordysContainer extends CordysObject {
 		Element method=new Element("GetMethodSets", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
-		return createObjects(call(method), MethodSet.class);
+		return createObjects(call(method));
 	}
 }

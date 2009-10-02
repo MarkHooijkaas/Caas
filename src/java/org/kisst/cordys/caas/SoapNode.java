@@ -15,7 +15,7 @@ public class SoapNode extends CordysObject {
 	public List<SoapProcessor> getSoapProcessors() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), SoapProcessor.class);
+		return createObjects(call(method));
 	}
 	
 	public List<String> getNamespaces() {

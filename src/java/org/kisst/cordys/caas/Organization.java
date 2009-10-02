@@ -18,13 +18,13 @@ public class Organization extends CordysContainer {
 	public List<Role> getRoles() {	
 		Element method=new Element("GetRolesForOrganization", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), Role.class);
+		return createObjects(call(method));
 	}
 
 	public List<SoapNode> getSoapNodes() {	
 		Element method=new Element("GetSoapNodes", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("namespace").setText("*"));
-		return createObjects(call(method), SoapNode.class);
+		return createObjects(call(method));
 	}
 }

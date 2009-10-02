@@ -13,7 +13,7 @@ public class User extends CordysObject {
 	public List<Role> getRoles() {
 		Element method=new Element("GetRoles", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method), Role.class);
+		return createObjects(call(method));
 	}
 	
 	
