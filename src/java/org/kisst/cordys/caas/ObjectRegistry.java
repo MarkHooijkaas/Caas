@@ -20,8 +20,6 @@ public class ObjectRegistry {
 		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
 		ldapObjectTypes.put("busorganizationaluser", User.class);
 	}
-	
-	
 	private final HashMap<String, CordysObject> tree=new HashMap<String, CordysObject>();
 	private final CordysSystem system;
 	
@@ -30,56 +28,63 @@ public class ObjectRegistry {
 		tree.put(system.dn, system);
 	}
 	
-	public synchronized CordysObject getObject(String dn) {
-		CordysObject result=tree.get(dn);
+	
+	public synchronized CordysObject getObject(String newdn) {
+		//System.out.println("get "+newdn);
+		CordysObject result=tree.get(newdn);
 		if (result==null) {
-			result=createObject(dn);
-			tree.put(dn, result);
+			result=createObject(newdn);
+			tree.put(newdn, result);
 		}
 		return result;
 	}
 	public synchronized CordysObject getObject(Element entry) {
-		String dn=entry.getAttributeValue("dn");
-		CordysObject result=tree.get(dn);
+		//System.out.println("get "+JdomUtil.toString(entry));
+		String newdn=entry.getAttributeValue("dn");
+		CordysObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(entry);
-			tree.put(dn, result);
+			tree.put(newdn, result);
 		}
 		return result;
 	}
-	private CordysObject createObject(String dn) {
+	private CordysObject createObject(String newdn) {
+		//System.out.println("create "+newdn);
 		Element method=new Element("GetLDAPObject", CordysObject.nsldap10);
-		method.addContent(new Element("dn").setText(dn));
+		method.addContent(new Element("dn").setText(newdn));
 		Element response = system.call(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
 		return createObject(entry);
 	}
 	
 	private CordysObject createObject(Element entry) {
-		String dn=entry.getAttributeValue("dn");
+		//System.out.println("create "+JdomUtil.toString(entry));
+		String newdn=entry.getAttributeValue("dn");
 		CordysObject parent = getParent(entry);
 		Class resultClass = determineClass(entry);
 		if (resultClass==null)
 			return null;
 		CordysObject result;
+		//System.out.println(resultClass+","+parent+","+newdn);
 		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
 		try {
-			result = (CordysObject) cons.newInstance(new Object[]{parent, entry});
-			//result.entry=elm;
+			result = (CordysObject) cons.newInstance(new Object[]{parent, newdn});
+			result.entry=entry;
 		}
 		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
 		catch (InstantiationException e) { throw new RuntimeException(e); }
 		catch (IllegalAccessException e) { throw new RuntimeException(e); }
 		catch (InvocationTargetException e) { throw new RuntimeException(e); }
-		tree.put(dn, result);
+		tree.put(newdn, result);
 		return result;
 	}
 
 	private CordysObject getParent(Element entry) {
 		String dn=entry.getAttributeValue("dn");
+		//System.out.println("getParent "+dn);
 		do {
 			dn=dn.substring(dn.indexOf(",")+1);
-			CordysObject parent=getObject(entry);
+			CordysObject parent=getObject(dn);
 			if (parent!=null)
 				return parent;
 		} while (dn.length()>0);
@@ -87,6 +92,7 @@ public class ObjectRegistry {
 	}
 
 	private Class determineClass(Element entry) {
+		//System.out.println(JdomUtil.toString(entry));
 		Element objectclass=entry.getChild("objectclass",null);
 		for(Object o:objectclass.getChildren("string",null)) {
 			Class c=ldapObjectTypes.get(((Element) o).getText());
@@ -94,6 +100,4 @@ public class ObjectRegistry {
 				return c;
 		}
 		return null;
-	}
-
-}
+	}}

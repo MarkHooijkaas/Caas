@@ -1,14 +1,11 @@
 package org.kisst.cordys.caas;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.kisst.cordys.caas.util.JdomUtil;
-import org.kisst.cordys.caas.util.ReflectionUtil;
 
 
 public class CordysObject {
@@ -71,22 +68,12 @@ public class CordysObject {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> createObjects(Element response, Class resultClass) {
 		ArrayList<T> result=new ArrayList<T>();
-		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
 
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
 		for (Object tuple : response.getChildren("tuple", null)) {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			String dn2=elm.getAttributeValue("dn");
-			CordysObject obj;
-			try {
-				obj = (CordysObject) cons.newInstance(new Object[]{this, dn2});
-				obj.entry=elm;
-			}
-			catch (IllegalArgumentException e) { throw new RuntimeException(e); }
-			catch (InstantiationException e) { throw new RuntimeException(e); }
-			catch (IllegalAccessException e) { throw new RuntimeException(e); }
-			catch (InvocationTargetException e) { throw new RuntimeException(e); }
+			CordysObject obj=getSystem().getObject(elm);
 			result.add((T) obj);
 			//System.out.println(dn);
 		}

@@ -10,6 +10,7 @@ import org.kisst.cordys.caas.util.DynamicProperty;
 
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
+	private final ObjectRegistry registry=new ObjectRegistry(this);
 	
 	public final DynamicProperty<Organization> org;
 	
@@ -25,6 +26,10 @@ public class CordysSystem  extends Organization {
 		this.caller=caller;
 		org=new DynamicProperty<Organization>(this, Organization.class, "o=", dn);
 	}
+
+	public CordysObject getObject(Element elm) { return registry.getObject(elm); }
+	public CordysObject getObject(String dn)   { return registry.getObject(dn); }
+
 	public String call(String input) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
@@ -66,7 +71,7 @@ public class CordysSystem  extends Organization {
 		dn=dn.substring(0,dn.length()-this.dn.length()-1);
 		int pos=dn.lastIndexOf(",");
 		String part=dn.substring(pos+1);
-		System.out.println(part);
+		//System.out.println(part);
 		if (part.startsWith("o="))
 			return new Organization(this,part+","+this.dn);
 		else
