@@ -14,6 +14,7 @@ public class NamedObjectList<T extends CordysObject> extends HashMap<String,T>{
 		}
 		throw new IndexOutOfBoundsException("Index out of bounds");	
 	}
+	public T propertyMissing(String name) { return get(name); }
 
 	public NamedObjectList <T> like(String expr) {
 		NamedObjectList <T> result=new NamedObjectList <T>();

@@ -1,16 +1,11 @@
 package org.kisst.cordys.caas;
 
 import org.jdom.Element;
-import org.kisst.cordys.caas.util.DynamicProperty;
 
 public class Organization extends CordysContainer {
-	public final DynamicProperty<User> user;
-	public final DynamicProperty<MethodSet> methodSet;
 
 	protected Organization(CordysObject parent, String dn) {
 		super(parent, dn);
-		user=new DynamicProperty<User>(getSystem(), User.class, "cn=", "cn=organizational users,"+dn);
-		methodSet=new DynamicProperty<MethodSet>(getSystem(), MethodSet.class, "cn=", "cn=method sets,"+dn);
 	}
 
 	public NamedObjectList<Role> getRoles() {	
@@ -19,6 +14,7 @@ public class Organization extends CordysContainer {
 		return createObjects(call(method));
 	}
 
+	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
 	public NamedObjectList<SoapNode> getSoapNodes() {	
 		Element method=new Element("GetSoapNodes", nsldap10);
 		method.addContent(new Element("dn").setText(dn));

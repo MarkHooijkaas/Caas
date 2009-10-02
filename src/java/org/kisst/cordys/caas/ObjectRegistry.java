@@ -25,7 +25,7 @@ public class ObjectRegistry {
 	
 	ObjectRegistry(CordysSystem system) {
 		this.system=system;
-		tree.put(system.dn, system);
+		remember(system);
 	}
 	
 	
@@ -35,7 +35,7 @@ public class ObjectRegistry {
 		if (result==null) {
 			result=createObject(newdn);
 			if (result!=null)
-				tree.put(newdn, result);
+				remember(result);
 		}
 		return result;
 	}
@@ -45,10 +45,15 @@ public class ObjectRegistry {
 		CordysObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(entry);
-			tree.put(newdn, result);
+			remember(result);
 		}
 		return result;
 	}
+	private void remember(CordysObject obj) {
+		tree.put(obj.dn, obj);
+		System.out.println("remember "+obj);
+	}
+	
 	private CordysObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
 		Element method=new Element("GetLDAPObject", CordysObject.nsldap10);

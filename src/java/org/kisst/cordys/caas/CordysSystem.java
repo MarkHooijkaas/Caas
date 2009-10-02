@@ -3,14 +3,11 @@ package org.kisst.cordys.caas;
 import org.jdom.Element;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
-import org.kisst.cordys.caas.util.DynamicProperty;
 
 
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
 	final ObjectRegistry registry=new ObjectRegistry(this);
-	
-	public final DynamicProperty<Organization> org;
 	
 	public static CordysSystem connect(String filename) {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
@@ -22,7 +19,6 @@ public class CordysSystem  extends Organization {
 	protected CordysSystem(String dn, SoapCaller caller) {
 		super(null,dn);
 		this.caller=caller;
-		org=new DynamicProperty<Organization>(this, Organization.class, "o=", dn);
 	}
 
 	public CordysObject getObject(Element elm) { return registry.getObject(elm); }
@@ -39,12 +35,7 @@ public class CordysSystem  extends Organization {
 		return response;
 	}
 	
-
-	public Organization getOrganization(String name) {
-		// TODO: validate if it really exists
-		return new Organization(this, "o="+name+","+dn);
-	}
-
+	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
 	public NamedObjectList<Organization> getOrganizations() {
 		Element method=new Element("GetOrganizations", nsldap10);
 		method.addContent(new Element("dn").setText(dn));

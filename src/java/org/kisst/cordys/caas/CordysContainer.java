@@ -15,6 +15,7 @@ public class CordysContainer extends CordysObject {
 	}
 
 
+	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {	
 		Element method=new Element("GetMethodSets", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
