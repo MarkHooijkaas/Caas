@@ -10,7 +10,7 @@ import org.kisst.cordys.caas.util.DynamicProperty;
 
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
-	private final ObjectRegistry registry=new ObjectRegistry(this);
+	final ObjectRegistry registry=new ObjectRegistry(this);
 	
 	public final DynamicProperty<Organization> org;
 	

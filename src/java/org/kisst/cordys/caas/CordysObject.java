@@ -1,6 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom.Element;
@@ -58,25 +57,19 @@ public class CordysObject {
 		return createObjects(call(method));
 	}
 	
-	public Element getDetails() {
-		Element method=new Element("GetLDAPObject", nsldap10);
-		method.addContent(new Element("dn").setText(dn));
-		return call(method);
+	protected <T> List<T> createObjects(Element element) {
+		return getSystem().registry.createObjects(element);
 	}
 	
-
-	@SuppressWarnings("unchecked")
-	public <T> List<T> createObjects(Element response) {
-		ArrayList<T> result=new ArrayList<T>();
-
-		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body",null).getChild(null,null);
-		for (Object tuple : response.getChildren("tuple", null)) {
-			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			CordysObject obj=getSystem().getObject(elm);
-			result.add((T) obj);
-			//System.out.println(dn);
-		}
-		return result;
+	public void refresh() {
+		Element method=new Element("GetLDAPObject", nsldap10);
+		method.addContent(new Element("dn").setText(dn));
+		Element response = system.call(method);
+		entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
+	}
+	public Element getEntry() {
+		if (entry==null)
+			refresh();
+		return entry;
 	}
 }

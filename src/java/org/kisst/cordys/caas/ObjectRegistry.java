@@ -2,7 +2,9 @@ package org.kisst.cordys.caas;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.jdom.Element;
 import org.kisst.cordys.caas.util.ReflectionUtil;
@@ -104,4 +106,19 @@ public class ObjectRegistry {
 		if (dn.substring(dn.indexOf(",")+1).equals(system.dn) && dn.startsWith("cn="))
 			return Isvp.class;
 		return null;
-	}}
+	}
+	@SuppressWarnings("unchecked")
+	public <T> List<T> createObjects(Element response) {
+		ArrayList<T> result=new ArrayList<T>();
+
+		if (response.getName().equals("Envelope"))
+			response=response.getChild("Body",null).getChild(null,null);
+		for (Object tuple : response.getChildren("tuple", null)) {
+			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
+			CordysObject obj=system.getObject(elm);
+			result.add((T) obj);
+			//System.out.println(dn);
+		}
+		return result;
+	}
+}
