@@ -9,7 +9,7 @@ public class Organization extends CordysContainer {
 	public final DynamicProperty<User> user;
 	public final DynamicProperty<MethodSet> methodSet;
 
-	public Organization(CordysObject parent, String dn) {
+	protected Organization(CordysObject parent, String dn) {
 		super(parent, dn);
 		user=new DynamicProperty<User>(getSystem(), User.class, "cn=", "cn=organizational users,"+dn);
 		methodSet=new DynamicProperty<MethodSet>(getSystem(), MethodSet.class, "cn=", "cn=method sets,"+dn);

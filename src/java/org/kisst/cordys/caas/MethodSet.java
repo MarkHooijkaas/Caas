@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 public class MethodSet extends CordysObject {
 
-	public MethodSet(CordysObject parent, String dn) {
+	protected MethodSet(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 	

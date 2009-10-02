@@ -23,7 +23,7 @@ public class ObjectRegistry {
 	private final HashMap<String, CordysObject> tree=new HashMap<String, CordysObject>();
 	private final CordysSystem system;
 	
-	public ObjectRegistry(CordysSystem system) {
+	ObjectRegistry(CordysSystem system) {
 		this.system=system;
 		tree.put(system.dn, system);
 	}
@@ -67,6 +67,7 @@ public class ObjectRegistry {
 		CordysObject result;
 		//System.out.println(resultClass+","+parent+","+newdn);
 		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
+		cons.setAccessible(true);
 		try {
 			result = (CordysObject) cons.newInstance(new Object[]{parent, newdn});
 			result.entry=entry;

@@ -7,7 +7,7 @@ public class SoapProcessor extends CordysObject {
 
 	private static final Namespace nsmonitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 
-	public SoapProcessor(CordysObject parent, String dn) {
+	protected SoapProcessor(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 

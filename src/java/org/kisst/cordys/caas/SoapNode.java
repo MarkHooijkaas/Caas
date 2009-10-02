@@ -8,7 +8,7 @@ import org.jdom.Element;
 
 public class SoapNode extends CordysObject {
 
-	public SoapNode(CordysObject parent, String dn) {
+	protected SoapNode(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 	
@@ -30,7 +30,7 @@ public class SoapNode extends CordysObject {
 		Element ms=entry.getChild("busmethodsets", null);
 		for (Object o: ms.getChildren("string", null)) {
 			String dn=((Element)o).getText();
-			result.add(new MethodSet(getSystem().getContainer(dn),dn));
+			result.add((MethodSet)getSystem().getObject(dn));
 		}
 		return result;
 	}

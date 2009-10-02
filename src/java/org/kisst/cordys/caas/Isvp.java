@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 public class Isvp extends CordysObject {
 
-	public Isvp(CordysObject parent, String dn) {
+	protected Isvp(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 

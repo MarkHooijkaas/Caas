@@ -21,7 +21,7 @@ public class CordysSystem  extends Organization {
 		return new CordysSystem(rootdn, caller);
 	}
 
-	public CordysSystem(String dn, SoapCaller caller) {
+	protected CordysSystem(String dn, SoapCaller caller) {
 		super(null,dn);
 		this.caller=caller;
 		org=new DynamicProperty<Organization>(this, Organization.class, "o=", dn);
@@ -63,18 +63,5 @@ public class CordysSystem  extends Organization {
 		Element method=new Element("GetSoftwarePackages", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method), Isvp.class);
-	}
-	
-	public CordysObject getContainer(String dn) {
-		if (! dn.endsWith(this.dn))
-			throw new RuntimeException("dn is not part of this system:"+dn);
-		dn=dn.substring(0,dn.length()-this.dn.length()-1);
-		int pos=dn.lastIndexOf(",");
-		String part=dn.substring(pos+1);
-		//System.out.println(part);
-		if (part.startsWith("o="))
-			return new Organization(this,part+","+this.dn);
-		else
-			return new Isvp(this,part+","+this.dn);
 	}
 }

@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 public class CordysContainer extends CordysObject {
 
-	public CordysContainer(CordysObject parent, String dn) {
+	protected CordysContainer(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 

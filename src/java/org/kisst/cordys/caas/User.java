@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 public class User extends CordysObject {
 
-	public User(CordysObject parent, String dn) {
+	protected User(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 	// does not work in C2
