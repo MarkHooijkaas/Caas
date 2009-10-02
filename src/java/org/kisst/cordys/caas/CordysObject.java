@@ -35,10 +35,10 @@ public class CordysObject {
 		return dn.substring(pos+1,pos2);
 	}
 	public String toString() {
-		String c=this.getClass().getSimpleName()+"(";
+		String c=this.getClass().getSimpleName()+"("+getName()+")";
 		if (parent!=null && ! (parent instanceof CordysSystem))
-			c+=parent.toString()+",";
-		return c+getName()+")"; 
+			c="("+parent.toString()+","+c+")";
+		return c; 
 	}
 
 	public String call(String input) { return getSystem().call(input); }
