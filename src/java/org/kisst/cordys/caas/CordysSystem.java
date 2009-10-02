@@ -5,7 +5,7 @@ import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
-public class CordysSystem  extends Organization {
+public class CordysSystem  extends CordysObject {
 	private final SoapCaller caller;
 	final ObjectRegistry registry=new ObjectRegistry(this);
 	public boolean debug=false;

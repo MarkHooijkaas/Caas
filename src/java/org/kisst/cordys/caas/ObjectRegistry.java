@@ -51,7 +51,8 @@ public class ObjectRegistry {
 	}
 	private void remember(CordysObject obj) {
 		tree.put(obj.dn, obj);
-		System.out.println("remember "+obj);
+		if (system.debug)
+			System.out.println("remembering "+obj);
 	}
 	
 	private CordysObject createObject(String newdn) {
