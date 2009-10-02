@@ -8,7 +8,7 @@ import org.kisst.cordys.caas.util.JdomUtil;
 
 
 public class CordysObject {
-	public final static Namespace nsldap10=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
+	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 
 	private final CordysObject parent; 
 	private final CordysSystem system;
@@ -52,7 +52,7 @@ public class CordysObject {
 
 
 	public NamedObjectList<CordysObject> getChildren() {
-		Element method=new Element("GetChildren", nsldap10);
+		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}
@@ -62,7 +62,7 @@ public class CordysObject {
 	}
 	
 	public void refresh() {
-		Element method=new Element("GetLDAPObject", nsldap10);
+		Element method=new Element("GetLDAPObject", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		Element response = system.call(method);
 		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
@@ -79,7 +79,7 @@ public class CordysObject {
 	protected void addLdapString(String group, String value) {
 		getEntry();
 		Element newEntry=(Element) entry.clone();
-		newEntry.getChild(group, null).addContent(new Element("string",value));
+		newEntry.getChild(group, null).addContent(new Element("string",nsldap).setText(value));
 		updateLdap(newEntry);
 	}
 	protected void removeLdapString(String group, String value) {
@@ -98,10 +98,10 @@ public class CordysObject {
 	}
 
 	protected void updateLdap(Element newEntry) {
-		Element tuple=new Element("tuple", nsldap10);
-		tuple.addContent(new Element("old", nsldap10).addContent(entry));
-		tuple.addContent(new Element("new", nsldap10).addContent(newEntry));
-		Element method=new Element("Update", nsldap10).addContent(tuple);
+		Element tuple=new Element("tuple", nsldap);
+		tuple.addContent(new Element("old", nsldap).addContent(entry));
+		tuple.addContent(new Element("new", nsldap).addContent(newEntry));
+		Element method=new Element("Update", nsldap).addContent(tuple);
 		call(method);
 		setEntry(newEntry);
 	}

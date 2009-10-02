@@ -9,14 +9,14 @@ public class Organization extends CordysContainer {
 	}
 
 	public NamedObjectList<Role> getRoles() {	
-		Element method=new Element("GetRolesForOrganization", nsldap10);
+		Element method=new Element("GetRolesForOrganization", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}
 
 	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
 	public NamedObjectList<SoapNode> getSoapNodes() {	
-		Element method=new Element("GetSoapNodes", nsldap10);
+		Element method=new Element("GetSoapNodes", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("namespace").setText("*"));
 		return createObjects(call(method));

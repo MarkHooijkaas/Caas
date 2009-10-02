@@ -14,7 +14,7 @@ public class SoapNode extends CordysObject {
 	
 	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		Element method=new Element("GetChildren", nsldap10);
+		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}

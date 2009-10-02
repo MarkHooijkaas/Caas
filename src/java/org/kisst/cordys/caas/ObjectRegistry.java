@@ -56,7 +56,7 @@ public class ObjectRegistry {
 	
 	private CordysObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", CordysObject.nsldap10);
+		Element method=new Element("GetLDAPObject", CordysObject.nsldap);
 		method.addContent(new Element("dn").setText(newdn));
 		Element response = system.call(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
