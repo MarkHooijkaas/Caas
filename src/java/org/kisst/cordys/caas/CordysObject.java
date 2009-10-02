@@ -1,7 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.kisst.cordys.caas.util.JdomUtil;
@@ -51,14 +49,28 @@ public class CordysObject {
 	}
 
 
-	public List<CordysObject> getChildren() {
+	public NamedObjectList<CordysObject> getChildren() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}
 	
-	protected <T> List<T> createObjects(Element element) {
+	protected <T extends CordysObject> NamedObjectList<T> createObjects(Element element) {
 		return getSystem().registry.createObjects(element);
+	}
+	@SuppressWarnings("unchecked")
+	public <T extends CordysObject> NamedObjectList<T> createChildren(Element response) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
+
+		if (response.getName().equals("Envelope"))
+			response=response.getChild("Body",null).getChild(null,null);
+		for (Object tuple : response.getChildren("tuple", null)) {
+			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
+			CordysObject obj=system.getObject(elm);
+			result.put(obj.getName(),(T) obj);
+			//System.out.println(dn);
+		}
+		return result;
 	}
 	
 	public void refresh() {

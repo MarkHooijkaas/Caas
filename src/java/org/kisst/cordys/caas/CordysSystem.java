@@ -1,7 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
 import org.jdom.Element;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
@@ -47,19 +45,19 @@ public class CordysSystem  extends Organization {
 		return new Organization(this, "o="+name+","+dn);
 	}
 
-	public List<Organization> getOrganizations() {
+	public NamedObjectList<Organization> getOrganizations() {
 		Element method=new Element("GetOrganizations", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
 	}
-	public List<AuthenticatedUser> getAuthenticatedUsers() {
+	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
 		Element method=new Element("GetAuthenticatedUsers", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
 		return createObjects(call(method));
 	}
 	
-	public List<Isvp> getIsvps() {
+	public NamedObjectList<Isvp> getIsvps() {
 		Element method=new Element("GetSoftwarePackages", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));

@@ -1,7 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
 import org.jdom.Element;
 
 public class MethodSet extends CordysObject {
@@ -10,7 +8,7 @@ public class MethodSet extends CordysObject {
 		super(parent, dn);
 	}
 	
-	public List<Method> getMethods() {
+	public NamedObjectList<Method> getMethods() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));

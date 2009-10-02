@@ -12,7 +12,7 @@ public class SoapNode extends CordysObject {
 		super(parent, dn);
 	}
 	
-	public List<SoapProcessor> getSoapProcessors() {
+	public NamedObjectList<SoapProcessor> getSoapProcessors() {
 		Element method=new Element("GetChildren", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));
@@ -25,12 +25,13 @@ public class SoapNode extends CordysObject {
 			result.add(((Element)o).getText());
 		return result;
 	}
-	public List<MethodSet> getMethodSets() {
-		ArrayList<MethodSet> result=new ArrayList<MethodSet>();
+	public NamedObjectList<MethodSet> getMethodSets() {
+		NamedObjectList<MethodSet> result=new NamedObjectList<MethodSet>();
 		Element ms=entry.getChild("busmethodsets", null);
 		for (Object o: ms.getChildren("string", null)) {
 			String dn=((Element)o).getText();
-			result.add((MethodSet)getSystem().getObject(dn));
+			MethodSet obj=(MethodSet)getSystem().getObject(dn);
+			result.put(obj.getName(), obj);
 		}
 		return result;
 	}

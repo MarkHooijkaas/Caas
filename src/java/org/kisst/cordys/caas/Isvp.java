@@ -1,7 +1,5 @@
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
 import org.jdom.Element;
 
 public class Isvp extends CordysObject {
@@ -10,14 +8,14 @@ public class Isvp extends CordysObject {
 		super(parent, dn);
 	}
 
-	public List<MethodSet> getMethodSets() {	
+	public NamedObjectList<MethodSet> getMethodSets() {	
 		Element method=new Element("GetMethodSets", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
 		return createObjects(call(method));
 	}
 	
-	public List<Role> getRoles() {	
+	public NamedObjectList<Role> getRoles() {	
 		Element method=new Element("GetRolesForSoftwarePackage", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjects(call(method));

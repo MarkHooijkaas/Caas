@@ -2,9 +2,7 @@ package org.kisst.cordys.caas;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.jdom.Element;
 import org.kisst.cordys.caas.util.ReflectionUtil;
@@ -36,7 +34,8 @@ public class ObjectRegistry {
 		CordysObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(newdn);
-			tree.put(newdn, result);
+			if (result!=null)
+				tree.put(newdn, result);
 		}
 		return result;
 	}
@@ -108,15 +107,15 @@ public class ObjectRegistry {
 		return null;
 	}
 	@SuppressWarnings("unchecked")
-	public <T> List<T> createObjects(Element response) {
-		ArrayList<T> result=new ArrayList<T>();
+	public <T extends CordysObject> NamedObjectList<T> createObjects(Element response) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
 
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
 		for (Object tuple : response.getChildren("tuple", null)) {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
 			CordysObject obj=system.getObject(elm);
-			result.add((T) obj);
+			result.put(obj.getName(),(T) obj);
 			//System.out.println(dn);
 		}
 		return result;
