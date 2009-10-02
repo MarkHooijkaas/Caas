@@ -8,6 +8,7 @@ public class Isvp extends CordysObject {
 		super(parent, dn);
 	}
 
+	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {	
 		Element method=new Element("GetMethodSets", nsldap);
 		method.addContent(new Element("dn").setText(dn));
