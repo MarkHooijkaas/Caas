@@ -76,7 +76,7 @@ public class ObjectRegistry {
 		cons.setAccessible(true);
 		try {
 			result = (CordysObject) cons.newInstance(new Object[]{parent, newdn});
-			result.entry=entry;
+			result.setEntry(entry);
 		}
 		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
 		catch (InstantiationException e) { throw new RuntimeException(e); }
@@ -112,7 +112,7 @@ public class ObjectRegistry {
 		return null;
 	}
 	@SuppressWarnings("unchecked")
-	public <T extends CordysObject> NamedObjectList<T> createObjects(Element response) {
+	public <T extends CordysObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 
 		if (response.getName().equals("Envelope"))
@@ -125,4 +125,17 @@ public class ObjectRegistry {
 		}
 		return result;
 	}
+	@SuppressWarnings("unchecked")
+	public <T extends CordysObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
+		start=start.getChild(group,null);
+		for (Object s: start.getChildren("string", null)) {
+			String dn=((Element) s).getText();
+			CordysObject obj=system.getObject(dn);
+			result.put(obj.getName(),(T) obj);
+			//System.out.println(dn);
+		}
+		return result;
+	}
+
 }

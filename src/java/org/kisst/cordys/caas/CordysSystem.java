@@ -8,6 +8,7 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
 	final ObjectRegistry registry=new ObjectRegistry(this);
+	public boolean debug=false;
 	
 	public static CordysSystem connect(String filename) {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
@@ -28,9 +29,10 @@ public class CordysSystem  extends Organization {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
-		//System.out.println(soap);
+		if (debug)
+			System.out.println(soap);
 		String response = caller.call(soap);
-		if (response.indexOf("SOAP:Fault")>0)
+		if (debug || response.indexOf("SOAP:Fault")>0)
 			System.out.println(response);
 		return response;
 	}

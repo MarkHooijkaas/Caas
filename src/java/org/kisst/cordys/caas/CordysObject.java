@@ -1,5 +1,7 @@
 package org.kisst.cordys.caas;
 
+import java.util.List;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.kisst.cordys.caas.util.JdomUtil;
@@ -11,7 +13,7 @@ public class CordysObject {
 	private final CordysObject parent; 
 	private final CordysSystem system;
 	protected final String dn;
-	protected Element entry;
+	private Element entry;
 
 	protected CordysObject(CordysObject parent, String dn) {
 		this.parent=parent;
@@ -56,32 +58,53 @@ public class CordysObject {
 	}
 	
 	protected <T extends CordysObject> NamedObjectList<T> createObjects(Element element) {
-		return getSystem().registry.createObjects(element);
-	}
-	@SuppressWarnings("unchecked")
-	public <T extends CordysObject> NamedObjectList<T> createChildren(Element response) {
-		NamedObjectList<T> result=new NamedObjectList<T>();
-
-		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body",null).getChild(null,null);
-		for (Object tuple : response.getChildren("tuple", null)) {
-			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			CordysObject obj=system.getObject(elm);
-			result.put(obj.getName(),(T) obj);
-			//System.out.println(dn);
-		}
-		return result;
+		return getSystem().registry.createObjectsFromEntries(element);
 	}
 	
 	public void refresh() {
 		Element method=new Element("GetLDAPObject", nsldap10);
 		method.addContent(new Element("dn").setText(dn));
 		Element response = system.call(method);
-		entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
+		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
+	}
+	public void setEntry(Element entry) {
+		this.entry=entry;
+		entry.detach();
 	}
 	public Element getEntry() {
 		if (entry==null)
 			refresh();
 		return entry;
 	}
+	protected void addLdapString(String group, String value) {
+		getEntry();
+		Element newEntry=(Element) entry.clone();
+		newEntry.getChild(group, null).addContent(new Element("string",value));
+		updateLdap(newEntry);
+	}
+	protected void removeLdapString(String group, String value) {
+		getEntry();
+		Element newEntry=(Element) entry.clone();
+		List<?> children=newEntry.getChild(group, null).getChildren(); 
+		Element toRemove=null;
+		for(Object o: children) {
+			Element e= (Element) o;
+			if (e.getText().equals(value))
+				toRemove=e;
+		}
+		if (toRemove!=null)
+		children.remove(toRemove);
+		updateLdap(newEntry);
+	}
+
+	protected void updateLdap(Element newEntry) {
+		Element tuple=new Element("tuple", nsldap10);
+		tuple.addContent(new Element("old", nsldap10).addContent(entry));
+		tuple.addContent(new Element("new", nsldap10).addContent(newEntry));
+		Element method=new Element("Update", nsldap10).addContent(tuple);
+		call(method);
+		setEntry(newEntry);
+	}
+	
+
 }

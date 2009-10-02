@@ -21,7 +21,7 @@ public class SoapNode extends CordysObject {
 	
 	public List<String> getNamespaces() {
 		ArrayList<String> result=new ArrayList<String>();
-		Element ms=entry.getChild("labeleduri", null);
+		Element ms=getEntry().getChild("labeleduri", null);
 		for (Object o: ms.getChildren("string", null)) 
 			result.add(((Element)o).getText());
 		return result;
@@ -30,7 +30,7 @@ public class SoapNode extends CordysObject {
 	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {
 		NamedObjectList<MethodSet> result=new NamedObjectList<MethodSet>();
-		Element ms=entry.getChild("busmethodsets", null);
+		Element ms=getEntry().getChild("busmethodsets", null);
 		for (Object o: ms.getChildren("string", null)) {
 			String dn=((Element)o).getText();
 			MethodSet obj=(MethodSet)getSystem().getObject(dn);
