@@ -14,9 +14,9 @@ public class CordysSystem  extends Organization {
 	
 	public final DynamicProperty<Organization> org;
 	
-	public static CordysSystem connect() {
+	public static CordysSystem connect(String filename) {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
-		HttpClientCaller caller = new HttpClientCaller("user.properties");
+		HttpClientCaller caller = new HttpClientCaller(filename);
 		String rootdn= caller.props.getProperty("cordys.rootdn");
 		return new CordysSystem(rootdn, caller);
 	}
