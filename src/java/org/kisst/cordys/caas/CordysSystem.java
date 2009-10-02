@@ -10,6 +10,7 @@ import org.kisst.cordys.caas.util.DynamicProperty;
 
 public class CordysSystem  extends Organization {
 	private final SoapCaller caller;
+	
 	public final DynamicProperty<Organization> org;
 	
 	public static CordysSystem connect() {
@@ -34,6 +35,7 @@ public class CordysSystem  extends Organization {
 			System.out.println(response);
 		return response;
 	}
+	
 
 	public Organization getOrganization(String name) {
 		// TODO: validate if it really exists

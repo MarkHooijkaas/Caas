@@ -2,6 +2,8 @@ package org.kisst.cordys.caas.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -24,5 +26,16 @@ public class JdomUtil {
 		XMLOutputter out=new XMLOutputter();
 		String xml= out.outputString(method);
 		return xml;
+	}
+	/**
+	 * returns a nicely typed list of all children elements with a certain name.
+	 * This method is a convenience method to be able to nicely Iterate.
+	 * Furthermore it ignores namespace
+	 */
+	public static List<Element> getChildren(Element e, String tag) {
+		ArrayList<Element> result=new ArrayList<Element>();
+		for (Object o: e.getChildren(tag,null))
+			result.add((Element) o);
+		return result;
 	}
 }

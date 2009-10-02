@@ -12,6 +12,8 @@ import org.kisst.cordys.caas.util.ReflectionUtil;
 
 
 public class CordysObject {
+	public final static Namespace nsldap10=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
+
 	private final CordysObject parent; 
 	private final CordysSystem system;
 	protected final String dn;
@@ -27,7 +29,6 @@ public class CordysObject {
 	}
 	public CordysObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
-	public final Namespace nsldap10=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 	//public final Namespace nsldap11=Namespace.getNamespace("http://schemas.cordys.com/1.1/ldap");
 	
 	public String getDn() { return dn; }
@@ -47,7 +48,10 @@ public class CordysObject {
 	public Element call(Element method) { 
 		String xml = JdomUtil.toString(method);
 		String response= getSystem().call(xml);
-		return JdomUtil.fromString(response);
+		Element output=JdomUtil.fromString(response);
+		if (output.getName().equals("Envelope"))
+			output=output.getChild("Body",null).getChild(null,null);
+		return output;
 	}
 
 
