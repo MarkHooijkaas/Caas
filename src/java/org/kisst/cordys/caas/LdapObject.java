@@ -13,8 +13,14 @@ public class LdapObject extends CordysObject {
 	protected final String dn;
 	private Element entry;
 
+	protected LdapObject(CordysSystem system, String dn) {
+		super(system);
+		this.parent=null;
+		this.dn=dn;
+	}
+	
 	protected LdapObject(LdapObject parent, String dn) {
-		super(parent);
+		super(parent.getSystem());
 		this.parent=parent;
 		this.dn=dn;
 	}
@@ -28,7 +34,7 @@ public class LdapObject extends CordysObject {
 	}
 	public String toString() {
 		String c=this.getClass().getSimpleName()+"("+getName()+")";
-		if (parent!=null && ! (parent instanceof CordysSystem))
+		if (parent!=null && ! (parent instanceof CordysRoot))
 			c="("+parent.toString()+","+c+")";
 		return c; 
 	}

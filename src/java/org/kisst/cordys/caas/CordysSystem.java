@@ -3,23 +3,26 @@ package org.kisst.cordys.caas;
 import org.jdom.Element;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
+import org.kisst.cordys.caas.util.JdomUtil;
 
 
-public class CordysSystem  extends LdapObject {
+public class CordysSystem {
 	private final SoapCaller caller;
-	final ObjectRegistry registry=new ObjectRegistry(this);
+	final ObjectRegistry registry;
+	public final CordysRoot root;
 	public boolean debug=false;
 	
-	public static CordysSystem connect(String filename) {
+	public static CordysRoot connect(String filename) {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
 		HttpClientCaller caller = new HttpClientCaller(filename);
 		String rootdn= caller.props.getProperty("cordys.rootdn");
-		return new CordysSystem(rootdn, caller);
+		return new CordysSystem(rootdn, caller).root;
 	}
 
 	protected CordysSystem(String dn, SoapCaller caller) {
-		super(null,dn);
 		this.caller=caller;
+		this.root=new CordysRoot(this, dn);
+		this.registry=new ObjectRegistry(this, root);
 	}
 
 	public LdapObject getObject(Element elm) { return registry.getObject(elm); }
@@ -36,23 +39,13 @@ public class CordysSystem  extends LdapObject {
 			System.out.println(response);
 		return response;
 	}
-	
-	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
-	public NamedObjectList<Organization> getOrganizations() {
-		Element method=new Element("GetOrganizations", nsldap);
-		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
+	public Element call(Element method) { 
+		String xml = JdomUtil.toString(method);
+		String response= call(xml);
+		Element output=JdomUtil.fromString(response);
+		if (output.getName().equals("Envelope"))
+			output=output.getChild("Body",null).getChild(null,null);
+		return output;
 	}
-	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
-		Element method=new Element("GetAuthenticatedUsers", nsldap);
-		method.addContent(new Element("dn").setText(dn));
-		method.addContent(new Element("filter").setText("*"));
-		return createObjects(call(method));
-	}
-	
-	public NamedObjectList<Isvp> getIsvps() {
-		Element method=new Element("GetSoftwarePackages", nsldap);
-		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
-	}
+
 }

@@ -23,9 +23,9 @@ public class ObjectRegistry {
 	private final HashMap<String, LdapObject> tree=new HashMap<String, LdapObject>();
 	private final CordysSystem system;
 	
-	ObjectRegistry(CordysSystem system) {
+	ObjectRegistry(CordysSystem system, CordysRoot root) {
 		this.system=system;
-		remember(system);
+		remember(root);
 	}
 	
 	
@@ -108,7 +108,7 @@ public class ObjectRegistry {
 				return c;
 		}
 		String dn=entry.getAttributeValue("dn");
-		if (dn.substring(dn.indexOf(",")+1).equals(system.dn) && dn.startsWith("cn="))
+		if (dn.substring(dn.indexOf(",")+1).equals(system.root.dn) && dn.startsWith("cn="))
 			return Isvp.class;
 		return null;
 	}
