@@ -32,12 +32,12 @@ public class Isvp extends LdapObject {
 		Element method=new Element("GetMethodSets", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
 	
 	public NamedObjectList<Role> getRoles() {	
 		Element method=new Element("GetRolesForSoftwarePackage", nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
 }

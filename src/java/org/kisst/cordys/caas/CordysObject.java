@@ -32,5 +32,30 @@ public class CordysObject {
 	public String call(String input) { return getSystem().call(input); }
 	public Element call(Element method) { return getSystem().call(method); }
 
+	@SuppressWarnings("unchecked")
+	public <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
 
+		if (response.getName().equals("Envelope"))
+			response=response.getChild("Body",null).getChild(null,null);
+		for (Object tuple : response.getChildren("tuple", null)) {
+			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
+			LdapObject obj=system.getObject(elm);
+			result.put(obj.getName(),(T) obj);
+			//System.out.println(dn);
+		}
+		return result;
+	}
+	@SuppressWarnings("unchecked")
+	public <T extends LdapObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
+		start=start.getChild(group,null);
+		for (Object s: start.getChildren("string", null)) {
+			String dn=((Element) s).getText();
+			LdapObject obj=system.getObject(dn);
+			result.put(obj.getName(),(T) obj);
+			//System.out.println(dn);
+		}
+		return result;
+	}
 }

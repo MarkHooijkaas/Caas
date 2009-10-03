@@ -30,7 +30,7 @@ public class Organization extends CordysContainer {
 	public NamedObjectList<Role> getRoles() {	
 		Element method=new Element("GetRolesForOrganization", nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
 
 	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
@@ -38,6 +38,6 @@ public class Organization extends CordysContainer {
 		Element method=new Element("GetSoapNodes", nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("namespace").setText("*"));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
 }

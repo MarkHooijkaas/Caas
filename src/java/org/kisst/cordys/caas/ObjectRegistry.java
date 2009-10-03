@@ -30,7 +30,7 @@ public class ObjectRegistry {
 	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
 	static {
 		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
-		//ldapObjectTypes.put("groupOfNames", Isvp.class); 
+		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
 		ldapObjectTypes.put("busmethod", Method.class);
 		ldapObjectTypes.put("busmethodset", MethodSet.class);
 		ldapObjectTypes.put("organization", Organization.class);
@@ -131,31 +131,4 @@ public class ObjectRegistry {
 			return Isvp.class;
 		return null;
 	}
-	@SuppressWarnings("unchecked")
-	public <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
-		NamedObjectList<T> result=new NamedObjectList<T>();
-
-		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body",null).getChild(null,null);
-		for (Object tuple : response.getChildren("tuple", null)) {
-			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			LdapObject obj=system.getObject(elm);
-			result.put(obj.getName(),(T) obj);
-			//System.out.println(dn);
-		}
-		return result;
-	}
-	@SuppressWarnings("unchecked")
-	public <T extends LdapObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
-		NamedObjectList<T> result=new NamedObjectList<T>();
-		start=start.getChild(group,null);
-		for (Object s: start.getChildren("string", null)) {
-			String dn=((Element) s).getText();
-			LdapObject obj=system.getObject(dn);
-			result.put(obj.getName(),(T) obj);
-			//System.out.println(dn);
-		}
-		return result;
-	}
-
 }

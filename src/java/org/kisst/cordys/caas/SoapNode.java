@@ -35,7 +35,7 @@ public class SoapNode extends LdapObject {
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
 		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
 	
 	public List<String> getNamespaces() {
@@ -59,7 +59,7 @@ public class SoapNode extends LdapObject {
 	}
 	
 	public NamedObjectList<MethodSet> getMethodSets() {
-		return getSystem().registry.createObjectsFromStrings(getEntry(),"busmethodsets");
+		return createObjectsFromStrings(getEntry(),"busmethodsets");
 	}
 	
 	public void addMethodSet(MethodSet m) { 

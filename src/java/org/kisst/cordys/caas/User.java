@@ -27,7 +27,7 @@ public class User extends LdapObject {
 	}
 
 	public NamedObjectList<Role> getRoles() {
-		return getSystem().registry.createObjectsFromStrings(getEntry(),"role");
+		return createObjectsFromStrings(getEntry(),"role");
 	}
 	
 	public void addRole(Role r) { addLdapString("role", r.dn); }

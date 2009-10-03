@@ -61,13 +61,9 @@ public class LdapObject extends CordysObject {
 	public NamedObjectList<LdapObject> getChildren() {
 		Element method=new Element("GetChildren", nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjects(call(method));
+		return createObjectsFromEntries(call(method));
 	}
-	
-	protected <T extends LdapObject> NamedObjectList<T> createObjects(Element element) {
-		return getSystem().registry.createObjectsFromEntries(element);
-	}
-	
+
 	public void refresh() {
 		Element method=new Element("GetLDAPObject", nsldap);
 		method.addContent(new Element("dn").setText(dn));
