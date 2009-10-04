@@ -89,4 +89,23 @@ public class CordysSystem implements LdapObject {
 		}
 		return result;
 	}
+	
+	public Isvp loadIsvp(String filename) {
+		filename=filename.trim();
+		if (filename.endsWith(".isvp"))
+			filename=filename.substring(0,filename.length()-5);
+		Element method=new Element("GetISVPackageDefinition", Isvp.xmlns_isv);
+		Element file=new Element("file").setText(filename);
+		file.setAttribute("type", "isvpackage");
+		file.setAttribute("detail", "false");
+		file.setAttribute("wizardsteps", "true");
+		method.addContent(file);
+		Element details=soapCall(method);
+		
+		method=new Element("LoadISVPackage", Isvp.xmlns_isv);
+		method.addContent(new Element("url").setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp"));
+		method.addContent(details.getChild("ISVPackage", null).detach());
+		soapCall(method);
+		return null;
+	}
 }
