@@ -58,7 +58,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	public void refresh() {
 		Element method=new Element("GetLDAPObject", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		Element response = call(method);
+		Element response = soapCall(method);
 		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
 	}
 	public void setEntry(Element entry) {
@@ -96,7 +96,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		tuple.addContent(new Element("old", CordysSystem.nsldap).addContent(entry));
 		tuple.addContent(new Element("new", CordysSystem.nsldap).addContent(newEntry));
 		Element method=new Element("Update", CordysSystem.nsldap).addContent(tuple);
-		call(method);
+		soapCall(method);
 		setEntry(newEntry);
 	}
 	

@@ -42,7 +42,6 @@ public class HttpClientCaller implements SoapCaller {
 	private final String ntlmhost;
 	private final String ntlmdomain;
 	public final Properties props=new Properties();
-	private boolean debug=false;
 
 	public HttpClientCaller(String filename)
 	{
@@ -91,7 +90,7 @@ public class HttpClientCaller implements SoapCaller {
 		return response;
 	}
 
-	public String soapCall(String input) {
+	public String soapCall(String input, boolean debug) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
@@ -102,9 +101,9 @@ public class HttpClientCaller implements SoapCaller {
 			System.out.println(response);
 		return response;
 	}
-	public Element soapCall(Element method) { 
+	public Element soapCall(Element method, boolean debug) { 
 		String xml = JdomUtil.toString(method);
-		String response= soapCall(xml);
+		String response= soapCall(xml, debug);
 		Element output=JdomUtil.fromString(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body",null).getChild(null,null);

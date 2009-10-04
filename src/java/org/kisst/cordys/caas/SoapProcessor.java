@@ -33,16 +33,16 @@ public class SoapProcessor extends CordysLdapObject {
 	public void start() {
 		Element method=new Element("Start", nsmonitor);
 		method.addContent(new Element("dn").setText(dn));
-		call(method);
+		soapCall(method);
 	}
 	public void stop() {
 		Element method=new Element("Stop", nsmonitor);
 		method.addContent(new Element("dn").setText(dn));
-		call(method);
+		soapCall(method);
 	}
 	public void restart() {
 		Element method=new Element("Restart", nsmonitor);
 		method.addContent(new Element("dn").setText(dn));
-		call(method);
+		soapCall(method);
 	}
 }

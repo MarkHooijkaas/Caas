@@ -32,12 +32,12 @@ public class Isvp extends CordysLdapObject {
 		Element method=new Element("GetMethodSets", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Role> getRoles() {	
 		Element method=new Element("GetRolesForSoftwarePackage", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 }

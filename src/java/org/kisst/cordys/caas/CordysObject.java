@@ -29,11 +29,10 @@ public class CordysObject {
 	}
 	public CordysSystem getSystem() { return system; }
 
-	public String call(String input) { return getSystem().soapCall(input); }
-	public Element call(Element method) { return getSystem().call(method); }
+	public Element soapCall(Element method) { return getSystem().soapCall(method); }
 
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(Element response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
@@ -46,7 +45,7 @@ public class CordysObject {
 		return result;
 	}
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> createObjectsFromStrings(Element start, String group) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromStrings(Element start, String group) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		start=start.getChild(group,null);
 		for (Object s: start.getChildren("string", null)) {

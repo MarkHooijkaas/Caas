@@ -35,7 +35,7 @@ public class SoapNode extends CordysLdapObject {
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
 		Element method=new Element("GetChildren", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public List<String> getNamespaces() {
@@ -59,7 +59,7 @@ public class SoapNode extends CordysLdapObject {
 	}
 	
 	public NamedObjectList<MethodSet> getMethodSets() {
-		return createObjectsFromStrings(getEntry(),"busmethodsets");
+		return getObjectsFromStrings(getEntry(),"busmethodsets");
 	}
 	
 	public void addMethodSet(MethodSet m) { 

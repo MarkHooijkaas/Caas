@@ -30,7 +30,7 @@ public class CordysContainer extends CordysLdapObject {
 	public NamedObjectList<User> getUsers() {	
 		Element method=new Element("GetOrganizationalUsers", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 
 
@@ -39,6 +39,6 @@ public class CordysContainer extends CordysLdapObject {
 		Element method=new Element("GetMethodSets", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 }

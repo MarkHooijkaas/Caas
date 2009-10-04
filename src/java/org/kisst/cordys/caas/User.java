@@ -27,7 +27,7 @@ public class User extends CordysLdapObject {
 	}
 
 	public NamedObjectList<Role> getRoles() {
-		return createObjectsFromStrings(getEntry(),"role");
+		return getObjectsFromStrings(getEntry(),"role");
 	}
 	
 	public void addRole(Role r) { addLdapString("role", r.dn); }

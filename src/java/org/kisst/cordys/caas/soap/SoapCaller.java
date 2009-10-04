@@ -23,6 +23,6 @@ import org.jdom.Element;
 
 public interface SoapCaller {
 	//public String httpCall(String input);
-	public String soapCall(String input);
-	public Element soapCall(Element method); 
+	public String soapCall(String input, boolean debug);
+	public Element soapCall(Element method, boolean debug); 
 }

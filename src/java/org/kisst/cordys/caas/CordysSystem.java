@@ -26,10 +26,6 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 
 
 public class CordysSystem implements LdapObject {
-	private final SoapCaller caller;
-	final LdapCache ldapcache;
-	public final String dn; 
-	public boolean debug=false;
 	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 	
 	public static CordysSystem connect(String filename) {
@@ -38,6 +34,12 @@ public class CordysSystem implements LdapObject {
 		String rootdn= caller.props.getProperty("cordys.rootdn");
 		return new CordysSystem(rootdn, caller);
 	}
+
+	
+	private final SoapCaller caller;
+	final LdapCache ldapcache;
+	public final String dn; 
+	public boolean debug=false;
 
 	protected CordysSystem(String dn, SoapCaller caller) {
 		this.caller=caller;
@@ -52,31 +54,31 @@ public class CordysSystem implements LdapObject {
 	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
 	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
 
-	public String soapCall(String input) { return caller.soapCall(input); }
-	public Element call(Element method) { return caller.soapCall(method); }
+	public Element soapCall(Element method) { return caller.soapCall(method, debug); }
 	
 
 	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
 	public NamedObjectList<Organization> getOrganizations() {
 		Element method=new Element("GetOrganizations", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
 		Element method=new Element("GetAuthenticatedUsers", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Isvp> getIsvps() {
 		Element method=new Element("GetSoftwarePackages", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
-		return createObjectsFromEntries(call(method));
+		return getObjectsFromEntries(soapCall(method));
 	}
 	
+	// TODO: this function is the same as found in CordysObject, but is tricky to reuse
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(Element response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
@@ -84,7 +86,6 @@ public class CordysSystem implements LdapObject {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
 			LdapObject obj=getObject(elm);
 			result.put(obj.getName(),(T) obj);
-			//System.out.println(dn);
 		}
 		return result;
 	}
