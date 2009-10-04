@@ -22,6 +22,7 @@ package org.kisst.cordys.caas;
 
 
 public interface LdapObject {
+	public CordysSystem getSystem();
 	public LdapObject getParent();
 	public String getDn();
 	public String getName();

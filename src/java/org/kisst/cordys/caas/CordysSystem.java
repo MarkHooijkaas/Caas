@@ -25,24 +25,29 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.util.JdomUtil;
 
 
-public class CordysSystem {
+public class CordysSystem implements LdapObject {
 	private final SoapCaller caller;
 	final ObjectRegistry registry;
-	public final CordysRoot root;
+	public final String dn; 
 	public boolean debug=false;
 	
-	public static CordysRoot connect(String filename) {
+	public static CordysSystem connect(String filename) {
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
 		HttpClientCaller caller = new HttpClientCaller(filename);
 		String rootdn= caller.props.getProperty("cordys.rootdn");
-		return new CordysSystem(rootdn, caller).root;
+		return new CordysSystem(rootdn, caller);
 	}
 
 	protected CordysSystem(String dn, SoapCaller caller) {
 		this.caller=caller;
-		this.root=new CordysRoot(this, dn);
-		this.registry=new ObjectRegistry(this, root);
+		this.dn=dn;
+		//this.root=new CordysRoot(this, dn);
+		this.registry=new ObjectRegistry(this);
 	}
+	public CordysSystem getSystem() { return this; }
+	public String getDn() { return dn;	}
+	public String getName() { return "Cordys";}
+	public LdapObject getParent() {return null;	}
 
 	public LdapObject getObject(Element elm) { return registry.getObject(elm); }
 	public LdapObject getObject(String dn)   { return registry.getObject(dn); }
@@ -67,4 +72,39 @@ public class CordysSystem {
 		return output;
 	}
 
+	
+
+	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
+	public NamedObjectList<Organization> getOrganizations() {
+		Element method=new Element("GetOrganizations", CordysLdapObject.nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		return createObjectsFromEntries(call(method));
+	}
+	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
+		Element method=new Element("GetAuthenticatedUsers", CordysLdapObject.nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		method.addContent(new Element("filter").setText("*"));
+		return createObjectsFromEntries(call(method));
+	}
+	
+	public NamedObjectList<Isvp> getIsvps() {
+		Element method=new Element("GetSoftwarePackages", CordysLdapObject.nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		return createObjectsFromEntries(call(method));
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+		NamedObjectList<T> result=new NamedObjectList<T>();
+
+		if (response.getName().equals("Envelope"))
+			response=response.getChild("Body",null).getChild(null,null);
+		for (Object tuple : response.getChildren("tuple", null)) {
+			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
+			LdapObject obj=getObject(elm);
+			result.put(obj.getName(),(T) obj);
+			//System.out.println(dn);
+		}
+		return result;
+	}
 }
