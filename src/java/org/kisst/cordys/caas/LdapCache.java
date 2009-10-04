@@ -68,6 +68,7 @@ public class LdapCache {
 		}
 		return result;
 	}
+	public void remove(String dn) { tree.put(dn, null);	}
 	private void remember(LdapObject obj) {
 		tree.put(obj.getDn(), obj);
 		if (system.debug)

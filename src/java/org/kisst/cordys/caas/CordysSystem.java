@@ -53,6 +53,7 @@ public class CordysSystem implements LdapObject {
 
 	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
 	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
+	public void remove(String dn)   { ldapcache.remove(dn); }
 
 	public Element soapCall(Element method) { return caller.soapCall(method, debug); }
 	
