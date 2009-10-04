@@ -76,7 +76,19 @@ public class CordysSystem implements LdapObject {
 		method.addContent(new Element("dn").setText(dn));
 		return getObjectsFromEntries(soapCall(method));
 	}
-	
+
+	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
+	public NamedObjectList<SoapProcessor> getSoapProcessors() {
+		NamedObjectList<SoapProcessor> result= new NamedObjectList<SoapProcessor>();
+		for (Object o: getOrganizations() ) {
+			for (Object sn : ((Organization) o).getSoapNodes()) {
+				for (Object sp : ((SoapNode) sn).getSoapProcessors())
+					result.put(((SoapProcessor)sp).getName(), (SoapProcessor) sp);
+			}
+		}
+		return result;
+	}
+
 	// TODO: this function is the same as found in CordysObject, but is tricky to reuse
 	@SuppressWarnings("unchecked")
 	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(Element response) {
