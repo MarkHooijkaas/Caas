@@ -51,7 +51,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	public String toString() {
 		String c=this.getClass().getSimpleName()+"("+getName()+")";
 		if (parent!=null && (parent instanceof CordysLdapObject))
-			c="("+parent.toString()+","+c+")";
+			c=parent.toString()+"."+c;
 		return c; 
 	}
 
