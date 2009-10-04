@@ -43,5 +43,19 @@ public class NamedObjectList<T extends LdapObject> extends HashMap<String,T>{
 		}
 		return result;	
 	}
+	@SuppressWarnings("unchecked")
+	public T get(Object key) {
+		if (! (key instanceof String))
+			return super.get(key);
+		String name=((String) key).toLowerCase();;
+		Object result=super.get(name);
+		if (result==null) {
+			for(T obj: values()) {
+				if (obj.getName().toLowerCase().indexOf(name)>=0)
+					return obj;
+			}
+		}
+		return (T) result;
+	}
 
 }
