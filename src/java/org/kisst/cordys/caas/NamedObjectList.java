@@ -22,9 +22,22 @@ package org.kisst.cordys.caas;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class NamedObjectList<T extends LdapObject> extends HashMap<String,T>{
+public class NamedObjectList<T extends LdapObject> extends HashMap<String,T> implements Iterable {
 	private static final long serialVersionUID = 1L;
 	
+	public String toString() {
+		StringBuffer result=new StringBuffer("[");
+		boolean first=true;
+		for(Object o: this) {
+			if (! first)
+				result.append(", ");
+			else
+				first=false;
+			result.append(o.toString());
+		}
+		result.append("]");
+		return result.toString();
+	}
 	public Iterator<T> iterator() { return values().iterator(); }
 	public T getAt(int index) {
 		for(T obj: values()) {
@@ -36,9 +49,10 @@ public class NamedObjectList<T extends LdapObject> extends HashMap<String,T>{
 	public T propertyMissing(String name) { return get(name); }
 
 	public NamedObjectList <T> like(String expr) {
+		expr=expr.toLowerCase();
 		NamedObjectList <T> result=new NamedObjectList <T>();
 		for(T obj: values()) {
-			if (obj.getName().indexOf(expr)>=0)
+			if (obj.getName().toLowerCase().indexOf(expr)>=0)
 				result.put(obj.getName(), obj);
 		}
 		return result;	
