@@ -69,14 +69,14 @@ public class ObjectRegistry {
 		return result;
 	}
 	private void remember(LdapObject obj) {
-		tree.put(obj.dn, obj);
+		tree.put(obj.getDn(), obj);
 		if (system.debug)
 			System.out.println("remembering "+obj);
 	}
 	
 	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", LdapObject.nsldap);
+		Element method=new Element("GetLDAPObject", CordysLdapObject.nsldap);
 		method.addContent(new Element("dn").setText(newdn));
 		Element response = system.call(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
@@ -90,20 +90,19 @@ public class ObjectRegistry {
 		Class resultClass = determineClass(entry);
 		if (resultClass==null)
 			return null;
-		LdapObject result;
 		//System.out.println(resultClass+","+parent+","+newdn);
 		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {LdapObject.class, String.class});
 		cons.setAccessible(true);
 		try {
-			result = (LdapObject) cons.newInstance(new Object[]{parent, newdn});
+			CordysLdapObject result = (CordysLdapObject) cons.newInstance(new Object[]{parent, newdn});
 			result.setEntry(entry);
+			tree.put(newdn, result);
+			return result;
 		}
 		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
 		catch (InstantiationException e) { throw new RuntimeException(e); }
 		catch (IllegalAccessException e) { throw new RuntimeException(e); }
 		catch (InvocationTargetException e) { throw new RuntimeException(e); }
-		tree.put(newdn, result);
-		return result;
 	}
 
 	private LdapObject getParent(Element entry) {
@@ -113,7 +112,7 @@ public class ObjectRegistry {
 			dn=dn.substring(dn.indexOf(",")+1);
 			LdapObject parent=getObject(dn);
 			if (parent!=null)
-				return parent;
+				return (LdapObject) parent;
 		} while (dn.length()>0);
 		throw new RuntimeException("Could not find a parent for "+dn);
 	}

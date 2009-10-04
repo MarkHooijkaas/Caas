@@ -25,7 +25,7 @@ import java.util.List;
 import org.jdom.Element;
 
 
-public class SoapNode extends LdapObject {
+public class SoapNode extends CordysLdapObject {
 
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);

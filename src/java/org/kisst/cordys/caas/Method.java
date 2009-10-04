@@ -19,7 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-public class Method extends LdapObject {
+public class Method extends CordysLdapObject {
 
 	protected Method(LdapObject parent, String dn) {
 		super(parent, dn);

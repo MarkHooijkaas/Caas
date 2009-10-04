@@ -19,7 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-public class Role extends LdapObject {
+public class Role extends CordysLdapObject {
 	protected Role(LdapObject parent, String dn) {
 		super(parent, dn);
 	}

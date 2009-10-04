@@ -20,7 +20,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 
-public class User extends LdapObject {
+public class User extends CordysLdapObject {
 
 	protected User(LdapObject parent, String dn) {
 		super(parent, dn);

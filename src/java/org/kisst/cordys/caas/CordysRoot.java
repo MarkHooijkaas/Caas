@@ -22,7 +22,7 @@ package org.kisst.cordys.caas;
 import org.jdom.Element;
 
 
-public class CordysRoot  extends LdapObject {
+public class CordysRoot  extends CordysLdapObject {
 
 	protected CordysRoot(CordysSystem system, String dn) {
 		super(system, dn);

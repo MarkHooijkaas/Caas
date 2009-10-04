@@ -22,7 +22,7 @@ package org.kisst.cordys.caas;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class SoapProcessor extends LdapObject {
+public class SoapProcessor extends CordysLdapObject {
 
 	private static final Namespace nsmonitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 

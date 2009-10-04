@@ -21,7 +21,7 @@ package org.kisst.cordys.caas;
 
 import org.jdom.Element;
 
-public class CordysContainer extends LdapObject {
+public class CordysContainer extends CordysLdapObject {
 
 	protected CordysContainer(LdapObject parent, String dn) {
 		super(parent, dn);
