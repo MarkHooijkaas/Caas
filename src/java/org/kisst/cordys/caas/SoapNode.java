@@ -33,7 +33,7 @@ public class SoapNode extends CordysLdapObject {
 	
 	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		Element method=new Element("GetChildren", nsldap);
+		Element method=new Element("GetChildren", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
 	}

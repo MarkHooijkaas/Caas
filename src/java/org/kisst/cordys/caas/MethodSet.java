@@ -28,7 +28,7 @@ public class MethodSet extends CordysLdapObject {
 	}
 	
 	public NamedObjectList<Method> getMethods() {
-		Element method=new Element("GetChildren", nsldap);
+		Element method=new Element("GetChildren", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
 	}

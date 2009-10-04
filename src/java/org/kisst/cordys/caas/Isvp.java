@@ -29,14 +29,14 @@ public class Isvp extends CordysLdapObject {
 
 	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {	
-		Element method=new Element("GetMethodSets", nsldap);
+		Element method=new Element("GetMethodSets", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
 		return createObjectsFromEntries(call(method));
 	}
 	
 	public NamedObjectList<Role> getRoles() {	
-		Element method=new Element("GetRolesForSoftwarePackage", nsldap);
+		Element method=new Element("GetRolesForSoftwarePackage", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
 	}

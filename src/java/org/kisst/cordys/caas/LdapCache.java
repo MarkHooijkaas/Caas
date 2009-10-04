@@ -26,7 +26,7 @@ import java.util.HashMap;
 import org.jdom.Element;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
-public class ObjectRegistry {
+public class LdapCache {
 	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
 	static {
 		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
@@ -42,7 +42,7 @@ public class ObjectRegistry {
 	private final HashMap<String, LdapObject> tree=new HashMap<String, LdapObject>();
 	private final CordysSystem system;
 	
-	ObjectRegistry(CordysSystem system) {
+	LdapCache(CordysSystem system) {
 		this.system=system;
 		remember(system);
 	}
@@ -76,7 +76,7 @@ public class ObjectRegistry {
 	
 	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", CordysLdapObject.nsldap);
+		Element method=new Element("GetLDAPObject", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(newdn));
 		Element response = system.call(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);

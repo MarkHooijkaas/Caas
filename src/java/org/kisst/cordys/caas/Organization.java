@@ -28,14 +28,14 @@ public class Organization extends CordysContainer {
 	}
 
 	public NamedObjectList<Role> getRoles() {	
-		Element method=new Element("GetRolesForOrganization", nsldap);
+		Element method=new Element("GetRolesForOrganization", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
 	}
 
 	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
 	public NamedObjectList<SoapNode> getSoapNodes() {	
-		Element method=new Element("GetSoapNodes", nsldap);
+		Element method=new Element("GetSoapNodes", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("namespace").setText("*"));
 		return createObjectsFromEntries(call(method));

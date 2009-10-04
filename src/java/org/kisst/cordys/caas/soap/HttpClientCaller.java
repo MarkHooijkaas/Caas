@@ -31,6 +31,8 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.jdom.Element;
+import org.kisst.cordys.caas.util.JdomUtil;
 
 public class HttpClientCaller implements SoapCaller {
 	private final HttpClient client = new HttpClient();
@@ -40,6 +42,7 @@ public class HttpClientCaller implements SoapCaller {
 	private final String ntlmhost;
 	private final String ntlmdomain;
 	public final Properties props=new Properties();
+	private boolean debug=false;
 
 	public HttpClientCaller(String filename)
 	{
@@ -70,7 +73,7 @@ public class HttpClientCaller implements SoapCaller {
 
 	}
 
-	public String call(String input) {
+	public String httpCall(String input) {
 		PostMethod method=new PostMethod(url);
 		method.setDoAuthentication(true);
 		int statusCode;
@@ -87,5 +90,26 @@ public class HttpClientCaller implements SoapCaller {
 		}
 		return response;
 	}
+
+	public String soapCall(String input) {
+		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
+			+ input
+			+ "</SOAP:Body></SOAP:Envelope>";
+		if (debug)
+			System.out.println(soap);
+		String response = httpCall(soap);
+		if (debug || response.indexOf("SOAP:Fault")>0)
+			System.out.println(response);
+		return response;
+	}
+	public Element soapCall(Element method) { 
+		String xml = JdomUtil.toString(method);
+		String response= soapCall(xml);
+		Element output=JdomUtil.fromString(response);
+		if (output.getName().equals("Envelope"))
+			output=output.getChild("Body",null).getChild(null,null);
+		return output;
+	}
+	
 
 }

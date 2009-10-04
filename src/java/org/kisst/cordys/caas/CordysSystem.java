@@ -20,19 +20,20 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
-import org.kisst.cordys.caas.util.JdomUtil;
 
 
 public class CordysSystem implements LdapObject {
 	private final SoapCaller caller;
-	final ObjectRegistry registry;
+	final LdapCache ldapcache;
 	public final String dn; 
 	public boolean debug=false;
+	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
 	
 	public static CordysSystem connect(String filename) {
-		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
+		//System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
 		HttpClientCaller caller = new HttpClientCaller(filename);
 		String rootdn= caller.props.getProperty("cordys.rootdn");
 		return new CordysSystem(rootdn, caller);
@@ -41,62 +42,42 @@ public class CordysSystem implements LdapObject {
 	protected CordysSystem(String dn, SoapCaller caller) {
 		this.caller=caller;
 		this.dn=dn;
-		//this.root=new CordysRoot(this, dn);
-		this.registry=new ObjectRegistry(this);
+		this.ldapcache=new LdapCache(this);
 	}
 	public CordysSystem getSystem() { return this; }
 	public String getDn() { return dn;	}
 	public String getName() { return "Cordys";}
 	public LdapObject getParent() {return null;	}
 
-	public LdapObject getObject(Element elm) { return registry.getObject(elm); }
-	public LdapObject getObject(String dn)   { return registry.getObject(dn); }
+	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
+	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
 
-	public String call(String input) {
-		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
-			+ input
-			+ "</SOAP:Body></SOAP:Envelope>";
-		if (debug)
-			System.out.println(soap);
-		String response = caller.call(soap);
-		if (debug || response.indexOf("SOAP:Fault")>0)
-			System.out.println(response);
-		return response;
-	}
-	public Element call(Element method) { 
-		String xml = JdomUtil.toString(method);
-		String response= call(xml);
-		Element output=JdomUtil.fromString(response);
-		if (output.getName().equals("Envelope"))
-			output=output.getChild("Body",null).getChild(null,null);
-		return output;
-	}
-
+	public String soapCall(String input) { return caller.soapCall(input); }
+	public Element call(Element method) { return caller.soapCall(method); }
 	
 
 	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
 	public NamedObjectList<Organization> getOrganizations() {
-		Element method=new Element("GetOrganizations", CordysLdapObject.nsldap);
+		Element method=new Element("GetOrganizations", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
 	}
 	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
-		Element method=new Element("GetAuthenticatedUsers", CordysLdapObject.nsldap);
+		Element method=new Element("GetAuthenticatedUsers", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
 		return createObjectsFromEntries(call(method));
 	}
 	
 	public NamedObjectList<Isvp> getIsvps() {
-		Element method=new Element("GetSoftwarePackages", CordysLdapObject.nsldap);
+		Element method=new Element("GetSoftwarePackages", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
 		return createObjectsFromEntries(call(method));
-	}	
+	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
+	protected <T extends LdapObject> NamedObjectList<T> createObjectsFromEntries(Element response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
-
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body",null).getChild(null,null);
 		for (Object tuple : response.getChildren("tuple", null)) {
