@@ -21,12 +21,27 @@ package org.kisst.cordys.caas;
 
 import org.jdom.Element;
 
-public class Organization extends CordysContainer {
+public class Organization extends CordysLdapObject {
 
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
+	public NamedObjectList<User> getUsers() {	
+		Element method=new Element("GetOrganizationalUsers", CordysSystem.nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		return getObjectsFromEntries(soapCall(method));
+	}
+
+
+	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
+	public NamedObjectList<MethodSet> getMethodSets() {	
+		Element method=new Element("GetMethodSets", CordysSystem.nsldap);
+		method.addContent(new Element("dn").setText(dn));
+		method.addContent(new Element("labeleduri").setText("*"));
+		return getObjectsFromEntries(soapCall(method));
+	}
+	
 	public NamedObjectList<Role> getRoles() {	
 		Element method=new Element("GetRolesForOrganization", CordysSystem.nsldap);
 		method.addContent(new Element("dn").setText(dn));
