@@ -83,7 +83,7 @@ public class CordysSystem implements LdapObject {
 		for (Object o: getOrganizations() ) {
 			for (Object sn : ((Organization) o).getSoapNodes()) {
 				for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
-					result.put(((SoapProcessor)sp).getDn(), (SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
+					result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public class CordysSystem implements LdapObject {
 		for (Object tuple : response.getChildren("tuple", null)) {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
 			LdapObject obj=getObject(elm);
-			result.put(obj.getName(),(T) obj);
+			result.add((T) obj);
 		}
 		return result;
 	}

@@ -19,11 +19,22 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 
-public class NamedObjectList<T extends LdapObject> extends LinkedHashMap<String,T> implements Iterable {
+public class NamedObjectList<T extends LdapObject> implements Iterable {
 	private static final long serialVersionUID = 1L;
+	private final ArrayList<T> list=new ArrayList<T>();
+	private final HashMap<String,T> dnIndex=new HashMap<String,T>(); 
+	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
+	
+	public boolean add(T obj) {
+		list.add(obj);
+		dnIndex.put(obj.getDn(), obj);
+		nameIndex.put(obj.getName(), obj);
+		return true;
+	}
 	
 	public String toString() { return toString("[\t",",\n\t","]"); }
 	public String toString(String begin, String middle, String end) {
@@ -39,38 +50,43 @@ public class NamedObjectList<T extends LdapObject> extends LinkedHashMap<String,
 		result.append(end);
 		return result.toString();
 	}
-	public Iterator<T> iterator() { return values().iterator(); }
+	public Iterator<T> iterator() { return list.iterator(); }
 	public T getAt(int index) {
-		for(T obj: values()) {
+		for(T obj: list) {
 			if (index--<=0)
 				return obj;
 		}
 		throw new IndexOutOfBoundsException("Index out of bounds");	
 	}
-	public T propertyMissing(String name) { return get(name); }
+	public T propertyMissing(String name) {	return get((Object)name); }
 
 	public NamedObjectList <T> like(String expr) {
 		expr=expr.toLowerCase();
 		NamedObjectList <T> result=new NamedObjectList <T>();
-		for(T obj: values()) {
+		for(T obj: list) {
 			if (obj.getName().toLowerCase().indexOf(expr)>=0)
-				result.put(obj.getDn(), obj);
+				result.add(obj);
 		}
 		return result;	
 	}
 	@SuppressWarnings("unchecked")
 	public T get(Object key) {
-		if (! (key instanceof String))
-			return super.get(key);
-		String name=((String) key).toLowerCase();;
-		Object result=super.get(name);
+		//if (! (key instanceof String))
+		//	return super.get(key);
+		String name=((String) key);
+		T result=dnIndex.get(name);
+		if (result!=null)
+			return result;
+		result=nameIndex.get(name);
+		if (result!=null)
+			return result;
+		name=name.toLowerCase();
 		if (result==null) {
-			for(T obj: values()) {
+			for(T obj: list) {
 				if (obj.getName().toLowerCase().indexOf(name)>=0)
 					return obj;
 			}
 		}
-		return (T) result;
+		return null;
 	}
-
 }

@@ -39,7 +39,7 @@ public class CordysObject {
 		for (Object tuple : response.getChildren("tuple", null)) {
 			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
 			LdapObject obj=system.getObject(elm);
-			result.put(obj.getName(),(T) obj);
+			result.add((T) obj);
 			//System.out.println(dn);
 		}
 		return result;
@@ -51,7 +51,7 @@ public class CordysObject {
 		for (Object s: start.getChildren("string", null)) {
 			String dn=((Element) s).getText();
 			LdapObject obj=system.getObject(dn);
-			result.put(obj.getName(),(T) obj);
+			result.add((T) obj);
 			//System.out.println(dn);
 		}
 		return result;

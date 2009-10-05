@@ -53,7 +53,7 @@ public class SoapNode extends CordysLdapObject {
 		for (Object o: ms.getChildren("string", null)) {
 			String dn=((Element)o).getText();
 			MethodSet obj=(MethodSet)getSystem().getObject(dn);
-			result.put(obj.getName(), obj);
+			result.add(obj);
 		}
 		return result;
 	}
