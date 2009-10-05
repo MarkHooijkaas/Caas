@@ -49,7 +49,7 @@ public class LdapCache {
 	
 	
 	public synchronized LdapObject getObject(String newdn) {
-		//System.out.println("get "+newdn);
+		//System.out.println("get ["+newdn+"]");
 		LdapObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(newdn);
@@ -61,6 +61,7 @@ public class LdapCache {
 	public synchronized LdapObject getObject(Element entry) {
 		//System.out.println("get "+JdomUtil.toString(entry));
 		String newdn=entry.getAttributeValue("dn");
+		//System.out.println("get ["+newdn+"]");
 		LdapObject result=tree.get(newdn);
 		if (result==null) {
 			result=createObject(entry);
@@ -70,6 +71,7 @@ public class LdapCache {
 	}
 	public void remove(String dn) { tree.put(dn, null);	}
 	private void remember(LdapObject obj) {
+		//System.out.println("remembering ["+obj.getDn()+"]");
 		tree.put(obj.getDn(), obj);
 		if (system.debug)
 			System.out.println("remembering "+obj);
@@ -78,7 +80,7 @@ public class LdapCache {
 	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
 		Element method=new Element("GetLDAPObject", CordysSystem.nsldap);
-		method.addContent(new Element("dn").setText(newdn));
+		method.addContent(new Element("dn", CordysSystem.nsldap).setText(newdn));
 		Element response = system.soapCall(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
 		return createObject(entry);
@@ -108,9 +110,12 @@ public class LdapCache {
 
 	private LdapObject getParent(Element entry) {
 		String dn=entry.getAttributeValue("dn");
-		//System.out.println("getParent "+dn);
+		//System.out.println("getParent ["+dn+"]");
+		if (dn.length()<=system.dn.length()) // Safeguard
+			return null;
 		do {
-			dn=dn.substring(dn.indexOf(",")+1);
+			int pos=dn.indexOf(",");
+			dn=dn.substring(pos+1);
 			LdapObject parent=getObject(dn);
 			if (parent!=null)
 				return (LdapObject) parent;

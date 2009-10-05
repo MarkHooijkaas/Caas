@@ -82,8 +82,9 @@ public class CordysSystem implements LdapObject {
 		NamedObjectList<SoapProcessor> result= new NamedObjectList<SoapProcessor>();
 		for (Object o: getOrganizations() ) {
 			for (Object sn : ((Organization) o).getSoapNodes()) {
-				for (Object sp : ((SoapNode) sn).getSoapProcessors())
-					result.put(((SoapProcessor)sp).getName(), (SoapProcessor) sp);
+				for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
+					result.put(((SoapProcessor)sp).getDn(), (SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
+				}
 			}
 		}
 		return result;
@@ -108,7 +109,7 @@ public class CordysSystem implements LdapObject {
 		if (filename.endsWith(".isvp"))
 			filename=filename.substring(0,filename.length()-5);
 		Element method=new Element("GetISVPackageDefinition", Isvp.xmlns_isv);
-		Element file=new Element("file").setText(filename);
+		Element file=new Element("file", Isvp.xmlns_isv).setText(filename);
 		file.setAttribute("type", "isvpackage");
 		file.setAttribute("detail", "false");
 		file.setAttribute("wizardsteps", "true");
@@ -116,7 +117,7 @@ public class CordysSystem implements LdapObject {
 		Element details=soapCall(method);
 		
 		method=new Element("LoadISVPackage", Isvp.xmlns_isv);
-		method.addContent(new Element("url").setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp"));
+		method.addContent(new Element("url", Isvp.xmlns_isv).setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp"));
 		method.addContent(details.getChild("ISVPackage", null).detach());
 		soapCall(method);
 		return null;

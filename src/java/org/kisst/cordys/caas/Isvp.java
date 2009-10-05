@@ -49,7 +49,7 @@ public class Isvp extends CordysLdapObject {
 			filename=filename.substring(0,filename.length()-5);
 
 		Element method=new Element("UnloadISVPackage", xmlns_isv);
-		Element file=new Element("file").setText(filename);
+		Element file=new Element("file", xmlns_isv).setText(filename);
 		if (deletereferences)
 			file.setAttribute("deletereference", "true");
 		else

@@ -19,23 +19,24 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
-public class NamedObjectList<T extends LdapObject> extends HashMap<String,T> implements Iterable {
+public class NamedObjectList<T extends LdapObject> extends LinkedHashMap<String,T> implements Iterable {
 	private static final long serialVersionUID = 1L;
 	
-	public String toString() {
-		StringBuffer result=new StringBuffer("[");
+	public String toString() { return toString("[\t",",\n\t","]"); }
+	public String toString(String begin, String middle, String end) {
+		StringBuffer result=new StringBuffer(begin);
 		boolean first=true;
 		for(Object o: this) {
 			if (! first)
-				result.append(", ");
+				result.append(middle);
 			else
 				first=false;
 			result.append(o.toString());
 		}
-		result.append("]");
+		result.append(end);
 		return result.toString();
 	}
 	public Iterator<T> iterator() { return values().iterator(); }
@@ -53,7 +54,7 @@ public class NamedObjectList<T extends LdapObject> extends HashMap<String,T> imp
 		NamedObjectList <T> result=new NamedObjectList <T>();
 		for(T obj: values()) {
 			if (obj.getName().toLowerCase().indexOf(expr)>=0)
-				result.put(obj.getName(), obj);
+				result.put(obj.getDn(), obj);
 		}
 		return result;	
 	}
