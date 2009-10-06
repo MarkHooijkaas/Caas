@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
+
+import org.kisst.cordys.caas.util.ReflectionUtil;
 
 public class GroovyCaasShell {
 	public static void main(String[] args) {
@@ -74,21 +75,24 @@ public class GroovyCaasShell {
 	}
 
 	private static void run(String[] args) {
+		int code=0;
+		SecurityManager psm = null;
 		try {
-			String classname="org.codehaus.groovy.tools.shell.Main";
-			if (args.length>0)
-				classname="groovy.ui.GroovyMain";
-			//Class<?> c = Class.forName("org.codehaus.groovy.tools.GroovyStarter");
-			// This way there is no compile time dependency for groovy
-			Class<?> c = Class.forName(classname);
-			Method m=c.getMethod("main", new Class[]{String[].class});
-			m.invoke(null, new Object[]{args});
-		} catch (Exception e) {
-			e.printStackTrace();
+			psm = System.getSecurityManager();
+			Object shell = ReflectionUtil.createObject("org.codehaus.groovy.tools.shell.Groovysh");
+			System.setSecurityManager((SecurityManager) ReflectionUtil.createObject("org.codehaus.groovy.tools.shell.util.NoExitSecurityManager"));
+			ReflectionUtil.invoke(shell, "executeCommand", new Object[]{"import org.kisst.cordys.caas.Caas"});
+			ReflectionUtil.invoke(shell, "run", new Object[]{args});
+		}
+		catch (Exception e) {
 			askTodDownload();
 		}
+		finally {
+			System.setSecurityManager(psm);
+		}
+		System.exit(code);
 	}
-
+	
 	private static void askTodDownload() {
 		System.out.println("Some kind of error occured");
 		System.out.println("This might be due to not having donwloaded necessary jar files");

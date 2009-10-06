@@ -20,26 +20,17 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.jdom.Element;
-import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
 public class CordysSystem implements LdapObject {
-	public static CordysSystem connect(String filename, String name) {
-		//System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
-		HttpClientCaller caller = new HttpClientCaller(filename);
-		String rootdn= caller.props.getProperty("cordys.rootdn");
-		return new CordysSystem(name, caller, rootdn);
-	}
-
-	
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
 	public final String dn; 
 	public boolean debug=false;
-	public final String name;
+	private final String name;
 
-	protected CordysSystem(String name, SoapCaller caller, String dn) {
+	public CordysSystem(String name, SoapCaller caller, String dn) {
 		this.name=name;
 		this.caller=caller;
 		this.dn=dn;
@@ -47,7 +38,7 @@ public class CordysSystem implements LdapObject {
 	}
 	public CordysSystem getSystem() { return this; }
 	public String getDn() { return dn;	}
-	public String getName() { return "Cordys";}
+	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
 
 	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
