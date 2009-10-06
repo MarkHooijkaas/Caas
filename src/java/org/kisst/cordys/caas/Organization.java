@@ -55,4 +55,15 @@ public class Organization extends CordysLdapObject {
 		method.addContent(new Element("namespace").setText("*"));
 		return getObjectsFromEntries(soapCall(method));
 	}
+
+	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
+	public NamedObjectList<SoapProcessor> getSoapProcessors() {
+		NamedObjectList<SoapProcessor> result= new NamedObjectList<SoapProcessor>();
+		for (Object sn : getSoapNodes()) {
+			for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
+				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
+			}
+		}
+		return result;
+	}
 }
