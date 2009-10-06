@@ -20,19 +20,16 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
 public class CordysSystem implements LdapObject {
-	public final static Namespace nsldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
-	
-	public static CordysSystem connect(String filename) {
+	public static CordysSystem connect(String filename, String name) {
 		//System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
 		HttpClientCaller caller = new HttpClientCaller(filename);
 		String rootdn= caller.props.getProperty("cordys.rootdn");
-		return new CordysSystem(rootdn, caller);
+		return new CordysSystem(name, caller, rootdn);
 	}
 
 	
@@ -40,8 +37,10 @@ public class CordysSystem implements LdapObject {
 	final LdapCache ldapcache;
 	public final String dn; 
 	public boolean debug=false;
+	public final String name;
 
-	protected CordysSystem(String dn, SoapCaller caller) {
+	protected CordysSystem(String name, SoapCaller caller, String dn) {
+		this.name=name;
 		this.caller=caller;
 		this.dn=dn;
 		this.ldapcache=new LdapCache(this);
@@ -60,19 +59,19 @@ public class CordysSystem implements LdapObject {
 
 	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
 	public NamedObjectList<Organization> getOrganizations() {
-		Element method=new Element("GetOrganizations", CordysSystem.nsldap);
+		Element method=new Element("GetOrganizations", CordysLdapObject.xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		return getObjectsFromEntries(soapCall(method));
 	}
 	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
-		Element method=new Element("GetAuthenticatedUsers", CordysSystem.nsldap);
+		Element method=new Element("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("filter").setText("*"));
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Isvp> getIsvps() {
-		Element method=new Element("GetSoftwarePackages", CordysSystem.nsldap);
+		Element method=new Element("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		return getObjectsFromEntries(soapCall(method));
 	}

@@ -22,9 +22,12 @@ package org.kisst.cordys.caas;
 import java.util.List;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 
 
 public class CordysLdapObject extends CordysObject implements LdapObject {
+	public final static Namespace xmlns_ldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
+
 	private final LdapObject parent; 
 	protected final String dn;
 	private Element entry;
@@ -56,7 +59,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	}
 
 	public void refresh() {
-		Element method=new Element("GetLDAPObject", CordysSystem.nsldap);
+		Element method=new Element("GetLDAPObject", xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		Element response = soapCall(method);
 		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
@@ -73,7 +76,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	protected void addLdapString(String group, String value) {
 		getEntry();
 		Element newEntry=(Element) entry.clone();
-		newEntry.getChild(group, null).addContent(new Element("string",CordysSystem.nsldap).setText(value));
+		newEntry.getChild(group, null).addContent(new Element("string",xmlns_ldap).setText(value));
 		updateLdap(newEntry);
 	}
 	protected void removeLdapString(String group, String value) {
@@ -92,10 +95,10 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	}
 
 	protected void updateLdap(Element newEntry) {
-		Element tuple=new Element("tuple", CordysSystem.nsldap);
-		tuple.addContent(new Element("old", CordysSystem.nsldap).addContent(entry));
-		tuple.addContent(new Element("new", CordysSystem.nsldap).addContent(newEntry));
-		Element method=new Element("Update", CordysSystem.nsldap).addContent(tuple);
+		Element tuple=new Element("tuple", xmlns_ldap);
+		tuple.addContent(new Element("old", xmlns_ldap).addContent(entry));
+		tuple.addContent(new Element("new", xmlns_ldap).addContent(newEntry));
+		Element method=new Element("Update", xmlns_ldap).addContent(tuple);
 		soapCall(method);
 		setEntry(newEntry);
 	}

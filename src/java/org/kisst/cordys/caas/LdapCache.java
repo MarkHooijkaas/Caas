@@ -79,8 +79,8 @@ public class LdapCache {
 	
 	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", CordysSystem.nsldap);
-		method.addContent(new Element("dn", CordysSystem.nsldap).setText(newdn));
+		Element method=new Element("GetLDAPObject", CordysLdapObject.xmlns_ldap);
+		method.addContent(new Element("dn", CordysLdapObject.xmlns_ldap).setText(newdn));
 		Element response = system.soapCall(method);
 		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
 		return createObject(entry);

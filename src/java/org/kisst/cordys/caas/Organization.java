@@ -28,7 +28,7 @@ public class Organization extends CordysLdapObject {
 	}
 
 	public NamedObjectList<User> getUsers() {	
-		Element method=new Element("GetOrganizationalUsers", CordysSystem.nsldap);
+		Element method=new Element("GetOrganizationalUsers", xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		return getObjectsFromEntries(soapCall(method));
 	}
@@ -36,21 +36,21 @@ public class Organization extends CordysLdapObject {
 
 	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {	
-		Element method=new Element("GetMethodSets", CordysSystem.nsldap);
+		Element method=new Element("GetMethodSets", xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("labeleduri").setText("*"));
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Role> getRoles() {	
-		Element method=new Element("GetRolesForOrganization", CordysSystem.nsldap);
+		Element method=new Element("GetRolesForOrganization", xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		return getObjectsFromEntries(soapCall(method));
 	}
 
 	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
 	public NamedObjectList<SoapNode> getSoapNodes() {	
-		Element method=new Element("GetSoapNodes", CordysSystem.nsldap);
+		Element method=new Element("GetSoapNodes", xmlns_ldap);
 		method.addContent(new Element("dn").setText(dn));
 		method.addContent(new Element("namespace").setText("*"));
 		return getObjectsFromEntries(soapCall(method));
