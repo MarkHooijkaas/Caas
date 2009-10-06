@@ -39,7 +39,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 	}
 	
 	protected CordysLdapObject(LdapObject parent, String dn) {
-		super(((LdapObject)parent).getSystem());
+		super(parent.getSystem());
 		this.parent=parent;
 		this.dn=dn;
 	}

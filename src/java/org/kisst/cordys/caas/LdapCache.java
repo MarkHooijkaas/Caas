@@ -118,7 +118,7 @@ public class LdapCache {
 			dn=dn.substring(pos+1);
 			LdapObject parent=getObject(dn);
 			if (parent!=null)
-				return (LdapObject) parent;
+				return parent;
 		} while (dn.length()>0);
 		throw new RuntimeException("Could not find a parent for "+dn);
 	}
