@@ -5,6 +5,9 @@ import org.kisst.cordys.caas.soap.HttpClientCaller;
 public class Caas {
 	public static CordysSystem connect(String filename) {
 		String name=filename.substring(0,filename.indexOf("."));
+		int pos=name.lastIndexOf("/");
+		if (pos>=0)
+			name=name.substring(pos+1);
 		return connect(filename, name);
 	}
 	public static CordysSystem connect(String filename, String name) {
