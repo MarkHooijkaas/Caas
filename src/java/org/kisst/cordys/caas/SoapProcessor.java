@@ -45,4 +45,11 @@ public class SoapProcessor extends CordysLdapObject {
 		method.addContent(new Element("dn").setText(dn));
 		soapCall(method);
 	}
+	public String getComputer() {
+		return getEntry().getChild("computer",null).getChildText("string",null);
+	}
+	public boolean getAutomatic() {
+		String s=getEntry().getChild("automaticstart",null).getChildText("string",null);
+		return s.equals("true");
+	}
 }
