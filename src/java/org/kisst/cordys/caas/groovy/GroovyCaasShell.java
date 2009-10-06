@@ -12,10 +12,11 @@ import org.kisst.cordys.caas.util.ReflectionUtil;
 public class GroovyCaasShell {
 	public static void main(String[] args) {
 		System.out.println("Caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
-		if (args.length>0 && args[0].equals("--download"))
+		if (args.length>0 && args[0].equals("--download")) {
 			downloadAll();
-		else
-			run(args);
+			return;
+		}
+		run(args);
 	}
 
 	private static void downloadAll() {
@@ -80,6 +81,23 @@ public class GroovyCaasShell {
 	}
 
 	private static void run(String[] args) {
+		int i=0;
+		boolean debug=false;
+		String filename=null;
+		while (i<args.length) {
+			if (args[i].equals("--debug"))
+				debug=true;
+			else
+				filename=args[i];
+			i++;
+		}
+		if (filename==null)
+			runInteractive(args, debug);
+		else
+			runFile(args, debug);
+	}
+	
+	private static void runInteractive(String[] args, boolean debug) {
 		int code=0;
 		SecurityManager psm = null;
 		try {
@@ -90,6 +108,8 @@ public class GroovyCaasShell {
 			ReflectionUtil.invoke(shell, "run", new Object[]{args});
 		}
 		catch (Exception e) {
+			if (debug)
+				e.printStackTrace();
 			askTodDownload();
 		}
 		finally {
@@ -97,7 +117,22 @@ public class GroovyCaasShell {
 		}
 		System.exit(code);
 	}
-	
+
+	private static void runFile(String[] args, boolean debug) {
+		System.out.println("Running "+args[0]);
+		int code=0;
+		try {
+			Class clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");
+			ReflectionUtil.invoke(clz, null, "main", new Object[]{args});
+		}
+		catch (Exception e) {
+			if (debug)
+				e.printStackTrace();
+			askTodDownload();
+		}
+		System.exit(code);
+	}
+
 	private static void askTodDownload() {
 		System.out.println("Some kind of error occured");
 		System.out.println("This might be due to not having downloaded the necessary jar files");

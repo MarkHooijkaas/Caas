@@ -36,8 +36,11 @@ public class ReflectionUtil {
 	}
 	
 	public static Object invoke(Object o, String name, Object[] args) {
+		return invoke(o.getClass(),o, name, args);
+	}
+	public static Object invoke(Class<?> c, Object o, String name, Object[] args) {
 		try {
-			Method m = o.getClass().getDeclaredMethod(name, getSignature(args));
+			Method m = c.getDeclaredMethod(name, getSignature(args));
 			m.setAccessible(true);
 			return m.invoke(o, args);
 		}
