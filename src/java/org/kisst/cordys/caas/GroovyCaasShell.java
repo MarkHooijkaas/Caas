@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-public class Main {
+public class GroovyCaasShell {
 	public static void main(String[] args) {
 		System.out.println("Caas: Cordys Administration Automation Scripting");
 		if (args.length>0 && args[0].equals("--download"))
