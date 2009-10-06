@@ -21,6 +21,7 @@ package org.kisst.cordys.caas;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.kisst.cordys.caas.util.JdomUtil;
 
 public class SoapProcessor extends CordysLdapObject {
 
@@ -51,5 +52,15 @@ public class SoapProcessor extends CordysLdapObject {
 	public boolean getAutomatic() {
 		String s=getEntry().getChild("automaticstart",null).getChildText("string",null);
 		return s.equals("true");
+	}
+	public Element config() {
+		String s=getEntry().getChild("bussoapprocessorconfiguration",null).getChildText("string",null);
+		return JdomUtil.fromString(s);
+	}
+	public boolean getUseSystemLogPolicy() {
+		Element e=config().getChild("loggerconfiguration",null);
+		if (e==null)
+			return true; // defautl is true
+		return e.getChildText("systempolicy",null).equals("true");
 	}
 }
