@@ -3,10 +3,23 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 
 public class Caas {
+	public static CordysSystem connect(String filename) {
+		String name=filename.substring(0,filename.indexOf("."));
+		return connect(filename, name);
+	}
 	public static CordysSystem connect(String filename, String name) {
-		//System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "error");
-		HttpClientCaller caller = new HttpClientCaller(filename);
-		String rootdn= caller.props.getProperty("cordys.rootdn");
-		return new CordysSystem(name, caller, rootdn);
+		try {
+			System.out.print("Connecting to system "+name+" ("+filename+") ... ");
+			HttpClientCaller caller = new HttpClientCaller(filename);
+			CordysSystem result = new CordysSystem(name, caller);
+			System.out.println("OK");
+			return result;
+		}
+		catch (Exception e) {
+			// Catch any exceptions so it won't be a problem if anything fails in the Startup script
+			//e.printStackTrace();
+			System.out.println("FAILED");
+			return null;
+		}
 	}
 }

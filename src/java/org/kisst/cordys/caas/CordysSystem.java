@@ -20,20 +20,30 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.kisst.cordys.caas.soap.SoapCaller;
 
 
 public class CordysSystem implements LdapObject {
+	public final Namespace xmlns_monitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
 	public final String dn; 
 	public boolean debug=false;
 	private final String name;
-
-	public CordysSystem(String name, SoapCaller caller, String dn) {
+	public final String version;
+	public final String build;
+	
+	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
 		this.caller=caller;
-		this.dn=dn;
+		Element response=soapCall(new Element("GetVersion",xmlns_monitor));
+		Element header=response.getParentElement().getParentElement().getChild("Header",null).getChild("header",null);
+		String tmp=header.getChild("sender",null).getChildText("component",null);
+		String key="cn=soap nodes,o=system,";
+		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
+		this.version=response.getChildText("version",null);
+		this.build=response.getChildText("build",null);
 		this.ldapcache=new LdapCache(this);
 	}
 	public CordysSystem getSystem() { return this; }
@@ -46,6 +56,7 @@ public class CordysSystem implements LdapObject {
 	public void remove(String dn)   { ldapcache.remove(dn); }
 
 	public Element soapCall(Element method) { return caller.soapCall(method, debug); }
+	public String soapCall(String soap) { return caller.soapCall(soap, debug); }
 	
 
 	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
