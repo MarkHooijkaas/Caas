@@ -21,7 +21,7 @@ package org.kisst.cordys.caas;
 
 
 
-public interface LdapObject {
+public interface LdapObject extends Comparable<LdapObject> {
 	public CordysSystem getSystem();
 	public LdapObject getParent();
 	public String getDn();

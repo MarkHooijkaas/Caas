@@ -57,6 +57,27 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 			c=parent.toString()+"."+c;
 		return c; 
 	}
+	public boolean equals(Object o) {
+		if (o instanceof LdapObject)
+			return dn.equals(((LdapObject)o).getDn());
+		return false;
+	}
+	public int compareTo(LdapObject o) {
+		if (o==this)
+			return 0;
+		String[] d1=dn.split(",");
+		String[] d2=o.getDn().split(",");
+		int p1=d1.length-1;
+		int p2=d2.length-1;
+		while (p1>=0 && p2>=0 ) {
+			int comp=d1[p1--].compareTo(d2[p2--]);
+			if (comp!=0)
+				return comp;
+		}
+		return 0;
+	}
+
+
 
 	public void refresh() {
 		Element method=new Element("GetLDAPObject", xmlns_ldap);
@@ -102,6 +123,4 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		soapCall(method);
 		setEntry(newEntry);
 	}
-	
-
 }

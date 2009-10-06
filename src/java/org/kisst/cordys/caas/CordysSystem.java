@@ -123,4 +123,5 @@ public class CordysSystem implements LdapObject {
 		soapCall(method);
 		return null;
 	}
+	public int compareTo(LdapObject o) { return dn.compareTo(o.getDn()); }
 }

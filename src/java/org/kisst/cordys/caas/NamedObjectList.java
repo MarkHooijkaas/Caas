@@ -20,14 +20,31 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class NamedObjectList<T extends LdapObject> implements Iterable {
 	private static final long serialVersionUID = 1L;
-	private final ArrayList<T> list=new ArrayList<T>();
+	private final ArrayList<T> list;
 	private final HashMap<String,T> dnIndex=new HashMap<String,T>(); 
 	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
+	
+	public NamedObjectList() {
+		list=new ArrayList<T>();
+	}
+
+	public NamedObjectList(List<T> l) {
+		if (l instanceof ArrayList)
+			list=(ArrayList<T>)l;
+		else
+			list=new ArrayList<T>(l);
+		for(T obj : list) {
+			dnIndex.put(obj.getDn(), obj);
+			nameIndex.put(obj.getName(), obj);
+		}
+	}
 	
 	public boolean add(T obj) {
 		list.add(obj);
@@ -89,4 +106,11 @@ public class NamedObjectList<T extends LdapObject> implements Iterable {
 		}
 		return null;
 	}
+	
+	public NamedObjectList<T> sort() {
+		ArrayList<T> newList=new ArrayList<T>(list);
+		Collections.sort(newList);
+		return new NamedObjectList<T>(newList);
+	}
+
 }
