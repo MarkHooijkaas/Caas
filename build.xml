@@ -2,6 +2,7 @@
 <project name="Caas" default="jar" basedir=".">
 	<target name="init">
 		<property file="user.properties"/>
+		<property file="version.properties"/>
 		<property name="projectfile" value="project.xml"/>
 		<xmlproperty file="${projectfile}" semanticAttributes="true"/>
 		<property file="buildnumber.properties"/>
@@ -14,23 +15,26 @@
 		
 
 	<target name="compile" description="Compiles Java files" depends="init">
-		<javac srcdir="${srcdir}/java" includes="${project.javafiles}" destdir="${builddir}/classes" debug="on" optimize="on" target="1.5">
+		<javac srcdir="${srcdir}/java" destdir="${builddir}/classes" debug="on" optimize="on" target="1.5">
 		    <compilerarg value="-Xlint"/>
 			<classpath>
 				<pathelement path="${libdir}/commons-httpclient-3.1.jar" />
-				<pathelement path="${libdir}/freemarker-2.3.15.jar" />
 				<pathelement path="${libdir}/log4j-1.2.13.jar" />
-				<pathelement path="${libdir}/groovy-all-1.6.2.jar" />
+				<pathelement path="${libdir}/jdom-1.0.jar" />
 			</classpath>
 		</javac>
-	</target>
+		<copy todir="${builddir}/classes">
+		    <fileset dir="${srcdir}/resources"/>
+		    <fileset file="version.properties"/>
+		</copy>	</target>
 
 	<target name="jar" description="creates a jar file" depends="compile">
+
 		<jar jarfile="${builddir}/caas.jar"  basedir="${builddir}/classes">
 			<manifest>
 				<attribute name="Implementation-Vendor" value="kisst.org"/>
 				<attribute name="Implementation-Title" value="Caas"/>
-				<attribute name="Implementation-Version" value="0.0"/> 
+				<attribute name="Implementation-Version" value="${project.version}"/> 
 				<attribute name="Class-Path" value="lib/groovy-all-1.6.5.jar lib/log4j-1.2.13.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.0.4.jar lib/commons-codec-1.2.jar lib/jdom-1.0.jar lib/commons-cli-1.2.jar lib/jline-0.9.94.jar"/>
 				<attribute name="Main-Class" value="org.kisst.cordys.caas.groovy.GroovyCaasShell"/>
 			</manifest>
@@ -60,19 +64,15 @@
 		<get src="http://repo2.maven.org/maven2/jdom/jdom/1.0/jdom-1.0.jar" dest="lib/jdom-1.0.jar"/>
 	</target>
 
-	<target name="download-freemarker" depends="init,proxy">
-		<get src="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/freemarker/freemarker/2.3.15/freemarker-2.3.15.jar" dest="lib/freemarker-2.3.15.jar"/>
-	</target>
-
 	<target name="download-groovy" depends="init,proxy">
 		<get src="http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.6.5/groovy-all-1.6.5.jar" dest="lib/groovy-all-1.6.5.jar"/>
 		<get src="http://repo1.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" dest="lib/commons-cli-1.2.jar"/>
 		<get src="http://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94.jar" dest="lib/jline-0.9.94.jar"/>
 	</target>
 
-	<target name="download-all" depends="download-commons,download-log4j,download-freemarker,download-groovy"/>
+	<target name="download-all" depends="download-commons,download-log4j,download-jdom,download-groovy"/>
 
 	<target name="clean" depends="init">
-  		<delete dir="${builddir}" />
+  		<delete dir="${builddir}/classes" />
   	</target>
 </project>

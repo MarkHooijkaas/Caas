@@ -18,33 +18,37 @@ public class GroovyCaasShell {
 	}
 
 	private static void downloadAll() {
-		String jardir = getJarDir();
-		System.out.println("Downloading necessary jar files to "+jardir);
-		File d=new File(jardir);
+		String libdir = getLibDir();
+		System.out.println("Downloading necessary jar files to "+libdir);
+		File d=new File(libdir);
 		if (!d.exists()) {
-			System.out.println("Making new directory "+jardir);
+			System.out.println("Making new directory "+libdir);
 			d.mkdir();
 		}
 		// httpclient and necessary files
-		download(jardir+"commons-httpclient-3.1.jar", "http://repo2.maven.org/maven2/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar");
-		download(jardir+"commons-logging-1.0.4.jar", "http://repo2.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar");
-		download(jardir+"commons-codec-1.2.jar", "http://repo2.maven.org/maven2/commons-codec/commons-codec/1.2/commons-codec-1.2.jar");
+		download(libdir+"commons-httpclient-3.1.jar", "http://repo2.maven.org/maven2/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar");
+		download(libdir+"commons-logging-1.0.4.jar", "http://repo2.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar");
+		download(libdir+"commons-codec-1.2.jar", "http://repo2.maven.org/maven2/commons-codec/commons-codec/1.2/commons-codec-1.2.jar");
 		
 		// log4j and jdom
-		download(jardir+"log4j-1.2.13.jar", "http://repo2.maven.org/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar");
-		download(jardir+"jdom-1.0.jar", "http://repo2.maven.org/maven2/jdom/jdom/1.0/jdom-1.0.jar");
+		download(libdir+"log4j-1.2.13.jar", "http://repo2.maven.org/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar");
+		download(libdir+"jdom-1.0.jar", "http://repo2.maven.org/maven2/jdom/jdom/1.0/jdom-1.0.jar");
 
 		// groovy and files for interactive shell
-		download(jardir+"groovy-all-1.6.5.jar", "http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.6.5/groovy-all-1.6.5.jar");
-		download(jardir+"commons-cli-1.2.jar", "http://repo1.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar");
-		download(jardir+"jline-0.9.94.jar", "http://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94.jar");
+		download(libdir+"groovy-all-1.6.5.jar", "http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.6.5/groovy-all-1.6.5.jar");
+		download(libdir+"commons-cli-1.2.jar", "http://repo1.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar");
+		download(libdir+"jline-0.9.94.jar", "http://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94.jar");
 	}
 	
-	private static String getJarDir() {
+	private static String getLibDir() {
 		// TODO: is this a safe way to determine the directory of the jar file?
 		String dir=System.getProperty("java.class.path");
-		dir=dir.substring(0,dir.indexOf("caas.jar"))+"lib/";
-		return dir;
+		dir=dir.replace('\\','/');
+		int pos=dir.lastIndexOf("/");
+		if (pos>=0)
+			 return dir.substring(0,pos+1)+"lib/";
+		else
+			return "lib/";
 	}
 
 	private static void download(String filename, String url) {
@@ -95,10 +99,10 @@ public class GroovyCaasShell {
 	
 	private static void askTodDownload() {
 		System.out.println("Some kind of error occured");
-		System.out.println("This might be due to not having donwloaded necessary jar files");
+		System.out.println("This might be due to not having downloaded the necessary jar files");
 		System.out.println("In order to do this one should execute the following command");
-		System.out.println("\tjava -jar caas.jar --download");
+		System.out.println("\tjava -jar "+System.getProperty("java.class.path")+" --download");
 		System.out.println("Or, if you behind a firewall or proxyserver, try the following command");
-		System.out.println("\tjava -autoproxy -jar caas.jar --download");
+		System.out.println("\tjava -autoproxy -jar "+System.getProperty("java.class.path")+" --download");
 	}
 }
