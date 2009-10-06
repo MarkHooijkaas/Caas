@@ -1,4 +1,4 @@
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.groovy;
 
 import java.io.File;
 import java.io.FileOutputStream;
