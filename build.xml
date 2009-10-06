@@ -30,7 +30,7 @@
 
 	<target name="jar" description="creates a jar file" depends="compile">
 
-		<jar jarfile="${builddir}/caas.jar"  basedir="${builddir}/classes">
+		<jar jarfile="${builddir}/caas-${project.version}.jar"  basedir="${builddir}/classes">
 			<manifest>
 				<attribute name="Implementation-Vendor" value="kisst.org"/>
 				<attribute name="Implementation-Title" value="Caas"/>
