@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.kisst.cordys.caas.Caas;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
 public class GroovyCaasShell {
 	public static void main(String[] args) {
-		System.out.println("Caas: Cordys Administration Automation Scripting");
+		System.out.println("Caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 		if (args.length>0 && args[0].equals("--download"))
 			downloadAll();
 		else

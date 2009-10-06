@@ -1,5 +1,9 @@
 package org.kisst.cordys.caas;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 
 public class Caas {
@@ -24,5 +28,15 @@ public class Caas {
 			System.out.println("FAILED");
 			return null;
 		}
+	}
+	public static String getVersion() {
+		InputStream in = Caas.class.getResourceAsStream("/version.properties");
+		if (in==null)
+			return "unknown-version";
+		Properties props=new Properties();
+		try {
+			props.load(in);
+		} catch (IOException e) { throw new RuntimeException(e);}
+		return props.getProperty("project.version");
 	}
 }
