@@ -1,4 +1,5 @@
-cordys=org.kisst.cordys.caas.CordysSystem.connect("user.properties")
+import org.kisst.cordys.caas.Caas
+cordys=Caas.connect("local/c2.properties")
 //println cordys.children
 for (i in cordys.isvps) {
   println "" + i +" ==> " + i.dn
