@@ -90,13 +90,14 @@ public class CordysSystem implements LdapObject {
 
 	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		NamedObjectList<SoapProcessor> result= new NamedObjectList<SoapProcessor>();
-		for (Object o: getOrganizations() ) {
-			for (Object sn : ((Organization) o).getSoapNodes()) {
-				for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
-					result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
-				}
-			}
+		Element method=new Element("List", xmlns_monitor);
+		NamedObjectList<SoapProcessor> result=new NamedObjectList<SoapProcessor>();
+		Element response=soapCall(method);
+		for (Object s: response.getChildren("tuple", null)) {
+			Element workerprocess=((Element) s).getChild("old", null).getChild("workerprocess",null);
+			String dn=workerprocess.getChildText("name",null);
+			LdapObject obj=getObject(dn);
+			result.add((SoapProcessor) obj);
 		}
 		return result;
 	}

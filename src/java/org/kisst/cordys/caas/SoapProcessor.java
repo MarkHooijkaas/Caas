@@ -53,12 +53,12 @@ public class SoapProcessor extends CordysLdapObject {
 		String s=getEntry().getChild("automaticstart",null).getChildText("string",null);
 		return s.equals("true");
 	}
-	public Element config() {
+	public Element getConfig() {
 		String s=getEntry().getChild("bussoapprocessorconfiguration",null).getChildText("string",null);
 		return JdomUtil.fromString(s);
 	}
 	public boolean getUseSystemLogPolicy() {
-		Element e=config().getChild("loggerconfiguration",null);
+		Element e=getConfig().getChild("loggerconfiguration",null);
 		if (e==null)
 			return true; // defautl is true
 		return e.getChildText("systempolicy",null).equals("true");

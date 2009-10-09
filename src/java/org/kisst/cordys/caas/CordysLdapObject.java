@@ -43,6 +43,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		this.parent=parent;
 		this.dn=dn;
 	}
+	public void clear() { entry=null; }
 	public LdapObject getParent() { return parent; }
 	
 	public String getDn() { return dn; }
