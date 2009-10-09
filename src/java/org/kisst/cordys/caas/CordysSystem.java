@@ -34,6 +34,8 @@ public class CordysSystem implements LdapObject {
 	public final String version;
 	public final String build;
 	
+	private boolean cache=false; 
+	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
 		this.caller=caller;
@@ -46,10 +48,18 @@ public class CordysSystem implements LdapObject {
 		this.build=response.getChildText("build",null);
 		this.ldapcache=new LdapCache(this);
 	}
+	public String toString() { return "CordysSystem("+name+")"; }
 	public CordysSystem getSystem() { return this; }
 	public String getDn() { return dn;	}
 	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
+
+	public boolean getCache() { return cache; }
+	public void setCache(boolean value) {
+		this.cache=value;
+		if (! cache)
+			ldapcache.clear();
+	}
 
 	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
 	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
