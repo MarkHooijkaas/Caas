@@ -75,12 +75,6 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		return 0;
 	}
 
-
-
-	public CordysLdapObject refresh() {
-		clear();
-		return this;  // convenience return value, so you can type obj.refresh().property
-	}
 	void setEntry(XmlNode entry) {
 		this.entry=entry;
 		entry.detach();
