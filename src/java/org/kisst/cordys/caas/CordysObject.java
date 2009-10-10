@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class CordysObject {
@@ -33,8 +36,8 @@ public class CordysObject {
 	public XmlNode soapCall(XmlNode method) { return getSystem().soapCall(method); }
 
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(XmlNode response) {
-		NamedObjectList<T> result=new NamedObjectList<T>();
+	protected <T extends LdapObject> List<T> getObjectsFromEntries(XmlNode response) {
+		ArrayList<T> result=new ArrayList<T>();
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {
@@ -46,8 +49,8 @@ public class CordysObject {
 		return result;
 	}
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromStrings(XmlNode start, String group) {
-		NamedObjectList<T> result=new NamedObjectList<T>();
+	protected <T extends LdapObject> ArrayList<T> getObjectsFromStrings(XmlNode start, String group) {
+		ArrayList<T> result=new ArrayList<T>();
 		start=start.getChild(group);
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();

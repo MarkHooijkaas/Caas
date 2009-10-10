@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Organization extends CordysLdapObject {
@@ -27,38 +30,51 @@ public class Organization extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public NamedObjectList<User> getUsers() {	
+	public NamedObjectList<User> getUser() {
+		return new NamedObjectList<User>(getUsers()); 
+	}
+	public List<User> getUsers() {	
 		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
 
-	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
-	public NamedObjectList<MethodSet> getMethodSets() {	
+	public NamedObjectList<MethodSet> getMs() { 
+		return new NamedObjectList<MethodSet>(getMethodSets());
+	}
+	public List<MethodSet> getMethodSets() {	
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
-	public NamedObjectList<Role> getRoles() {	
+	public NamedObjectList<Role> getRole() {
+		return new NamedObjectList<Role>(getRoles());
+	}
+	public List<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public NamedObjectList<SoapNode> getSn() { return getSoapNodes(); }	
-	public NamedObjectList<SoapNode> getSoapNodes() {	
+	public NamedObjectList<SoapNode> getSn() { 
+		return new NamedObjectList<SoapNode>(getSoapNodes()); 
+	}	
+	public List<SoapNode> getSoapNodes() {	
 		XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("namespace").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
-	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		NamedObjectList<SoapProcessor> result= new NamedObjectList<SoapProcessor>();
+	public NamedObjectList<SoapProcessor> getSp() { 
+		return new NamedObjectList<SoapProcessor>(getSoapProcessors());
+	}
+
+	public List<SoapProcessor> getSoapProcessors() {
+		ArrayList<SoapProcessor> result= new ArrayList<SoapProcessor>();
 		for (Object sn : getSoapNodes()) {
 			for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
 				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations

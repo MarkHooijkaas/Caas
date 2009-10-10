@@ -19,6 +19,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.List;
+
 
 public class User extends CordysLdapObject {
 
@@ -26,7 +28,10 @@ public class User extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public NamedObjectList<Role> getRoles() {
+	public NamedObjectList<Role> getRole() {
+		return new NamedObjectList<Role>(getRoles());
+	}
+	public List<Role> getRoles() {
 		return getObjectsFromStrings(getEntry(),"role");
 	}
 	

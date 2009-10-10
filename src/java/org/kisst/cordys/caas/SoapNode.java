@@ -31,8 +31,10 @@ public class SoapNode extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
-	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
-	public NamedObjectList<SoapProcessor> getSoapProcessors() {
+	public NamedObjectList<SoapProcessor> getSp() { 
+		return new NamedObjectList<SoapProcessor>(getSoapProcessors());
+	}
+	public List<SoapProcessor> getSoapProcessors() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
@@ -46,19 +48,10 @@ public class SoapNode extends CordysLdapObject {
 		return result;
 	}
 
-	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
-	public NamedObjectList<MethodSet> getMethodSetsOld() {
-		NamedObjectList<MethodSet> result=new NamedObjectList<MethodSet>();
-		XmlNode ms=getEntry().getChild("busmethodsets");
-		for (XmlNode child: ms.getChildren("string")) {
-			String dn=child.getText();
-			MethodSet obj=(MethodSet)getSystem().getObject(dn);
-			result.add(obj);
-		}
-		return result;
+	public NamedObjectList<MethodSet> getMs() { 
+		return new NamedObjectList<MethodSet>(getMethodSets()); 
 	}
-	
-	public NamedObjectList<MethodSet> getMethodSets() {
+	public List<MethodSet> getMethodSets() {
 		return getObjectsFromStrings(getEntry(),"busmethodsets");
 	}
 	
