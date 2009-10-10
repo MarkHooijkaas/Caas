@@ -34,7 +34,7 @@ public class CordysSystem implements LdapObject {
 	public final String version;
 	public final String build;
 	
-	private boolean cache=false; 
+	private boolean cache=true; 
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
