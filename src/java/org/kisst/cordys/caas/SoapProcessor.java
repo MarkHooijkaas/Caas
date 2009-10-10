@@ -57,7 +57,7 @@ public class SoapProcessor extends CordysLdapObject {
 	
 	private int getIntChild(XmlNode x, String name) {
 		String result=x.getChildText(name);
-		if (result==null)
+		if (result==null || result.length()==0)
 			return -1;
 		else
 			return Integer.parseInt(result);
