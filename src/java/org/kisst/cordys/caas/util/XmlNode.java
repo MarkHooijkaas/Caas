@@ -16,7 +16,6 @@ public class XmlNode {
 	private final Element element;
 	
 	public XmlNode(Element element) { this.element = element; }
-	public XmlNode(String name, Namespace ns) {	this.element=new Element(name, ns);	}
 	public XmlNode(String name, String namespace) {
 		this.element=new Element(name, Namespace.getNamespace(namespace));
 	}

@@ -100,15 +100,7 @@ public class HttpClientCaller implements SoapCaller {
 			System.out.println(response);
 		return response;
 	}
-	/*
-	public Element soapCall(Element method, boolean debug) { 
-		String xml = JdomUtil.toString(method);
-		String response= soapCall(xml, debug);
-		Element output=JdomUtil.fromString(response);
-		if (output.getName().equals("Envelope"))
-			output=output.getChild("Body",null).getChild(null,null);
-		return output;
-	}*/
+
 	public XmlNode soapCall(XmlNode method, boolean debug) {
 		String xml = method.toString();
 		String response= soapCall(xml, debug);

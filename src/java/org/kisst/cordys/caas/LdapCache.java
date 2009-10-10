@@ -67,7 +67,6 @@ public class LdapCache {
 		return result;
 	}
 	public synchronized LdapObject getObject(XmlNode entry) {
-		//System.out.println("get "+JdomUtil.toString(entry));
 		String newdn=entry.getAttribute("dn");
 		//System.out.println("get ["+newdn+"]");
 		LdapObject result=tree.get(newdn);
@@ -95,7 +94,6 @@ public class LdapCache {
 	}
 	
 	private LdapObject createObject(XmlNode entry) {
-		//System.out.println("create "+JdomUtil.toString(entry));
 		String newdn=entry.getAttribute("dn");
 		LdapObject parent = getParent(entry);
 		Class resultClass = determineClass(entry);
@@ -132,7 +130,6 @@ public class LdapCache {
 	}
 
 	private Class determineClass(XmlNode entry) {
-		//System.out.println(JdomUtil.toString(entry));
 		XmlNode objectclass=entry.getChild("objectclass");
 		for(XmlNode o:objectclass.getChildren("string")) {
 			Class c=ldapObjectTypes.get(o.getText());
