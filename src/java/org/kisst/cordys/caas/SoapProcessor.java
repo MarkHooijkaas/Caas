@@ -27,9 +27,38 @@ public class SoapProcessor extends CordysLdapObject {
 
 	private static final Namespace nsmonitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 
+	private Element workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+
+	public void setWorkerprocess(Element workerprocess) {
+		this.workerprocess=workerprocess;
+	}
+	public Element getWorkerprocess() {
+		// TODO: get from List method
+		return this.workerprocess;
+	}
+
+	private int getIntChild(Element x, String name) {
+		String result=x.getChildText(name,null);
+		if (result==null)
+			return -1;
+		else
+			return Integer.parseInt(result);
+	}
+	public String getStatus(){ return getWorkerprocess().getChildText("status",null); } 
+	public int getPid()            { return getIntChild(getWorkerprocess(), "process-id"); } 
+	public int getNomMemory()      { return getIntChild(getWorkerprocess(), "totalNOMMemory"); } 
+	public int getNomNodesMemory() { return getIntChild(getWorkerprocess(), "totalNOMNodesMemory"); } 
+	public int getCpuTime()        { return getIntChild(getWorkerprocess(), "totalCpuTime"); } 
+	public int getVirtualMemory()  { return getIntChild(getWorkerprocess(), "virtualMemoryUsage"); } 
+	public int getResidentMemory() { return getIntChild(getWorkerprocess(), "residentMemoryUsage"); } 
+	public int getSequenceNumber() { return getIntChild(getWorkerprocess(), "sequence-number"); } 
+	public int getPreference()     { return getIntChild(getWorkerprocess(), "preference"); } 
+	public int getBusdocs()        { return getIntChild(getWorkerprocess(), "busdocs"); } 
+	public int getProcessingTime() { return getIntChild(getWorkerprocess(), "processing-time"); } 
+	public int getLastTime()       { return getIntChild(getWorkerprocess(), "last-time"); } 
 
 	public void start() {
 		Element method=new Element("Start", nsmonitor);

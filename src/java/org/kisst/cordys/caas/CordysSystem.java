@@ -96,8 +96,9 @@ public class CordysSystem implements LdapObject {
 		for (Object s: response.getChildren("tuple", null)) {
 			Element workerprocess=((Element) s).getChild("old", null).getChild("workerprocess",null);
 			String dn=workerprocess.getChildText("name",null);
-			LdapObject obj=getObject(dn);
-			result.add((SoapProcessor) obj);
+			SoapProcessor obj= (SoapProcessor) getObject(dn);
+			obj.setWorkerprocess(workerprocess);
+			result.add( obj);
 		}
 		return result;
 	}
