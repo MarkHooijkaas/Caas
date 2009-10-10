@@ -45,7 +45,7 @@ public class NamedObjectList<T extends LdapObject> implements Iterable {
 			nameIndex.put(obj.getName(), obj);
 		}
 	}
-	
+	public int getSize() { return list.size(); }
 	public boolean add(T obj) {
 		list.add(obj);
 		dnIndex.put(obj.getDn(), obj);
