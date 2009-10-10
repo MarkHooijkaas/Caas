@@ -32,6 +32,12 @@ public class SoapProcessor extends CordysLdapObject {
 		super(parent, dn);
 	}
 
+	@Override
+	public void clear() {
+		super.clear();
+		this.workerprocess=null;
+	}
+	
 	public void setWorkerprocess(Element workerprocess) {
 		this.workerprocess=workerprocess;
 	}
@@ -51,6 +57,7 @@ public class SoapProcessor extends CordysLdapObject {
 		throw new RuntimeException("Could not find processor details for"+this.dn);
 	}
 
+	
 	private int getIntChild(Element x, String name) {
 		String result=x.getChildText(name,null);
 		if (result==null)

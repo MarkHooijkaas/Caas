@@ -81,19 +81,20 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 
 
 	public CordysLdapObject refresh() {
-		Element method=new Element("GetLDAPObject", xmlns_ldap);
-		method.addContent(new Element("dn", xmlns_ldap).setText(dn));
-		Element response = soapCall(method);
-		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
+		clear();
 		return this;  // convenience return value, so you can type obj.refresh().property
 	}
-	public void setEntry(Element entry) {
+	void setEntry(Element entry) {
 		this.entry=entry;
 		entry.detach();
 	}
 	public Element getEntry() {
-		if (entry==null || ! getSystem().getCache())
-			refresh();
+		if (entry!=null && getSystem().getCache())
+			return entry;
+		Element method=new Element("GetLDAPObject", xmlns_ldap);
+		method.addContent(new Element("dn", xmlns_ldap).setText(dn));
+		Element response = soapCall(method);
+		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
 		return entry;
 	}
 	protected void addLdapString(String group, String value) {
