@@ -43,7 +43,19 @@
 	<target name="dist" description="creates a zip file for distribution" depends="jar">
 		<zip destfile="${builddir}/caas-${project.version}.zip" >
 			<fileset dir="." includes="COPYING"/>
-			<fileset dir="src" includes="caas.jar"/>
+			<zipfileset dir="build" includes="caas.jar"/>
+			<zipfileset dir="src/groovy" prefix="scripts"/>
+			<zipfileset dir="bin" prefix="bin"/>
+		</zip>
+	</target>
+
+	<target name="dist-full" description="creates a zip file for distribution" depends="dist">
+		<zip destfile="${builddir}/caas-full-${project.version}.zip" >
+			<fileset dir="." includes="COPYING"/>
+			<zipfileset dir="build" includes="caas.jar"/>
+			<zipfileset dir="src/groovy" prefix="scripts"/>
+			<zipfileset dir="bin" prefix="bin"/>
+			<zipfileset dir="lib" prefix="lib" includes="*.jar"/>
 		</zip>
 	</target>
 
