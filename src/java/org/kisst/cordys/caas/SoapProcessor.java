@@ -36,8 +36,19 @@ public class SoapProcessor extends CordysLdapObject {
 		this.workerprocess=workerprocess;
 	}
 	public Element getWorkerprocess() {
-		// TODO: get from List method
-		return this.workerprocess;
+		if (workerprocess!=null && getSystem().getCache())
+			return this.workerprocess;
+		Element method=new Element("List", CordysSystem.xmlns_monitor);
+		Element response=soapCall(method);
+		for (Object s: response.getChildren("tuple", null)) {
+			Element workerprocess=((Element) s).getChild("old", null).getChild("workerprocess",null);
+			String dn=workerprocess.getChildText("name",null);
+			if (dn.equals(this.dn)) {
+				this.workerprocess=workerprocess;
+				return workerprocess;
+			}
+		}
+		throw new RuntimeException("Could not find processor details for"+this.dn);
 	}
 
 	private int getIntChild(Element x, String name) {

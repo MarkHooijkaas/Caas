@@ -25,7 +25,7 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 
 
 public class CordysSystem implements LdapObject {
-	public final Namespace xmlns_monitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
+	public final static Namespace xmlns_monitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
 	public final String dn; 
