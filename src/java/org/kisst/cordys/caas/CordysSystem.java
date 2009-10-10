@@ -52,6 +52,7 @@ public class CordysSystem implements LdapObject {
 	public String getDn() { return dn;	}
 	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
+	public void clear() { ldapcache.clear(); }
 
 	public boolean getCache() { return cache; }
 	public void setCache(boolean value) {
