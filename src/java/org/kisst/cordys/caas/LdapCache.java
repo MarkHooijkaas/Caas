@@ -23,8 +23,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-import org.jdom.Element;
 import org.kisst.cordys.caas.util.ReflectionUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class LdapCache {
 	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
@@ -66,9 +66,9 @@ public class LdapCache {
 		}
 		return result;
 	}
-	public synchronized LdapObject getObject(Element entry) {
+	public synchronized LdapObject getObject(XmlNode entry) {
 		//System.out.println("get "+JdomUtil.toString(entry));
-		String newdn=entry.getAttributeValue("dn");
+		String newdn=entry.getAttribute("dn");
 		//System.out.println("get ["+newdn+"]");
 		LdapObject result=tree.get(newdn);
 		if (result==null) {
@@ -87,16 +87,16 @@ public class LdapCache {
 	
 	private LdapObject createObject(String newdn) {
 		//System.out.println("create "+newdn);
-		Element method=new Element("GetLDAPObject", CordysLdapObject.xmlns_ldap);
-		method.addContent(new Element("dn", CordysLdapObject.xmlns_ldap).setText(newdn));
-		Element response = system.soapCall(method);
-		Element entry=response.getChild("tuple",null).getChild("old",null).getChild("entry",null);
+		XmlNode method=new XmlNode("GetLDAPObject", CordysLdapObject.xmlns_ldap);
+		method.add("dn").setText(newdn);
+		XmlNode response = system.soapCall(method);
+		XmlNode entry=response.getChild("tuple/old/entry");
 		return createObject(entry);
 	}
 	
-	private LdapObject createObject(Element entry) {
+	private LdapObject createObject(XmlNode entry) {
 		//System.out.println("create "+JdomUtil.toString(entry));
-		String newdn=entry.getAttributeValue("dn");
+		String newdn=entry.getAttribute("dn");
 		LdapObject parent = getParent(entry);
 		Class resultClass = determineClass(entry);
 		if (resultClass==null)
@@ -116,8 +116,8 @@ public class LdapCache {
 		catch (InvocationTargetException e) { throw new RuntimeException(e); }
 	}
 
-	private LdapObject getParent(Element entry) {
-		String dn=entry.getAttributeValue("dn");
+	private LdapObject getParent(XmlNode entry) {
+		String dn=entry.getAttribute("dn");
 		//System.out.println("getParent ["+dn+"]");
 		if (dn.length()<=system.dn.length()) // Safeguard
 			return null;
@@ -131,15 +131,15 @@ public class LdapCache {
 		throw new RuntimeException("Could not find a parent for "+dn);
 	}
 
-	private Class determineClass(Element entry) {
+	private Class determineClass(XmlNode entry) {
 		//System.out.println(JdomUtil.toString(entry));
-		Element objectclass=entry.getChild("objectclass",null);
-		for(Object o:objectclass.getChildren("string",null)) {
-			Class c=ldapObjectTypes.get(((Element) o).getText());
+		XmlNode objectclass=entry.getChild("objectclass");
+		for(XmlNode o:objectclass.getChildren("string")) {
+			Class c=ldapObjectTypes.get(o.getText());
 			if (c!=null)
 				return c;
 		}
-		String dn=entry.getAttributeValue("dn");
+		String dn=entry.getAttribute("dn");
 		if (dn.substring(dn.indexOf(",")+1).equals(system.getDn()) && dn.startsWith("cn="))
 			return Isvp.class;
 		return null;

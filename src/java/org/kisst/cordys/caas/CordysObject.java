@@ -19,7 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.jdom.Element;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class CordysObject {
 	private final CordysSystem system;
@@ -29,15 +29,16 @@ public class CordysObject {
 	}
 	public CordysSystem getSystem() { return system; }
 
-	public Element soapCall(Element method) { return getSystem().soapCall(method); }
+	//public Element soapCall(Element method) { return getSystem().soapCall(method); }
+	public XmlNode soapCall(XmlNode method) { return getSystem().soapCall(method); }
 
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(Element response) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(XmlNode response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body",null).getChild(null,null);
-		for (Object tuple : response.getChildren("tuple", null)) {
-			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
+			response=response.getChild("Body").getChildren().get(0);
+		for (XmlNode tuple : response.getChildren("tuple")) {
+			XmlNode elm=tuple.getChild("old/entry");
 			LdapObject obj=system.getObject(elm);
 			result.add((T) obj);
 			//System.out.println(dn);
@@ -45,11 +46,11 @@ public class CordysObject {
 		return result;
 	}
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromStrings(Element start, String group) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromStrings(XmlNode start, String group) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
-		start=start.getChild(group,null);
-		for (Object s: start.getChildren("string", null)) {
-			String dn=((Element) s).getText();
+		start=start.getChild(group);
+		for (XmlNode s: start.getChildren("string")) {
+			String dn=s.getText();
 			LdapObject obj=system.getObject(dn);
 			result.add((T) obj);
 			//System.out.println(dn);

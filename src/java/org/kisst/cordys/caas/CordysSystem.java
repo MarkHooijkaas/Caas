@@ -19,13 +19,12 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
 import org.kisst.cordys.caas.soap.SoapCaller;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class CordysSystem implements LdapObject {
-	public final static Namespace xmlns_monitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
+	public final static String xmlns_monitor="http://schemas.cordys.com/1.0/monitor";
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
 	public final String dn; 
@@ -39,13 +38,13 @@ public class CordysSystem implements LdapObject {
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
 		this.caller=caller;
-		Element response=soapCall(new Element("GetVersion",xmlns_monitor));
-		Element header=response.getParentElement().getParentElement().getChild("Header",null).getChild("header",null);
-		String tmp=header.getChild("sender",null).getChildText("component",null);
+		XmlNode response=soapCall(new XmlNode("GetVersion",xmlns_monitor));
+		XmlNode header=response.getChild("../../Header/header");
+		String tmp=header.getChildText("sender/component");
 		String key="cn=soap nodes,o=system,";
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
-		this.version=response.getChildText("version",null);
-		this.build=response.getChildText("build",null);
+		this.version=response.getChildText("version");
+		this.build=response.getChildText("build");
 		this.ldapcache=new LdapCache(this);
 	}
 	public String toString() { return "CordysSystem("+name+")"; }
@@ -61,41 +60,42 @@ public class CordysSystem implements LdapObject {
 			ldapcache.clear();
 	}
 
-	public LdapObject getObject(Element elm) { return ldapcache.getObject(elm); }
+	public LdapObject getObject(XmlNode elm) { return ldapcache.getObject(elm); }
 	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
 	public void remove(String dn)   { ldapcache.remove(dn); }
 
-	public Element soapCall(Element method) { return caller.soapCall(method, debug); }
+	//public Element soapCall(Element method) { return caller.soapCall(method, debug); }
 	public String soapCall(String soap) { return caller.soapCall(soap, debug); }
-	
+	public XmlNode soapCall(XmlNode method) { return caller.soapCall(method, debug); }
+
 
 	public NamedObjectList<Organization> getOrg() { return getOrganizations(); }
 	public NamedObjectList<Organization> getOrganizations() {
-		Element method=new Element("GetOrganizations", CordysLdapObject.xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode("GetOrganizations", CordysLdapObject.xmlns_ldap);
+		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 	public NamedObjectList<AuthenticatedUser> getAuthenticatedUsers() {
-		Element method=new Element("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
-		method.addContent(new Element("filter").setText("*"));
+		XmlNode method=new XmlNode("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
+		method.add("dn").setText(dn);
+		method.add("filter").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Isvp> getIsvps() {
-		Element method=new Element("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
+		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
 	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		Element method=new Element("List", xmlns_monitor);
+		XmlNode method=new XmlNode("List", xmlns_monitor);
 		NamedObjectList<SoapProcessor> result=new NamedObjectList<SoapProcessor>();
-		Element response=soapCall(method);
-		for (Object s: response.getChildren("tuple", null)) {
-			Element workerprocess=((Element) s).getChild("old", null).getChild("workerprocess",null);
-			String dn=workerprocess.getChildText("name",null);
+		XmlNode response=soapCall(method);
+		for (XmlNode s: response.getChildren("tuple")) {
+			XmlNode workerprocess=s.getChild("old/workerprocess");
+			String dn=workerprocess.getChildText("name");
 			SoapProcessor obj= (SoapProcessor) getObject(dn);
 			obj.setWorkerprocess(workerprocess);
 			result.add( obj);
@@ -105,13 +105,13 @@ public class CordysSystem implements LdapObject {
 
 	// TODO: this function is the same as found in CordysObject, but is tricky to reuse
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(Element response) {
+	protected <T extends LdapObject> NamedObjectList<T> getObjectsFromEntries(XmlNode response) {
 		NamedObjectList<T> result=new NamedObjectList<T>();
 		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body",null).getChild(null,null);
-		for (Object tuple : response.getChildren("tuple", null)) {
-			Element elm=((Element) tuple).getChild("old", null).getChild("entry", null);
-			LdapObject obj=getObject(elm);
+			response=response.getChild("Body").getChildren().get(0);
+		for (XmlNode tuple : response.getChildren("tuple")) {
+			XmlNode entry=tuple.getChild("old/entry");
+			LdapObject obj=getObject(entry);
 			result.add((T) obj);
 		}
 		return result;
@@ -121,17 +121,17 @@ public class CordysSystem implements LdapObject {
 		filename=filename.trim();
 		if (filename.endsWith(".isvp"))
 			filename=filename.substring(0,filename.length()-5);
-		Element method=new Element("GetISVPackageDefinition", Isvp.xmlns_isv);
-		Element file=new Element("file", Isvp.xmlns_isv).setText(filename);
+		XmlNode method=new XmlNode("GetISVPackageDefinition", Isvp.xmlns_isv);
+		XmlNode file=method.add("file");
+		file.setText(filename);
 		file.setAttribute("type", "isvpackage");
 		file.setAttribute("detail", "false");
 		file.setAttribute("wizardsteps", "true");
-		method.addContent(file);
-		Element details=soapCall(method);
+		XmlNode details=soapCall(method);
 		
-		method=new Element("LoadISVPackage", Isvp.xmlns_isv);
-		method.addContent(new Element("url", Isvp.xmlns_isv).setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp"));
-		method.addContent(details.getChild("ISVPackage", null).detach());
+		method=new XmlNode("LoadISVPackage", Isvp.xmlns_isv);
+		method.add("url").setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp");
+		method.add(details.getChild("ISVPackage").detach());
 		soapCall(method);
 		return null;
 	}

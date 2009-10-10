@@ -2,6 +2,7 @@ package org.kisst.cordys.caas;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.Properties;
 
 import org.kisst.cordys.caas.soap.HttpClientCaller;
@@ -24,7 +25,8 @@ public class Caas {
 		}
 		catch (Exception e) {
 			// Catch any exceptions so it won't be a problem if anything fails in the Startup script
-			//e.printStackTrace();
+			if (! (e.getCause() instanceof ConnectException))
+				e.printStackTrace();
 			System.out.println("FAILED");
 			return null;
 		}

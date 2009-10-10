@@ -19,15 +19,12 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.kisst.cordys.caas.util.JdomUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class SoapProcessor extends CordysLdapObject {
 
-	private static final Namespace nsmonitor=Namespace.getNamespace("http://schemas.cordys.com/1.0/monitor");
-
-	private Element workerprocess;
+	private static final String nsmonitor="http://schemas.cordys.com/1.0/monitor";
+	private XmlNode workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
@@ -38,17 +35,17 @@ public class SoapProcessor extends CordysLdapObject {
 		this.workerprocess=null;
 	}
 	
-	public void setWorkerprocess(Element workerprocess) {
+	public void setWorkerprocess(XmlNode workerprocess) {
 		this.workerprocess=workerprocess;
 	}
-	public Element getWorkerprocess() {
+	public XmlNode getWorkerprocess() {
 		if (workerprocess!=null && getSystem().getCache())
 			return this.workerprocess;
-		Element method=new Element("List", CordysSystem.xmlns_monitor);
-		Element response=soapCall(method);
-		for (Object s: response.getChildren("tuple", null)) {
-			Element workerprocess=((Element) s).getChild("old", null).getChild("workerprocess",null);
-			String dn=workerprocess.getChildText("name",null);
+		XmlNode method=new XmlNode("List", CordysSystem.xmlns_monitor);
+		XmlNode response=soapCall(method);
+		for (XmlNode s: response.getChildren("tuple")) {
+			XmlNode workerprocess=s.getChild("old/workerprocess");
+			String dn=workerprocess.getChildText("name");
 			if (dn.equals(this.dn)) {
 				this.workerprocess=workerprocess;
 				return workerprocess;
@@ -58,14 +55,14 @@ public class SoapProcessor extends CordysLdapObject {
 	}
 
 	
-	private int getIntChild(Element x, String name) {
-		String result=x.getChildText(name,null);
+	private int getIntChild(XmlNode x, String name) {
+		String result=x.getChildText(name);
 		if (result==null)
 			return -1;
 		else
 			return Integer.parseInt(result);
 	}
-	public String getStatus(){ return getWorkerprocess().getChildText("status",null); } 
+	public String getStatus(){ return getWorkerprocess().getChildText("status"); } 
 	public int getPid()            { return getIntChild(getWorkerprocess(), "process-id"); } 
 	public int getNomMemory()      { return getIntChild(getWorkerprocess(), "totalNOMMemory"); } 
 	public int getNomNodesMemory() { return getIntChild(getWorkerprocess(), "totalNOMNodesMemory"); } 
@@ -79,35 +76,35 @@ public class SoapProcessor extends CordysLdapObject {
 	public int getLastTime()       { return getIntChild(getWorkerprocess(), "last-time"); } 
 
 	public void start() {
-		Element method=new Element("Start", nsmonitor);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode ("Start", nsmonitor);
+		method.add("dn").setText(dn);
 		soapCall(method);
 	}
 	public void stop() {
-		Element method=new Element("Stop", nsmonitor);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode ("Stop", nsmonitor);
+		method.add("dn").setText(dn);
 		soapCall(method);
 	}
 	public void restart() {
-		Element method=new Element("Restart", nsmonitor);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode ("Restart", nsmonitor);
+		method.add("dn").setText(dn);
 		soapCall(method);
 	}
 	public String getComputer() {
-		return getEntry().getChild("computer",null).getChildText("string",null);
+		return getEntry().getChildText("computer/string");
 	}
 	public boolean getAutomatic() {
-		String s=getEntry().getChild("automaticstart",null).getChildText("string",null);
+		String s=getEntry().getChildText("automaticstart/string");
 		return s.equals("true");
 	}
-	public Element getConfig() {
-		String s=getEntry().getChild("bussoapprocessorconfiguration",null).getChildText("string",null);
-		return JdomUtil.fromString(s);
+	public XmlNode getConfig() {
+		String s=getEntry().getChildText("bussoapprocessorconfiguration/string");
+		return new XmlNode(s);
 	}
 	public boolean getUseSystemLogPolicy() {
-		Element e=getConfig().getChild("loggerconfiguration",null);
+		XmlNode e=getConfig().getChild("loggerconfiguration");
 		if (e==null)
 			return true; // defautl is true
-		return e.getChildText("systempolicy",null).equals("true");
+		return e.getChildText("systempolicy").equals("true");
 	}
 }

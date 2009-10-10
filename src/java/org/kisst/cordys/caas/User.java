@@ -34,7 +34,7 @@ public class User extends CordysLdapObject {
 	public void removeRole(Role r) { removeLdapString("role", r.dn); }
 	
 	public AuthenticatedUser getAuthenticatedUser() {
-		String dn=getEntry().getChild("authenticationuser",null).getChildText("string",null);
+		String dn=getEntry().getChildText("authenticationuser/string");
 		return (AuthenticatedUser) getSystem().getObject(dn);
 	}
 }

@@ -19,7 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.jdom.Element;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class MethodSet extends CordysLdapObject {
 
@@ -28,8 +28,8 @@ public class MethodSet extends CordysLdapObject {
 	}
 	
 	public NamedObjectList<Method> getMethods() {
-		Element method=new Element("GetChildren", xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
+		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 

@@ -19,11 +19,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class Isvp extends CordysLdapObject {
-	public final static Namespace xmlns_isv=Namespace.getNamespace("http://schemas.cordys.com/1.0/isvpackage");
+	public final static String xmlns_isv="http://schemas.cordys.com/1.0/isvpackage";
 
 	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
@@ -31,15 +30,15 @@ public class Isvp extends CordysLdapObject {
 
 	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSets() {	
-		Element method=new Element("GetMethodSets", xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
-		method.addContent(new Element("labeleduri").setText("*"));
+		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
+		method.add("dn").setText(dn);
+		method.add("labeleduri").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public NamedObjectList<Role> getRoles() {	
-		Element method=new Element("GetRolesForSoftwarePackage", xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode("GetRolesForSoftwarePackage", xmlns_ldap);
+		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
@@ -48,19 +47,19 @@ public class Isvp extends CordysLdapObject {
 		if (filename.endsWith(".isvp"))
 			filename=filename.substring(0,filename.length()-5);
 
-		Element method=new Element("UnloadISVPackage", xmlns_isv);
-		Element file=new Element("file", xmlns_isv).setText(filename);
+		XmlNode method=new XmlNode("UnloadISVPackage", xmlns_isv);
+		XmlNode file=method.add("file");
+		file.setText(filename);
 		if (deletereferences)
 			file.setAttribute("deletereference", "true");
 		else
 			file.setAttribute("deletereference", "false");
-		method.addContent(file);
 		soapCall(method);
 		getSystem().remove(dn);
 	}
 	
 	public String getFilename() {
-		String result=getEntry().getChild("member",null).getChildText("string",null);
+		String result=getEntry().getChildText("member/string");
 		if (result.startsWith("cn="))
 			return result.substring(3);
 		else

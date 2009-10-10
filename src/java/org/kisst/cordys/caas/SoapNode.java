@@ -22,7 +22,7 @@ package org.kisst.cordys.caas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom.Element;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
@@ -33,25 +33,25 @@ public class SoapNode extends CordysLdapObject {
 	
 	public NamedObjectList<SoapProcessor> getSp() { return getSoapProcessors(); }
 	public NamedObjectList<SoapProcessor> getSoapProcessors() {
-		Element method=new Element("GetChildren", xmlns_ldap);
-		method.addContent(new Element("dn").setText(dn));
+		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
+		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
 	public List<String> getNamespaces() {
 		ArrayList<String> result=new ArrayList<String>();
-		Element ms=getEntry().getChild("labeleduri", null);
-		for (Object o: ms.getChildren("string", null)) 
-			result.add(((Element)o).getText());
+		XmlNode ms=getEntry().getChild("labeleduri");
+		for (XmlNode child: ms.getChildren("string")) 
+			result.add(child.getText());
 		return result;
 	}
 
 	public NamedObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public NamedObjectList<MethodSet> getMethodSetsOld() {
 		NamedObjectList<MethodSet> result=new NamedObjectList<MethodSet>();
-		Element ms=getEntry().getChild("busmethodsets", null);
-		for (Object o: ms.getChildren("string", null)) {
-			String dn=((Element)o).getText();
+		XmlNode ms=getEntry().getChild("busmethodsets");
+		for (XmlNode child: ms.getChildren("string")) {
+			String dn=child.getText();
 			MethodSet obj=(MethodSet)getSystem().getObject(dn);
 			result.add(obj);
 		}

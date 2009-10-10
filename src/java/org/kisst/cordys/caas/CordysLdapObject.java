@@ -19,18 +19,15 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class CordysLdapObject extends CordysObject implements LdapObject {
-	public final static Namespace xmlns_ldap=Namespace.getNamespace("http://schemas.cordys.com/1.0/ldap");
+	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
 
 	private final LdapObject parent; 
 	protected final String dn;
-	private Element entry;
+	private XmlNode entry;
 
 	protected CordysLdapObject(CordysSystem system, String dn) {
 		super(system);
@@ -84,45 +81,39 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		clear();
 		return this;  // convenience return value, so you can type obj.refresh().property
 	}
-	void setEntry(Element entry) {
+	void setEntry(XmlNode entry) {
 		this.entry=entry;
 		entry.detach();
 	}
-	public Element getEntry() {
+	public XmlNode getEntry() {
 		if (entry!=null && getSystem().getCache())
 			return entry;
-		Element method=new Element("GetLDAPObject", xmlns_ldap);
-		method.addContent(new Element("dn", xmlns_ldap).setText(dn));
-		Element response = soapCall(method);
-		setEntry(response.getChild("tuple",null).getChild("old",null).getChild("entry",null));
+		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
+		method.createChild("dn").setText(dn);
+		XmlNode response = soapCall(method);
+		setEntry(response.getChild("tuple/old/entry"));
 		return entry;
 	}
+
 	protected void addLdapString(String group, String value) {
-		getEntry();
-		Element newEntry=(Element) entry.clone();
-		newEntry.getChild(group, null).addContent(new Element("string",xmlns_ldap).setText(value));
+		XmlNode newEntry=getEntry().clone();
+		newEntry.getChild(group).createChild("string").setText(value);
 		updateLdap(newEntry);
 	}
 	protected void removeLdapString(String group, String value) {
-		getEntry();
-		Element newEntry=(Element) entry.clone();
-		List<?> children=newEntry.getChild(group, null).getChildren(); 
-		Element toRemove=null;
-		for(Object o: children) {
-			Element e= (Element) o;
+		XmlNode newEntry= getEntry().clone();
+		for(XmlNode e: newEntry.getChild(group).getChildren()) {
 			if (e.getText().equals(value))
-				toRemove=e;
+				newEntry.remove(e);
 		}
-		if (toRemove!=null)
-			children.remove(toRemove);
 		updateLdap(newEntry);
 	}
 
-	protected void updateLdap(Element newEntry) {
-		Element tuple=new Element("tuple", xmlns_ldap);
-		tuple.addContent(new Element("old", xmlns_ldap).addContent(entry));
-		tuple.addContent(new Element("new", xmlns_ldap).addContent(newEntry));
-		Element method=new Element("Update", xmlns_ldap).addContent(tuple);
+	protected void updateLdap(XmlNode newEntry) {
+		XmlNode method=new XmlNode("Update", xmlns_ldap);
+		XmlNode tuple=method.createChild("tuple");
+		tuple.createChild("old").add(entry.clone());
+		tuple.createChild("new").add(newEntry);
 		soapCall(method);
 		setEntry(newEntry);
 	}

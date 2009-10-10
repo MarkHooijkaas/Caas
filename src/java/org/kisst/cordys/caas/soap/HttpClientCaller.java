@@ -31,8 +31,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.jdom.Element;
-import org.kisst.cordys.caas.util.JdomUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class HttpClientCaller implements SoapCaller {
 	private final HttpClient client = new HttpClient();
@@ -101,12 +100,21 @@ public class HttpClientCaller implements SoapCaller {
 			System.out.println(response);
 		return response;
 	}
+	/*
 	public Element soapCall(Element method, boolean debug) { 
 		String xml = JdomUtil.toString(method);
 		String response= soapCall(xml, debug);
 		Element output=JdomUtil.fromString(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body",null).getChild(null,null);
+		return output;
+	}*/
+	public XmlNode soapCall(XmlNode method, boolean debug) {
+		String xml = method.toString();
+		String response= soapCall(xml, debug);
+		XmlNode output=new XmlNode(response);
+		if (output.getName().equals("Envelope"))
+			output=output.getChild("Body").getChildren().get(0);
 		return output;
 	}
 	

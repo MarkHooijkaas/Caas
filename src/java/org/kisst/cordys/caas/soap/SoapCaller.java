@@ -19,10 +19,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.soap;
 
-import org.jdom.Element;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public interface SoapCaller {
 	//public String httpCall(String input);
 	public String soapCall(String input, boolean debug);
-	public Element soapCall(Element method, boolean debug); 
+	public XmlNode soapCall(XmlNode method, boolean debug); 
 }
