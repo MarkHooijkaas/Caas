@@ -113,4 +113,27 @@ public class NamedObjectList<T extends LdapObject> implements Iterable {
 		return new NamedObjectList<T>(newList);
 	}
 
+	public void diff(NamedObjectList<T> other) {
+		ArrayList<T> l1=this.sort().list;
+		ArrayList<T> l2=other.sort().list;
+		int pos1=0;
+		int pos2=0;
+		while (pos1<l1.size() || pos2<l2.size()) {
+			if (pos1>=l1.size())
+				System.out.println("> "+l2.get(pos2++));
+			else if (pos2>=l2.size())
+				System.out.println("< "+l1.get(pos1++));
+			else {
+				int comp=l1.get(pos1).getName().compareTo(l2.get(pos2).getName());
+				if (comp==0) {
+					pos1++;
+					pos2++;
+				}
+				else if (comp<0)
+					System.out.println("< "+l1.get(pos1++));
+				else
+					System.out.println("< "+l2.get(pos2++));
+			}
+		}
+	}
 }
