@@ -89,7 +89,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		if (entry!=null && getSystem().getCache())
 			return entry;
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
-		method.createChild("dn").setText(dn);
+		method.add("dn").setText(dn);
 		XmlNode response = soapCall(method);
 		setEntry(response.getChild("tuple/old/entry"));
 		return entry;
@@ -97,7 +97,7 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 
 	protected void addLdapString(String group, String value) {
 		XmlNode newEntry=getEntry().clone();
-		newEntry.getChild(group).createChild("string").setText(value);
+		newEntry.getChild(group).add("string").setText(value);
 		updateLdap(newEntry);
 	}
 	protected void removeLdapString(String group, String value) {
@@ -111,9 +111,9 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 
 	protected void updateLdap(XmlNode newEntry) {
 		XmlNode method=new XmlNode("Update", xmlns_ldap);
-		XmlNode tuple=method.createChild("tuple");
-		tuple.createChild("old").add(entry.clone());
-		tuple.createChild("new").add(newEntry);
+		XmlNode tuple=method.add("tuple");
+		tuple.add("old").add(entry.clone());
+		tuple.add("new").add(newEntry);
 		soapCall(method);
 		setEntry(newEntry);
 	}

@@ -44,7 +44,6 @@ public class XmlNode {
 	public XmlNode getChild(String path) { return (XmlNode) get(path); }
 	public XmlNode getParent() { return new XmlNode(element.getParentElement()); }
 	public Object  propertyMissing(String name) { return get(name); }
-	public Element getJdomElement() { return element; }
 	public String getChildText(String path) {
 		XmlNode child=getChild(path);
 		if (child==null)
@@ -94,14 +93,12 @@ public class XmlNode {
 		element.setAttribute(name, value);
 		return this;
 	}
-	public XmlNode createChild(String name, String namespace) {
+	public XmlNode add(String name, String namespace) {
 		Element child=new Element(name, element.getNamespace());
 		element.addContent(child);
 		return new XmlNode(child);
 	}
-	public XmlNode add(String name) { return createChild(name); }
-
-	public XmlNode createChild(String name) {
+	public XmlNode add(String name) { 
 		Element child=new Element(name, element.getNamespace());
 		element.addContent(child);
 		return new XmlNode(child);
