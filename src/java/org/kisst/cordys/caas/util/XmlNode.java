@@ -43,10 +43,16 @@ public class XmlNode {
 	public String getText() { return element.getText(); }
 	public String getAttribute(String name) { return element.getAttribute(name).getValue(); }
 	public XmlNode getChild(String path) { return (XmlNode) get(path); }
-	public String getChildText(String path) { return getChild(path).getText(); }
 	public XmlNode getParent() { return new XmlNode(element.getParentElement()); }
 	public Object  propertyMissing(String name) { return get(name); }
 	public Element getJdomElement() { return element; }
+	public String getChildText(String path) {
+		XmlNode child=getChild(path);
+		if (child==null)
+			return null;
+		return child.getText();
+	}
+
 	public List<XmlNode> getChildren() {
 		List l = element.getChildren();
 		ArrayList<XmlNode> result=new ArrayList<XmlNode>(l.size());
@@ -74,6 +80,8 @@ public class XmlNode {
 				return e.getAttribute(part.substring(1)).getValue();
 			else
 				e=e.getChild(part,null);
+			if (e==null)
+				return null;
 		}
 		return new XmlNode(e);
 	}
