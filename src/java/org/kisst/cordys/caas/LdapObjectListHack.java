@@ -56,4 +56,8 @@ public class LdapObjectListHack<T extends LdapObject> implements LdapObjectList<
 	// methods to be iterable without being a real List
 	public int getSize() { return list.size(); }
 	public Iterator<T> iterator() { return list.iterator(); }
+	
+	public Object __getattr__(String name) { return get(name); }
+	public Object __getitem__(String key)  { return get(key); }
+	public Object __getitem__(int index)   { return get(index); }
 }

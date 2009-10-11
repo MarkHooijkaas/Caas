@@ -113,4 +113,7 @@ public class LdapObjectListReal<T extends LdapObject> extends ArrayList<T> imple
 			}
 		}
 	}
+	public Object __getattr__(String name) { return get(name); }
+	public Object __getitem__(String key)  { return get(key); }
+	public Object __getitem__(int index)   { return get(index); }
 }
