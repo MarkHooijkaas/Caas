@@ -31,10 +31,10 @@ public class SoapNode extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
-	public NamedObjectList<SoapProcessor> getSp() { 
-		return new NamedObjectList<SoapProcessor>(getSoapProcessors());
+	public LdapObjectListHack<SoapProcessor> getSp() { 
+		return new LdapObjectListHack<SoapProcessor>(getSoapProcessors());
 	}
-	public List<SoapProcessor> getSoapProcessors() {
+	public LdapObjectListReal<SoapProcessor> getSoapProcessors() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
@@ -48,23 +48,19 @@ public class SoapNode extends CordysLdapObject {
 		return result;
 	}
 
-	public NamedObjectList<MethodSet> getMs() { 
-		return new NamedObjectList<MethodSet>(getMethodSets()); 
+	public LdapObjectListHack<MethodSet> getMs() { 
+		return new LdapObjectListHack<MethodSet>(getMethodSets()); 
 	}
-	public List<MethodSet> getMethodSets() {
+	public LdapObjectListReal<MethodSet> getMethodSets() {
 		return getObjectsFromStrings(getEntry(),"busmethodsets");
 	}
 	
 	public void addMethodSet(MethodSet m) { 
 		addLdapString("busmethodsets", m.dn); 
-		recalcNamespaces();
+		clear();
 	}
 	public void removeMethodSet(MethodSet m) { 
 		removeLdapString("busmethodsets", m.dn);
-		recalcNamespaces();
+		clear();
 	}
-	public void recalcNamespaces() { 
-		// TODO
-	}
-
 }

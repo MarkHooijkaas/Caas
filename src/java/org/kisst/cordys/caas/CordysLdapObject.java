@@ -50,10 +50,18 @@ public class CordysLdapObject extends CordysObject implements LdapObject {
 		return dn.substring(pos+1,pos2);
 	}
 	public String toString() {
-		String c=this.getClass().getSimpleName()+"("+getName()+")";
-		if (parent!=null && (parent instanceof CordysLdapObject))
-			c=parent.toString()+"."+c;
-		return c; 
+		if (getSystem().displayFormat==0) {
+			String c=this.getClass().getSimpleName()+"("+getName()+")";
+			if (parent!=null && (parent instanceof CordysLdapObject))
+				c=parent.toString()+"."+c;
+			return c; 
+		}
+		else {
+			if (parent!=null && (parent instanceof CordysLdapObject))
+				return parent.toString()+"."+getName();
+			else
+				return getName();
+		}
 	}
 	public boolean equals(Object o) {
 		if (o instanceof LdapObject)

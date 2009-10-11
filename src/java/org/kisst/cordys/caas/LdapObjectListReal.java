@@ -22,37 +22,25 @@ package org.kisst.cordys.caas;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
-public class NamedObjectList<T extends LdapObject> implements Iterable {
+public class LdapObjectListReal<T extends LdapObject> extends ArrayList<T> implements LdapObjectList<T> {
 	private static final long serialVersionUID = 1L;
-	private final ArrayList<T> list;
 	private final HashMap<String,T> dnIndex=new HashMap<String,T>(); 
 	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
 	
-	public NamedObjectList() {
-		list=new ArrayList<T>();
+	public LdapObjectListReal() {}
+	public LdapObjectListReal(LdapObjectList<T> l) {
+		for(T obj : l)
+			add(obj);
 	}
-
-	public NamedObjectList(List<T> l) {
-		if (l instanceof ArrayList)
-			list=(ArrayList<T>)l;
-		else
-			list=new ArrayList<T>(l);
-		for(T obj : list) {
-			dnIndex.put(obj.getDn(), obj);
-			nameIndex.put(obj.getName(), obj);
-		}
-	}
-	public int getSize() { return list.size(); }
 	public boolean add(T obj) {
-		list.add(obj);
+		super.add(obj);
 		dnIndex.put(obj.getDn(), obj);
 		nameIndex.put(obj.getName(), obj);
 		return true;
 	}
 	
+	public int getSize() { return size(); }
 	public String toString() { return toString("[\t",",\n\t","]"); }
 	public String toString(String begin, String middle, String end) {
 		StringBuffer result=new StringBuffer(begin);
@@ -67,61 +55,50 @@ public class NamedObjectList<T extends LdapObject> implements Iterable {
 		result.append(end);
 		return result.toString();
 	}
-	public Iterator<T> iterator() { return list.iterator(); }
-	public T getAt(int index) {
-		for(T obj: list) {
-			if (index--<=0)
-				return obj;
-		}
-		throw new IndexOutOfBoundsException("Index out of bounds");	
-	}
-	public T propertyMissing(String name) {	return get((Object)name); }
-
-	public NamedObjectList <T> like(String expr) {
+	
+	public T getAt(int index) { return get(index); } 
+	
+	public LdapObjectListReal <T> like(String expr) {
 		expr=expr.toLowerCase();
-		NamedObjectList <T> result=new NamedObjectList <T>();
-		for(T obj: list) {
+		LdapObjectListReal <T> result=new LdapObjectListReal <T>();
+		for(T obj: this) {
 			if (obj.getName().toLowerCase().indexOf(expr)>=0)
 				result.add(obj);
 		}
 		return result;	
 	}
-	@SuppressWarnings("unchecked")
-	public T get(Object key) {
-		//if (! (key instanceof String))
-		//	return super.get(key);
-		String name=((String) key);
-		T result=dnIndex.get(name);
+	public T get(String key) {
+		T result=dnIndex.get(key);
 		if (result!=null)
 			return result;
-		result=nameIndex.get(name);
+		result=nameIndex.get(key);
 		if (result!=null)
 			return result;
-		name=name.toLowerCase();
+		key=key.toLowerCase();
 		if (result==null) {
-			for(T obj: list) {
-				if (obj.getName().toLowerCase().indexOf(name)>=0)
+			for(T obj: this) {
+				if (obj.getName().toLowerCase().indexOf(key)>=0)
 					return obj;
 			}
 		}
 		return null;
 	}
 	
-	public NamedObjectList<T> sort() {
-		ArrayList<T> newList=new ArrayList<T>(list);
+	public LdapObjectList<T> sort() {
+		LdapObjectListReal<T> newList=new LdapObjectListReal<T>(this);
 		Collections.sort(newList);
-		return new NamedObjectList<T>(newList);
+		return newList;
 	}
 
-	public void diff(NamedObjectList<T> other) {
-		ArrayList<T> l1=this.sort().list;
-		ArrayList<T> l2=other.sort().list;
+	public void diff(LdapObjectList<T> other) {
+		LdapObjectList<T> l1=this.sort();
+		LdapObjectList<T> l2=other.sort();
 		int pos1=0;
 		int pos2=0;
-		while (pos1<l1.size() || pos2<l2.size()) {
-			if (pos1>=l1.size())
+		while (pos1<l1.getSize() || pos2<l2.getSize()) {
+			if (pos1>=l1.getSize())
 				System.out.println("> "+l2.get(pos2++));
-			else if (pos2>=l2.size())
+			else if (pos2>=l2.getSize())
 				System.out.println("< "+l1.get(pos1++));
 			else {
 				int comp=l1.get(pos1).getName().compareTo(l2.get(pos2).getName());

@@ -19,9 +19,6 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Organization extends CordysLdapObject {
@@ -30,51 +27,51 @@ public class Organization extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public NamedObjectList<User> getUser() {
-		return new NamedObjectList<User>(getUsers()); 
+	public LdapObjectListHack<User> getUser() {
+		return new LdapObjectListHack<User>(getUsers()); 
 	}
-	public List<User> getUsers() {	
+	public LdapObjectListReal<User> getUsers() {	
 		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
 
-	public NamedObjectList<MethodSet> getMs() { 
-		return new NamedObjectList<MethodSet>(getMethodSets());
+	public LdapObjectListHack<MethodSet> getMs() { 
+		return new LdapObjectListHack<MethodSet>(getMethodSets());
 	}
-	public List<MethodSet> getMethodSets() {	
+	public LdapObjectListReal<MethodSet> getMethodSets() {	
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
-	public NamedObjectList<Role> getRole() {
-		return new NamedObjectList<Role>(getRoles());
+	public LdapObjectListHack<Role> getRole() {
+		return new LdapObjectListHack<Role>(getRoles());
 	}
-	public List<Role> getRoles() {	
+	public LdapObjectListReal<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public NamedObjectList<SoapNode> getSn() { 
-		return new NamedObjectList<SoapNode>(getSoapNodes()); 
+	public LdapObjectListHack<SoapNode> getSn() { 
+		return new LdapObjectListHack<SoapNode>(getSoapNodes()); 
 	}	
-	public List<SoapNode> getSoapNodes() {	
+	public LdapObjectListReal<SoapNode> getSoapNodes() {	
 		XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("namespace").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public NamedObjectList<SoapProcessor> getSp() { 
-		return new NamedObjectList<SoapProcessor>(getSoapProcessors());
+	public LdapObjectListHack<SoapProcessor> getSp() { 
+		return new LdapObjectListHack<SoapProcessor>(getSoapProcessors());
 	}
 
-	public List<SoapProcessor> getSoapProcessors() {
-		ArrayList<SoapProcessor> result= new ArrayList<SoapProcessor>();
+	public LdapObjectListReal<SoapProcessor> getSoapProcessors() {
+		LdapObjectListReal<SoapProcessor> result= new LdapObjectListReal<SoapProcessor>();
 		for (Object sn : getSoapNodes()) {
 			for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
 				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations

@@ -19,19 +19,16 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.util.List;
-
-
 public class User extends CordysLdapObject {
 
 	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public NamedObjectList<Role> getRole() {
-		return new NamedObjectList<Role>(getRoles());
+	public LdapObjectListHack<Role> getRole() {
+		return new LdapObjectListHack<Role>(getRoles());
 	}
-	public List<Role> getRoles() {
+	public LdapObjectListReal<Role> getRoles() {
 		return getObjectsFromStrings(getEntry(),"role");
 	}
 	
