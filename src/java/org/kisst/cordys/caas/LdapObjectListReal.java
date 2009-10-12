@@ -109,7 +109,7 @@ public class LdapObjectListReal<T extends LdapObject> extends ArrayList<T> imple
 				else if (comp<0)
 					System.out.println("< "+l1.get(pos1++));
 				else
-					System.out.println("< "+l2.get(pos2++));
+					System.out.println("> "+l2.get(pos2++));
 			}
 		}
 	}
