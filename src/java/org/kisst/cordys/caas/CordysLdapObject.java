@@ -22,26 +22,28 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public class CordysLdapObject extends CordysObject implements LdapObject {
+public class CordysLdapObject implements LdapObject {
 	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
-
+	protected final CordysSystem system;
 	private final LdapObject parent; 
 	protected final String dn;
 	private XmlNode entry;
 
 	protected CordysLdapObject(CordysSystem system, String dn) {
-		super(system);
+		this.system=system;
 		this.parent=null;
 		this.dn=dn;
 	}
 	
 	protected CordysLdapObject(LdapObject parent, String dn) {
-		super(parent.getSystem());
+		this.system=parent.getSystem();
 		this.parent=parent;
 		this.dn=dn;
 	}
 	public void clear() { entry=null; }
 	public LdapObject getParent() { return parent; }
+	public CordysSystem getSystem() { return system; }
+	public XmlNode soapCall(XmlNode method) { return getSystem().soapCall(method); }
 	
 	public String getDn() { return dn; }
 	public String getName() {

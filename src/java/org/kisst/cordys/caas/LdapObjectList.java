@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.kisst.cordys.caas.util.XmlNode;
+
 /**
  * This class works like a list, without being a real java.util.List
  * This hack is necessary, because in groovy the propertyMissing method is never used
@@ -43,6 +45,30 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 
 	public LdapObjectList(List<T> l) {
 		list=new ArrayList<T>(l);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public LdapObjectList(CordysSystem system, XmlNode method) {
+		this();
+		XmlNode response=system.soapCall(method);
+		if (response.getName().equals("Envelope"))
+			response=response.getChild("Body").getChildren().get(0);
+		for (XmlNode tuple : response.getChildren("tuple")) {
+			XmlNode elm=tuple.getChild("old/entry");
+			LdapObject obj=system.getObject(elm);
+			this.add((T) obj);
+			//System.out.println(dn);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public LdapObjectList(CordysSystem system, XmlNode start, String group) {
+		this();
+		start=start.getChild(group);
+		for (XmlNode s: start.getChildren("string")) {
+			String dn=s.getText();
+			LdapObject obj=system.getObject(dn);
+			this.add((T) obj);
+		}
 	}
 	
 	public boolean add(T obj) {

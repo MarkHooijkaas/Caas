@@ -29,7 +29,7 @@ public class User extends CordysLdapObject {
 		return getRoles();
 	}
 	public LdapObjectList<Role> getRoles() {
-		return getObjectsFromStrings(getEntry(),"role");
+		return new LdapObjectList<Role>(system, getEntry(),"role");
 	}
 	
 	public void addRole(Role r) { addLdapString("role", r.dn); }

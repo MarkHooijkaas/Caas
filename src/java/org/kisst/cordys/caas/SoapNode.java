@@ -26,18 +26,26 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
+	private LdapObjectList<SoapProcessor> cachedSoapProcessors=null;
 
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	
-	public LdapObjectList<SoapProcessor> getSp() { 
-		return getSoapProcessors();
+
+	public void clear() {
+		super.clear();
+		cachedSoapProcessors=null;
 	}
+	
+	
+	public LdapObjectList<SoapProcessor> getSp() {	return getSoapProcessors();	}
 	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
-		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		if (cachedSoapProcessors==null || ! system.getCache()) {
+			XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
+			method.add("dn").setText(dn);
+			cachedSoapProcessors = new LdapObjectList<SoapProcessor>(system, method);
+		}
+		return cachedSoapProcessors;
 	}
 	
 	public List<String> getNamespaces() {
@@ -52,7 +60,7 @@ public class SoapNode extends CordysLdapObject {
 		return getMethodSets(); 
 	}
 	public LdapObjectList<MethodSet> getMethodSets() {
-		return getObjectsFromStrings(getEntry(),"busmethodsets");
+		return new LdapObjectList<MethodSet>(system, getEntry(),"busmethodsets");
 	}
 	
 	public void addMethodSet(MethodSet m) { 

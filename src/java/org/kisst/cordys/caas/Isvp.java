@@ -35,7 +35,7 @@ public class Isvp extends CordysLdapObject {
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<MethodSet>(system, method);
 	}
 	
 	
@@ -45,7 +45,7 @@ public class Isvp extends CordysLdapObject {
 	public LdapObjectList<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForSoftwarePackage", xmlns_ldap);
 		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<Role>(system, method);
 	}
 	
 	public void unload(boolean deletereferences) {

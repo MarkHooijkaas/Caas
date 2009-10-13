@@ -33,7 +33,7 @@ public class MethodSet extends CordysLdapObject {
 	public LdapObjectList<Method> getMethods() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<Method>(system, method);
 	}
 
 }

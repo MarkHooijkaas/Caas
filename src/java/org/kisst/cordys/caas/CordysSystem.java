@@ -34,7 +34,8 @@ public class CordysSystem implements LdapObject {
 	public final String build;
 	public int displayFormat=0;
 	
-	private boolean cache=true; 
+	private boolean cache=true;
+	private LdapObjectList<Organization> cachedOrganizations; 
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
@@ -53,7 +54,10 @@ public class CordysSystem implements LdapObject {
 	public String getDn() { return dn;	}
 	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
-	public void clear() { ldapcache.clear(); }
+	public void clear() {
+		cachedOrganizations=null;
+		ldapcache.clear();
+	}
 
 	public boolean getCache() { return cache; }
 	public void setCache(boolean value) {
@@ -71,13 +75,14 @@ public class CordysSystem implements LdapObject {
 	public XmlNode soapCall(XmlNode method) { return caller.soapCall(method, debug); }
 
 
-	public LdapObjectList<Organization> getOrg() { 
-		return getOrganizations();
-	}
+	public LdapObjectList<Organization> getOrg() { 	return getOrganizations();	}
 	public LdapObjectList<Organization> getOrganizations() {
-		XmlNode method=new XmlNode("GetOrganizations", CordysLdapObject.xmlns_ldap);
-		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		if (cachedOrganizations==null || ! getCache()) {
+			XmlNode method=new XmlNode("GetOrganizations", CordysLdapObject.xmlns_ldap);
+			method.add("dn").setText(dn);
+			cachedOrganizations = new LdapObjectList<Organization>(this,method);
+		}
+		return cachedOrganizations;
 	}
 
 	public LdapObjectList<AuthenticatedUser> getAuthuser() {
@@ -87,7 +92,7 @@ public class CordysSystem implements LdapObject {
 		XmlNode method=new XmlNode("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("filter").setText("*");
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<AuthenticatedUser>(this,method);
 	}
 	
 	public LdapObjectList<Isvp> getIsvp() {
@@ -96,7 +101,7 @@ public class CordysSystem implements LdapObject {
 	public LdapObjectList<Isvp> getIsvps() {
 		XmlNode method=new XmlNode("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
 		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<Isvp>(this,method);
 	}
 
 	public LdapObjectList<SoapProcessor> getSp() { 
@@ -124,20 +129,6 @@ public class CordysSystem implements LdapObject {
 		return result;
 	}
 
-	// TODO: this function is the same as found in CordysObject, but is tricky to reuse
-	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> LdapObjectList<T> getObjectsFromEntries(XmlNode response) {
-		LdapObjectList<T> result=new LdapObjectList<T>();
-		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body").getChildren().get(0);
-		for (XmlNode tuple : response.getChildren("tuple")) {
-			XmlNode entry=tuple.getChild("old/entry");
-			LdapObject obj=getObject(entry);
-			result.add((T) obj);
-		}
-		return result;
-	}
-	
 	public Isvp loadIsvp(String filename) {
 		filename=filename.trim();
 		if (filename.endsWith(".isvp"))

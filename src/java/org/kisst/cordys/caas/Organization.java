@@ -22,18 +22,24 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Organization extends CordysLdapObject {
+	private LdapObjectList<SoapNode> cachedSoapNodes=null;
 
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
+	public void clear() {
+		super.clear();
+		cachedSoapNodes=null;
+	}
+	
 	public LdapObjectList<User> getUser() {
 		return getUsers(); 
 	}
 	public LdapObjectList<User> getUsers() {	
 		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
 		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<User>(system, method);
 	}
 
 
@@ -44,7 +50,7 @@ public class Organization extends CordysLdapObject {
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<MethodSet>(system, method);
 	}
 	
 	public LdapObjectList<Role> getRole() {
@@ -53,17 +59,18 @@ public class Organization extends CordysLdapObject {
 	public LdapObjectList<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
 		method.add("dn").setText(dn);
-		return getObjectsFromEntries(soapCall(method));
+		return new LdapObjectList<Role>(system, method);
 	}
 
-	public LdapObjectList<SoapNode> getSn() { 
-		return getSoapNodes(); 
-	}	
+	public LdapObjectList<SoapNode> getSn() { return getSoapNodes(); }	
 	public LdapObjectList<SoapNode> getSoapNodes() {	
-		XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
-		method.add("dn").setText(dn);
-		method.add("namespace").setText("*");
-		return getObjectsFromEntries(soapCall(method));
+		if (cachedSoapNodes==null || ! system.getCache()) {
+			XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
+			method.add("dn").setText(dn);
+			method.add("namespace").setText("*");
+			cachedSoapNodes=new LdapObjectList<SoapNode>(system, method);
+		}
+		return cachedSoapNodes;
 	}
 
 	public LdapObjectList<SoapProcessor> getSp() { 
