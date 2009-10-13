@@ -8,3 +8,5 @@ log4j-1.2.13.jar
 groovy-all-1.6.5.jar
 commons-cli-1.2.jar
 jline-0.9.94.jar
+cachedir
+jython.jar
