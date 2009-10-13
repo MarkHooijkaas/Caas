@@ -133,25 +133,33 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 	}
 
 	public void diff(LdapObjectList<T> other) {
+		diff(other,0);
+	}
+	public void diff(LdapObjectList<T> other, int depth) {
+		diff("", other, depth);
+	}
+	public void diff(String prefix, LdapObjectList<T> other, int depth) {
 		LdapObjectList<T> l1=this.sort();
 		LdapObjectList<T> l2=other.sort();
 		int pos1=0;
 		int pos2=0;
 		while (pos1<l1.getSize() || pos2<l2.getSize()) {
 			if (pos1>=l1.getSize())
-				System.out.println("> "+l2.get(pos2++));
+				System.out.println("> "+prefix+l2.get(pos2++));
 			else if (pos2>=l2.getSize())
-				System.out.println("< "+l1.get(pos1++));
+				System.out.println("< "+prefix+l1.get(pos1++));
 			else {
 				int comp=l1.get(pos1).getName().compareTo(l2.get(pos2).getName());
 				if (comp==0) {
+					if (depth>0)
+						l1.get(pos1).diff(l2.get(pos2), depth-1);
 					pos1++;
 					pos2++;
 				}
 				else if (comp<0)
-					System.out.println("< "+l1.get(pos1++));
+					System.out.println("< "+prefix+l1.get(pos1++));
 				else
-					System.out.println("> "+l2.get(pos2++));
+					System.out.println("> "+prefix+l2.get(pos2++));
 			}
 		}
 	}
@@ -162,5 +170,4 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 	public Object __getattr__(String name) { return get(name); }
 	public Object __getitem__(String key)  { return get(key); }
 	public Object __getitem__(int index)   { return get(index); }
-
 }

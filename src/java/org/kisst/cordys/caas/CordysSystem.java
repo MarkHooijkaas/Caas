@@ -148,4 +148,15 @@ public class CordysSystem implements LdapObject {
 		return null;
 	}
 	public int compareTo(LdapObject o) { return dn.compareTo(o.getDn()); }
+	
+	public void deepdiff(LdapObject other) { diff(other,100); }
+	public void diff(LdapObject other) { diff(other,0); }
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		CordysSystem otherSystem = (CordysSystem) other;
+		getOrganizations().diff(otherSystem.getOrganizations(), depth);
+		getIsvps().diff(otherSystem.getIsvps(),depth);
+	}
+
 }

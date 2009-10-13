@@ -110,4 +110,10 @@ public class SoapProcessor extends CordysLdapObject {
 			return true; // defautl is true
 		return e.getChildText("systempolicy").equals("true");
 	}
+	
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		// TODO: which attributes to compare
+	}
 }

@@ -27,13 +27,16 @@ public class MethodSet extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
-	public LdapObjectList<Method> getMethod() {
-		return getMethods(); 
-	}
+	public LdapObjectList<Method> getMethod() {	return getMethods(); }
 	public LdapObjectList<Method> getMethods() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return new LdapObjectList<Method>(system, method);
 	}
-
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		MethodSet otherMs=(MethodSet) other;
+		getMethods().diff(otherMs.getMethods(),depth);
+	}
 }

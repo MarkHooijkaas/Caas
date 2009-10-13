@@ -25,9 +25,7 @@ public class User extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public LdapObjectList<Role> getRole() {
-		return getRoles();
-	}
+	public LdapObjectList<Role> getRole() { return getRoles(); }
 	public LdapObjectList<Role> getRoles() {
 		return new LdapObjectList<Role>(system, getEntry(),"role");
 	}
@@ -38,5 +36,18 @@ public class User extends CordysLdapObject {
 	public AuthenticatedUser getAuthenticatedUser() {
 		String dn=getEntry().getChildText("authenticationuser/string");
 		return (AuthenticatedUser) getSystem().getObject(dn);
+	}
+
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		User otherUser = (User) other;
+		String auser1=getAuthenticatedUser().getName();
+		String auser2=otherUser.getAuthenticatedUser().getName();
+		if (! auser1.equals(auser2)) {
+			System.out.println("< "+this+".authenticatedUser="+auser1);
+			System.out.println("> "+this+".authenticatedUser="+auser2);
+		}
+		getRoles().diff(this+" has role: ",otherUser.getRoles(), depth);
 	}
 }

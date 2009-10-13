@@ -56,9 +56,7 @@ public class SoapNode extends CordysLdapObject {
 		return result;
 	}
 
-	public LdapObjectList<MethodSet> getMs() { 
-		return getMethodSets(); 
-	}
+	public LdapObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public LdapObjectList<MethodSet> getMethodSets() {
 		return new LdapObjectList<MethodSet>(system, getEntry(),"busmethodsets");
 	}
@@ -70,5 +68,14 @@ public class SoapNode extends CordysLdapObject {
 	public void removeMethodSet(MethodSet m) { 
 		removeLdapString("busmethodsets", m.dn);
 		clear();
+	}
+	
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		SoapNode otherSn = (SoapNode) other;
+		getSoapProcessors().diff(otherSn.getSoapProcessors(), depth);
+		getMethodSets().diff(otherSn.getMethodSets(), depth);
+		// TODO: diff namespaces
 	}
 }

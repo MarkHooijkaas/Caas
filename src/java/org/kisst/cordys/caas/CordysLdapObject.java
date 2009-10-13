@@ -22,7 +22,7 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public class CordysLdapObject implements LdapObject {
+public abstract class CordysLdapObject implements LdapObject {
 	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
 	protected final CordysSystem system;
 	private final LdapObject parent; 
@@ -121,4 +121,9 @@ public class CordysLdapObject implements LdapObject {
 		soapCall(method);
 		setEntry(newEntry);
 	}
+	
+	public void deepdiff(LdapObject other) { diff(other,100); }
+	public void diff(LdapObject other) { diff(other,0); }
+	public abstract void diff(LdapObject other, int depth);
+
 }

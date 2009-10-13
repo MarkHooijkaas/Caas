@@ -23,5 +23,5 @@ public class Role extends CordysLdapObject {
 	protected Role(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-
+	public void diff(LdapObject other, int depth) {}
 }

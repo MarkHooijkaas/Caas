@@ -71,4 +71,11 @@ public class Isvp extends CordysLdapObject {
 		else
 			return result;
 	}
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		Isvp otherIsvp=(Isvp) other;
+		getMethodSets().diff(otherIsvp.getMethodSets(), depth);
+		getRoles().diff(otherIsvp.getRoles(),depth);
+	}
 }

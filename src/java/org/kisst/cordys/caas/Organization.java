@@ -33,9 +33,7 @@ public class Organization extends CordysLdapObject {
 		cachedSoapNodes=null;
 	}
 	
-	public LdapObjectList<User> getUser() {
-		return getUsers(); 
-	}
+	public LdapObjectList<User> getUser() { return getUsers(); }
 	public LdapObjectList<User> getUsers() {	
 		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
 		method.add("dn").setText(dn);
@@ -43,9 +41,7 @@ public class Organization extends CordysLdapObject {
 	}
 
 
-	public LdapObjectList<MethodSet> getMs() { 
-		return getMethodSets();
-	}
+	public LdapObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public LdapObjectList<MethodSet> getMethodSets() {	
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
@@ -53,9 +49,7 @@ public class Organization extends CordysLdapObject {
 		return new LdapObjectList<MethodSet>(system, method);
 	}
 	
-	public LdapObjectList<Role> getRole() {
-		return getRoles();
-	}
+	public LdapObjectList<Role> getRole() { return getRoles(); }
 	public LdapObjectList<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
 		method.add("dn").setText(dn);
@@ -86,4 +80,14 @@ public class Organization extends CordysLdapObject {
 		}
 		return result;
 	}
+	
+	public void diff(LdapObject other, int depth) {
+		if (this==other)
+			return;
+		Organization otherOrg = (Organization) other;
+		getSoapNodes().diff(otherOrg.getSoapNodes(),depth);
+		getUsers().diff(otherOrg.getUsers(), depth);
+		getRoles().diff(otherOrg.getRoles(), depth);
+	}
+
 }

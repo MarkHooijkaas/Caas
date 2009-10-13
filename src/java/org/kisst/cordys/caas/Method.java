@@ -24,5 +24,5 @@ public class Method extends CordysLdapObject {
 	protected Method(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-
+	public void diff(LdapObject other, int depth) {}
 }
