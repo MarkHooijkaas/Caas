@@ -27,51 +27,51 @@ public class Organization extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public LdapObjectListHack<User> getUser() {
-		return new LdapObjectListHack<User>(getUsers()); 
+	public LdapObjectList<User> getUser() {
+		return getUsers(); 
 	}
-	public LdapObjectListReal<User> getUsers() {	
+	public LdapObjectList<User> getUsers() {	
 		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
 
-	public LdapObjectListHack<MethodSet> getMs() { 
-		return new LdapObjectListHack<MethodSet>(getMethodSets());
+	public LdapObjectList<MethodSet> getMs() { 
+		return getMethodSets();
 	}
-	public LdapObjectListReal<MethodSet> getMethodSets() {	
+	public LdapObjectList<MethodSet> getMethodSets() {	
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
-	public LdapObjectListHack<Role> getRole() {
-		return new LdapObjectListHack<Role>(getRoles());
+	public LdapObjectList<Role> getRole() {
+		return getRoles();
 	}
-	public LdapObjectListReal<Role> getRoles() {	
+	public LdapObjectList<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public LdapObjectListHack<SoapNode> getSn() { 
-		return new LdapObjectListHack<SoapNode>(getSoapNodes()); 
+	public LdapObjectList<SoapNode> getSn() { 
+		return getSoapNodes(); 
 	}	
-	public LdapObjectListReal<SoapNode> getSoapNodes() {	
+	public LdapObjectList<SoapNode> getSoapNodes() {	
 		XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("namespace").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public LdapObjectListHack<SoapProcessor> getSp() { 
-		return new LdapObjectListHack<SoapProcessor>(getSoapProcessors());
+	public LdapObjectList<SoapProcessor> getSp() { 
+		return getSoapProcessors();
 	}
 
-	public LdapObjectListReal<SoapProcessor> getSoapProcessors() {
-		LdapObjectListReal<SoapProcessor> result= new LdapObjectListReal<SoapProcessor>();
+	public LdapObjectList<SoapProcessor> getSoapProcessors() {
+		LdapObjectList<SoapProcessor> result= new LdapObjectList<SoapProcessor>();
 		for (Object sn : getSoapNodes()) {
 			for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
 				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations

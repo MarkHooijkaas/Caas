@@ -33,8 +33,8 @@ public class CordysObject {
 	public XmlNode soapCall(XmlNode method) { return getSystem().soapCall(method); }
 
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> LdapObjectListReal<T> getObjectsFromEntries(XmlNode response) {
-		LdapObjectListReal<T> result=new LdapObjectListReal<T>();
+	protected <T extends LdapObject> LdapObjectList<T> getObjectsFromEntries(XmlNode response) {
+		LdapObjectList<T> result=new LdapObjectList<T>();
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {
@@ -46,8 +46,8 @@ public class CordysObject {
 		return result;
 	}
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> LdapObjectListReal<T> getObjectsFromStrings(XmlNode start, String group) {
-		LdapObjectListReal<T> result=new LdapObjectListReal<T>();
+	protected <T extends LdapObject> LdapObjectList<T> getObjectsFromStrings(XmlNode start, String group) {
+		LdapObjectList<T> result=new LdapObjectList<T>();
 		start=start.getChild(group);
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();

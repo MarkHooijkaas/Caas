@@ -27,10 +27,10 @@ public class MethodSet extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
-	public LdapObjectListHack<Method> getMethod() {
-		return new LdapObjectListHack<Method>(getMethods()); 
+	public LdapObjectList<Method> getMethod() {
+		return getMethods(); 
 	}
-	public LdapObjectListReal<Method> getMethods() {
+	public LdapObjectList<Method> getMethods() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));

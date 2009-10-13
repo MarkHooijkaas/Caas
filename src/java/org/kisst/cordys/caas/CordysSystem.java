@@ -71,40 +71,48 @@ public class CordysSystem implements LdapObject {
 	public XmlNode soapCall(XmlNode method) { return caller.soapCall(method, debug); }
 
 
-	public LdapObjectListHack<Organization> getOrg() { 
-		return new LdapObjectListHack<Organization>(getOrganizations());
+	public LdapObjectList<Organization> getOrg() { 
+		return getOrganizations();
 	}
-	public LdapObjectListReal<Organization> getOrganizations() {
+	public LdapObjectList<Organization> getOrganizations() {
 		XmlNode method=new XmlNode("GetOrganizations", CordysLdapObject.xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public LdapObjectListHack<AuthenticatedUser> getAuthuser() {
-		return new LdapObjectListHack<AuthenticatedUser>(getAuthenticatedUsers());
+	public LdapObjectList<AuthenticatedUser> getAuthuser() {
+		return getAuthenticatedUsers();
 	}
-	public LdapObjectListReal<AuthenticatedUser> getAuthenticatedUsers() {
+	public LdapObjectList<AuthenticatedUser> getAuthenticatedUsers() {
 		XmlNode method=new XmlNode("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("filter").setText("*");
 		return getObjectsFromEntries(soapCall(method));
 	}
 	
-	public LdapObjectListHack<Isvp> getIsvp() {
-		return new LdapObjectListHack<Isvp>(getIsvps());
+	public LdapObjectList<Isvp> getIsvp() {
+		return getIsvps();
 	}
-	public LdapObjectListReal<Isvp> getIsvps() {
+	public LdapObjectList<Isvp> getIsvps() {
 		XmlNode method=new XmlNode("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
 	}
 
-	public LdapObjectListHack<SoapProcessor> getSp() { 
-		return new LdapObjectListHack<SoapProcessor>(getSoapProcessors()); 
+	public LdapObjectList<SoapProcessor> getSp() { 
+		return getSoapProcessors(); 
 	}
-	public LdapObjectListReal<SoapProcessor> getSoapProcessors() {
+	public LdapObjectList<SoapProcessor> getSoapProcessors() {
+		LdapObjectList<SoapProcessor> result=new LdapObjectList<SoapProcessor>();
+		for (Organization o: getOrganizations()) {
+			for (SoapProcessor sp: o.getSoapProcessors())
+				result.add(sp);
+		}
+		return result;
+	}
+	public LdapObjectList<SoapProcessor> refreshSoapProcessors() {
 		XmlNode method=new XmlNode("List", xmlns_monitor);
-		LdapObjectListReal<SoapProcessor> result=new LdapObjectListReal<SoapProcessor>();
+		LdapObjectList<SoapProcessor> result=new LdapObjectList<SoapProcessor>();
 		XmlNode response=soapCall(method);
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
@@ -118,8 +126,8 @@ public class CordysSystem implements LdapObject {
 
 	// TODO: this function is the same as found in CordysObject, but is tricky to reuse
 	@SuppressWarnings("unchecked")
-	protected <T extends LdapObject> LdapObjectListReal<T> getObjectsFromEntries(XmlNode response) {
-		LdapObjectListReal<T> result=new LdapObjectListReal<T>();
+	protected <T extends LdapObject> LdapObjectList<T> getObjectsFromEntries(XmlNode response) {
+		LdapObjectList<T> result=new LdapObjectList<T>();
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {

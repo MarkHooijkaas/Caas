@@ -38,6 +38,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public void setWorkerprocess(XmlNode workerprocess) {
 		this.workerprocess=workerprocess;
 	}
+	private static XmlNode inactiveWorkerProcess=new XmlNode("<dummy><status></status></dummy>");
 	public XmlNode getWorkerprocess() {
 		if (workerprocess!=null && getSystem().getCache())
 			return this.workerprocess;
@@ -51,7 +52,9 @@ public class SoapProcessor extends CordysLdapObject {
 				return workerprocess;
 			}
 		}
-		throw new RuntimeException("Could not find processor details for"+this.dn);
+		this.workerprocess= inactiveWorkerProcess;
+		return workerprocess;
+		//throw new RuntimeException("Could not find processor details for "+this.dn);
 	}
 
 	

@@ -10,6 +10,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 public class XmlNode {
@@ -20,7 +21,7 @@ public class XmlNode {
 		this.element=new Element(name, Namespace.getNamespace(namespace));
 	}
 	public XmlNode(String xml) {
-		if (! xml.trim().startsWith("<")) {
+		if (xml.indexOf("<")<0) {
 			//xml is just an element name
 			this.element=new Element(xml);
 			return;
@@ -107,5 +108,11 @@ public class XmlNode {
 	public void setText(String text) { element.setText(text); }
 	public void add(XmlNode node) { element.addContent(node.element); }
 	public void remove(XmlNode e) { element.getChildren().remove(e.element); }
+	public String getIndented() {
+		XMLOutputter out=new XMLOutputter();
+		out.setFormat(Format.getPrettyFormat());
+		String xml= out.outputString(element);
+		return xml;
+	}
 }
 

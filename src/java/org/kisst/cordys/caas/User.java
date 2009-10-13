@@ -25,10 +25,10 @@ public class User extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public LdapObjectListHack<Role> getRole() {
-		return new LdapObjectListHack<Role>(getRoles());
+	public LdapObjectList<Role> getRole() {
+		return getRoles();
 	}
-	public LdapObjectListReal<Role> getRoles() {
+	public LdapObjectList<Role> getRoles() {
 		return getObjectsFromStrings(getEntry(),"role");
 	}
 	

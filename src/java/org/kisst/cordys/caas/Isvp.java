@@ -28,10 +28,10 @@ public class Isvp extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public LdapObjectListHack<MethodSet> getMs() { 
-		return new LdapObjectListHack<MethodSet>(getMethodSets()); 
+	public LdapObjectList<MethodSet> getMs() { 
+		return getMethodSets(); 
 	}
-	public LdapObjectListReal<MethodSet> getMethodSets() {	
+	public LdapObjectList<MethodSet> getMethodSets() {	
 		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
 		method.add("dn").setText(dn);
 		method.add("labeleduri").setText("*");
@@ -39,10 +39,10 @@ public class Isvp extends CordysLdapObject {
 	}
 	
 	
-	public LdapObjectListHack<Role> getRole() {
-		return new LdapObjectListHack<Role>(getRoles());
+	public LdapObjectList<Role> getRole() {
+		return getRoles();
 	}
-	public LdapObjectListReal<Role> getRoles() {	
+	public LdapObjectList<Role> getRoles() {	
 		XmlNode method=new XmlNode("GetRolesForSoftwarePackage", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));

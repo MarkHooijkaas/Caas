@@ -31,10 +31,10 @@ public class SoapNode extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
-	public LdapObjectListHack<SoapProcessor> getSp() { 
-		return new LdapObjectListHack<SoapProcessor>(getSoapProcessors());
+	public LdapObjectList<SoapProcessor> getSp() { 
+		return getSoapProcessors();
 	}
-	public LdapObjectListReal<SoapProcessor> getSoapProcessors() {
+	public LdapObjectList<SoapProcessor> getSoapProcessors() {
 		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(dn);
 		return getObjectsFromEntries(soapCall(method));
@@ -48,10 +48,10 @@ public class SoapNode extends CordysLdapObject {
 		return result;
 	}
 
-	public LdapObjectListHack<MethodSet> getMs() { 
-		return new LdapObjectListHack<MethodSet>(getMethodSets()); 
+	public LdapObjectList<MethodSet> getMs() { 
+		return getMethodSets(); 
 	}
-	public LdapObjectListReal<MethodSet> getMethodSets() {
+	public LdapObjectList<MethodSet> getMethodSets() {
 		return getObjectsFromStrings(getEntry(),"busmethodsets");
 	}
 	
