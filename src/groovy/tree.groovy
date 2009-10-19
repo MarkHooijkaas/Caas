@@ -1,4 +1,4 @@
-
+println "loading tree"
 tree = { sys -> 
 for (i in sys.isvps) {
   println "" + i +" ==> " + i.dn
