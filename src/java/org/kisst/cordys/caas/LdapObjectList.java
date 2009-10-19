@@ -73,8 +73,10 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 	
 	public boolean add(T obj) {
 		list.add(obj);
-		dnIndex.put(obj.getDn(), obj);
-		nameIndex.put(obj.getName(), obj);
+		if (obj!=null) {
+			dnIndex.put(obj.getDn(), obj);
+			nameIndex.put(obj.getName(), obj);
+		}
 		return true;
 	}
 	public Iterator<T> iterator() { return list.iterator(); }
@@ -110,7 +112,7 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 				result.append(middle);
 			else
 				first=false;
-			result.append(o.toString());
+			result.append(o);
 		}
 		result.append(end);
 		return result.toString();

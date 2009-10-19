@@ -94,6 +94,8 @@ public class LdapCache {
 	}
 	
 	private LdapObject createObject(XmlNode entry) {
+		if (entry==null)
+			return null;
 		String newdn=entry.getAttribute("dn");
 		LdapObject parent = getParent(entry);
 		Class resultClass = determineClass(entry);
