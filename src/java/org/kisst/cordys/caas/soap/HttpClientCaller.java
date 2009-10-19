@@ -35,7 +35,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public class HttpClientCaller implements SoapCaller {
 	private final HttpClient client = new HttpClient();
-	private final String url;
+	private final String baseurl;
 	private final String username;
 	private final String password;
 	private final String ntlmhost;
@@ -59,7 +59,12 @@ public class HttpClientCaller implements SoapCaller {
 			catch (java.io.IOException e) { throw new RuntimeException(e);  }
 		}
 
-		url =(String) props.get("cordys.gateway.url");
+		String url =(String) props.get("cordys.gateway.url");
+		int pos=url.indexOf("?");
+		if (pos>0)
+			baseurl=url.substring(0,pos);
+		else
+			baseurl=url;
 		username=(String) props.get("cordys.gateway.username");
 		password=(String) props.get("cordys.gateway.password");
 		ntlmhost=(String) props.get("cordys.gateway.ntlmhost");
@@ -71,7 +76,17 @@ public class HttpClientCaller implements SoapCaller {
 
 	}
 
-	public String httpCall(String input) {
+	public String httpCall(String input, String org, String processor) {
+		String url=baseurl;
+		if (org!=null)
+			url += "?org="+org;
+		if (processor!=null) {
+			if (org==null)
+				url += "?processor="+processor;
+			else
+				url += "&processor="+processor;
+		}
+			
 		PostMethod method=new PostMethod(url);
 		method.setDoAuthentication(true);
 		int statusCode;
@@ -89,23 +104,27 @@ public class HttpClientCaller implements SoapCaller {
 		return response;
 	}
 
-	public String soapCall(String input, boolean debug) {
+	public String call(String input, boolean debug) {
+		return call(input,debug, null, null); // TODO: use other parameters
+	}
+
+	public String call(String input, boolean debug, String org, String processor) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
 		if (debug)
 			System.out.println(soap);
-		String response = httpCall(soap);
+		String response = httpCall(soap, org, processor);
 		if (debug || response.indexOf("SOAP:Fault")>0)
 			System.out.println(response);
 		return response;
 	}
 
-	public XmlNode soapCall(XmlNode method, boolean debug) {
+	public XmlNode call(XmlNode method, boolean debug) {
 		if (debug)
 			System.out.println(method.getIndented());
 		String xml = method.toString();
-		String response= soapCall(xml, false);
+		String response= call(xml, false);
 		XmlNode output=new XmlNode(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body").getChildren().get(0);

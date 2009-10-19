@@ -50,7 +50,7 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 	@SuppressWarnings("unchecked")
 	public LdapObjectList(CordysSystem system, XmlNode method) {
 		this();
-		XmlNode response=system.soapCall(method);
+		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {

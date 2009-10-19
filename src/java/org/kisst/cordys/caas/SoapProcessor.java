@@ -34,6 +34,8 @@ public class SoapProcessor extends CordysLdapObject {
 		super.clear();
 		this.workerprocess=null;
 	}
+
+	public String call(String input) { return getSystem().call(input, null, dn); }
 	
 	public void setWorkerprocess(XmlNode workerprocess) {
 		this.workerprocess=workerprocess;
@@ -43,7 +45,7 @@ public class SoapProcessor extends CordysLdapObject {
 		if (workerprocess!=null && getSystem().getCache())
 			return this.workerprocess;
 		XmlNode method=new XmlNode("List", CordysSystem.xmlns_monitor);
-		XmlNode response=soapCall(method);
+		XmlNode response=call(method);
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
 			String dn=workerprocess.getChildText("name");
@@ -81,17 +83,17 @@ public class SoapProcessor extends CordysLdapObject {
 	public void start() {
 		XmlNode method=new XmlNode ("Start", nsmonitor);
 		method.add("dn").setText(dn);
-		soapCall(method);
+		call(method);
 	}
 	public void stop() {
 		XmlNode method=new XmlNode ("Stop", nsmonitor);
 		method.add("dn").setText(dn);
-		soapCall(method);
+		call(method);
 	}
 	public void restart() {
 		XmlNode method=new XmlNode ("Restart", nsmonitor);
 		method.add("dn").setText(dn);
-		soapCall(method);
+		call(method);
 	}
 	public String getComputer() {
 		return getEntry().getChildText("computer/string");

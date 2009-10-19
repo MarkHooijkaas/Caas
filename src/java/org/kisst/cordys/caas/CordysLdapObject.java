@@ -43,7 +43,7 @@ public abstract class CordysLdapObject implements LdapObject {
 	public void clear() { entry=null; }
 	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
-	public XmlNode soapCall(XmlNode method) { return getSystem().soapCall(method); }
+	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
 	public String getDn() { return dn; }
 	public String getName() {
@@ -94,7 +94,7 @@ public abstract class CordysLdapObject implements LdapObject {
 			return entry;
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(dn);
-		XmlNode response = soapCall(method);
+		XmlNode response = call(method);
 		setEntry(response.getChild("tuple/old/entry"));
 		return entry;
 	}
@@ -118,7 +118,7 @@ public abstract class CordysLdapObject implements LdapObject {
 		XmlNode tuple=method.add("tuple");
 		tuple.add("old").add(entry.clone());
 		tuple.add("new").add(newEntry);
-		soapCall(method);
+		call(method);
 		setEntry(newEntry);
 	}
 	

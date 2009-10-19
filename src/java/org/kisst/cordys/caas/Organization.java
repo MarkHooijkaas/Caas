@@ -32,6 +32,7 @@ public class Organization extends CordysLdapObject {
 		super.clear();
 		cachedSoapNodes=null;
 	}
+	public String call(String input) { return getSystem().call(input, dn, null); }
 	
 	public LdapObjectList<User> getUser() { return getUsers(); }
 	public LdapObjectList<User> getUsers() {	
