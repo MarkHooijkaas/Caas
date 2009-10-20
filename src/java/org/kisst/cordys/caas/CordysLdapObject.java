@@ -36,7 +36,23 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		private final String path;
 		protected StringProperty(String path) {this.path=path;}
 		public String get() { return getEntry().getChildText(path); }
-		public String toString() { return "\""+get()+"\""; }
+		public String toString() {
+			String s=get();
+			if (s==null)
+				return "null";
+			else
+				return "\""+s+"\""; 
+		}
+	}
+	protected class XmlProperty extends AbstractProperty {
+		private final String path;
+		protected XmlProperty(String path) {this.path=path;}
+		public XmlNode get() { 
+			String s=getEntry().getChildText(path);
+			if (s==null || s.length()==0)
+				return null;
+			return new XmlNode(s);
+		}
 	}
 	protected class BooleanProperty extends AbstractProperty {
 		private final String path;

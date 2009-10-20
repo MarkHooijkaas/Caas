@@ -19,10 +19,14 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-
 public class MethodSet extends CordysLdapObject {
 	public final ChildList<Method> methods= new ChildList<Method>(this, Method.class);
 	public final ChildList<Method> method = methods;
+	
+	public final StringList namespaces= new StringList("labeleduri"); 
+	public final StringList ns = namespaces;
+
+	public final StringProperty implementationclass=new StringProperty("implementationclass/string");
 	
 	protected MethodSet(LdapObject parent, String dn) {
 		super(parent, dn);
