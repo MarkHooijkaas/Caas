@@ -27,6 +27,9 @@ public class ChildList<T extends LdapObject> extends LdapObjectList<T>  {
 	private final String prefix;
 	private final Class<? extends LdapObject> clz;
 
+	protected ChildList(LdapObject parent, Class<? extends LdapObject> clz) {
+		this(parent,"",clz);
+	}
 	protected ChildList(LdapObject parent, String prefix, Class<? extends LdapObject> clz) {
 		super(parent.getSystem());
 		this.parent=parent;

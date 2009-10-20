@@ -21,7 +21,7 @@ package org.kisst.cordys.caas;
 
 
 public class MethodSet extends CordysLdapObject {
-	public final ChildList<Method> methods= new ChildList<Method>(this, "", Method.class);
+	public final ChildList<Method> methods= new ChildList<Method>(this, Method.class);
 	public final ChildList<Method> method = methods;
 	
 	protected MethodSet(LdapObject parent, String dn) {

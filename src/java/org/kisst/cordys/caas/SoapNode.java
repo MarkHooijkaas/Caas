@@ -26,7 +26,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
-	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, "", SoapProcessor.class);
+	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
 
 	protected SoapNode(LdapObject parent, String dn) {

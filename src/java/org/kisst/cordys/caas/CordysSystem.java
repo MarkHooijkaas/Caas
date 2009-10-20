@@ -34,10 +34,10 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public final String build;
 	public int displayFormat=0;
 	
-	public final ChildList<Organization> organizations= new ChildList<Organization>(this, "", Organization.class);
+	public final ChildList<Organization> organizations= new ChildList<Organization>(this, Organization.class);
 	public final ChildList<Organization> org = organizations;
 
-	public final ChildList<Isvp> isvps= new ChildList<Isvp>(this, "", Isvp.class);
+	public final ChildList<Isvp> isvps= new ChildList<Isvp>(this, Isvp.class);
 	public final ChildList<Isvp> isvp = isvps;
 
 	public final ChildList<AuthenticatedUser> authenticatedUsers= new ChildList<AuthenticatedUser>(this, "cn=authenticated users,", AuthenticatedUser.class);
