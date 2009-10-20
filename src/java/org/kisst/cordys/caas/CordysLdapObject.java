@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -47,6 +50,21 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 			return (T) getSystem().getObject(dn);
 		}
 	}
+	protected class StringList extends AbstractProperty {
+		// TODO: cache this?
+		private final String path;
+		protected StringList(String path) {this.path=path;}
+		public List<String> get() { 
+			ArrayList<String> result=new ArrayList<String>();
+			XmlNode ms=getEntry().getChild(path);
+			for (XmlNode child: ms.getChildren("string")) 
+				result.add(child.getText());
+			return result;
+		}
+		public String toString() { return get().toString(); }
+	}
+
+	public final StringProperty description = new StringProperty("description/string");
 
 	protected final CordysSystem system;
 	private final LdapObject parent; 

@@ -19,32 +19,22 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
 	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
 
+	public final EntryObjectList<MethodSet> methodSets = new EntryObjectList<MethodSet>(this, "busmethodsets");
+	public final EntryObjectList<MethodSet> ms = methodSets;
+	
+	public final StringList namespaces= new StringList("labeleduri"); 
+	public final StringList ns = namespaces;
+	
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public List<String> getNamespaces() {
-		ArrayList<String> result=new ArrayList<String>();
-		XmlNode ms=getEntry().getChild("labeleduri");
-		for (XmlNode child: ms.getChildren("string")) 
-			result.add(child.getText());
-		return result;
-	}
-
-	public CordysObjectList<MethodSet> getMs() { return getMethodSets(); }
-	public CordysObjectList<MethodSet> getMethodSets() {
-		return new EntryObjectList<MethodSet>(this, "busmethodsets");
-	}
 	
 	public void addMethodSet(MethodSet m) { 
 		addLdapString("busmethodsets", m.dn); 
@@ -60,7 +50,7 @@ public class SoapNode extends CordysLdapObject {
 			return;
 		SoapNode otherSn = (SoapNode) other;
 		soapProcessors.diff(otherSn.soapProcessors, depth);
-		getMethodSets().diff(otherSn.getMethodSets(), depth);
+		methodSets.diff(otherSn.methodSets, depth);
 		// TODO: diff namespaces
 	}
 }

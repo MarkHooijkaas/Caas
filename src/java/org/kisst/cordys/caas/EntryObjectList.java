@@ -39,13 +39,15 @@ public class EntryObjectList<T extends CordysObject> extends CordysObjectList<T>
 	
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
-		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
+		XmlNode method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(parent.getDn());
 		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 
-		XmlNode start=response.getChild(group);
+		//System.out.println(response.getIndented());
+		XmlNode start=response.getChild("tuple/old/entry/"+group);
+		//System.out.println(start.getIndented());
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();
 			LdapObject obj=system.getObject(dn);
