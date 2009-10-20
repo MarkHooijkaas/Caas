@@ -9,7 +9,8 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public final static String xmlns_monitor= "http://schemas.cordys.com/1.0/monitor";
 	public final static String xmlns_ldap   = "http://schemas.cordys.com/1.0/ldap";
 	public final static String xmlns_isv    = "http://schemas.cordys.com/1.0/isvpackage";
-
+	public final static String xmlns_xmlstore="http://schemas.cordys.com/1.0/xmlstore";
+	
 	abstract public CordysSystem getSystem();
 	abstract public void clearCache();
 	public String getName() { return null; } 

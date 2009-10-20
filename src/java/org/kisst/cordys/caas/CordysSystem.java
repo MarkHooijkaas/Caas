@@ -127,4 +127,14 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		organizations.diff(otherSystem.organizations, depth);
 		isvps.diff(otherSystem.isvps,depth);
 	}
+	public XmlNode getXml(String key) { return getXml(key, "isv", null); }
+	public XmlNode getXml(String key, String version, String organization) {
+		XmlNode method=new XmlNode("GetXMLObject", xmlns_xmlstore);
+		XmlNode keynode=method.add("key");
+		keynode.setText(key);
+		if (version !=null)
+			keynode.setAttribute("version", version);
+		XmlNode response = caller.call(method, debug, organization, null);
+		return response.getChild("tuple/old");
+	}
 }

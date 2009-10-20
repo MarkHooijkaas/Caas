@@ -79,14 +79,14 @@ public class HttpClientCaller implements SoapCaller {
 	public String httpCall(String input, String org, String processor) {
 		String url=baseurl;
 		if (org!=null)
-			url += "?org="+org;
+			url += "?organization="+org;
 		if (processor!=null) {
 			if (org==null)
 				url += "?processor="+processor;
 			else
 				url += "&processor="+processor;
 		}
-			
+		//System.out.println(url);	
 		PostMethod method=new PostMethod(url);
 		method.setDoAuthentication(true);
 		int statusCode;
@@ -121,10 +121,13 @@ public class HttpClientCaller implements SoapCaller {
 	}
 
 	public XmlNode call(XmlNode method, boolean debug) {
+		return call(method, debug, null, null);
+	}
+	public XmlNode call(XmlNode method, boolean debug, String org, String processor) {
 		if (debug)
 			System.out.println(method.getIndented());
 		String xml = method.toString();
-		String response= call(xml, false);
+		String response= call(xml, false, org, processor);
 		XmlNode output=new XmlNode(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body").getChildren().get(0);

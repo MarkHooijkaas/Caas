@@ -19,6 +19,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import org.kisst.cordys.caas.util.XmlNode;
+
 
 
 public class Organization extends CordysLdapObject {
@@ -62,4 +64,7 @@ public class Organization extends CordysLdapObject {
 		users.diff(otherOrg.users, depth);
 		roles.diff(otherOrg.roles, depth);
 	}
+	
+	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, dn); }
+	public XmlNode getXml(String key) { return getSystem().getXml(key, "organization", dn); }
 }

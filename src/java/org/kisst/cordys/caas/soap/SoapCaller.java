@@ -24,5 +24,6 @@ import org.kisst.cordys.caas.util.XmlNode;
 public interface SoapCaller {
 	public String call(String input, boolean debug, String org, String processor);
 	public String call(String input, boolean debug);
+	public XmlNode call(XmlNode method, boolean debug, String org, String processor);
 	public XmlNode call(XmlNode method, boolean debug); 
 }

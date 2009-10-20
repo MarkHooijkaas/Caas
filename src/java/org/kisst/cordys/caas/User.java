@@ -19,6 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+
 public class User extends CordysLdapObject {
 	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser/string");
 	
@@ -52,4 +53,8 @@ public class User extends CordysLdapObject {
 		}
 		getRoles().diff(this+" has role: ",otherUser.getRoles(), depth);
 	}
+
+	// It is not yet possible to impersonate another user
+	//public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getParent().getDn()); }
+	//public XmlNode getXml(String key) { return getSystem().getXml(key, "user", getParent().getDn()); }
 }
