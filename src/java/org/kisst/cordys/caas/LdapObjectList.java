@@ -47,8 +47,11 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 		list=new ArrayList<T>(l);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public LdapObjectList(CordysSystem system, XmlNode method) {
+		this(system, method, (Class<? extends LdapObject>)null);
+	}
+	@SuppressWarnings("unchecked")
+	public LdapObjectList(CordysSystem system, XmlNode method, Class<? extends LdapObject> clz) {
 		this();
 		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))
@@ -56,7 +59,8 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 		for (XmlNode tuple : response.getChildren("tuple")) {
 			XmlNode elm=tuple.getChild("old/entry");
 			LdapObject obj=system.getObject(elm);
-			this.add((T) obj);
+			if (clz==null || obj.getClass()==clz)
+				this.add((T) obj);
 			//System.out.println(dn);
 		}
 	}

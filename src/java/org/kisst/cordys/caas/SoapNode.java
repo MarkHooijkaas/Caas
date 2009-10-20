@@ -26,7 +26,8 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
-	private LdapObjectList<SoapProcessor> cachedSoapProcessors=null;
+	public final LdapObjectListProperty<SoapProcessor> soapProcessors= new LdapObjectListProperty<SoapProcessor>("", SoapProcessor.class);
+	public final LdapObjectListProperty<SoapProcessor> sn = soapProcessors;
 
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
@@ -34,18 +35,6 @@ public class SoapNode extends CordysLdapObject {
 
 	public void clear() {
 		super.clear();
-		cachedSoapProcessors=null;
-	}
-	
-	
-	public LdapObjectList<SoapProcessor> getSp() {	return getSoapProcessors();	}
-	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		if (cachedSoapProcessors==null || ! system.getCache()) {
-			XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
-			method.add("dn").setText(dn);
-			cachedSoapProcessors = new LdapObjectList<SoapProcessor>(system, method);
-		}
-		return cachedSoapProcessors;
 	}
 	
 	public List<String> getNamespaces() {
@@ -74,7 +63,7 @@ public class SoapNode extends CordysLdapObject {
 		if (this==other)
 			return;
 		SoapNode otherSn = (SoapNode) other;
-		getSoapProcessors().diff(otherSn.getSoapProcessors(), depth);
+		soapProcessors.diff(otherSn.soapProcessors, depth);
 		getMethodSets().diff(otherSn.getMethodSets(), depth);
 		// TODO: diff namespaces
 	}

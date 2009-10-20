@@ -19,63 +19,31 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.util.XmlNode;
 
 public class Organization extends CordysLdapObject {
-	private LdapObjectList<SoapNode> cachedSoapNodes=null;
+	public final LdapObjectListProperty<User> users= new LdapObjectListProperty<User>("cn=organizational users,", User.class);
+	public final LdapObjectListProperty<User> user = users;
 
+	public final LdapObjectListProperty<Role> roles= new LdapObjectListProperty<Role>("cn=organizational roles,", Role.class);
+	public final LdapObjectListProperty<Role> role= roles;
+
+	public final LdapObjectListProperty<MethodSet> methodSets= new LdapObjectListProperty<MethodSet>("cn=method sets,", MethodSet.class);
+	public final LdapObjectListProperty<MethodSet> ms = methodSets;
+
+	public final LdapObjectListProperty<SoapNode> soapNodes= new LdapObjectListProperty<SoapNode>("cn=soap nodes,", SoapNode.class);
+	public final LdapObjectListProperty<SoapNode> sn = soapNodes;
+	
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public void clear() {
-		super.clear();
-		cachedSoapNodes=null;
-	}
 	public String call(String input) { return getSystem().call(input, dn, null); }
-	
-	public LdapObjectList<User> getUser() { return getUsers(); }
-	public LdapObjectList<User> getUsers() {	
-		XmlNode method=new XmlNode("GetOrganizationalUsers", xmlns_ldap);
-		method.add("dn").setText(dn);
-		return new LdapObjectList<User>(system, method);
-	}
 
-
-	public LdapObjectList<MethodSet> getMs() { return getMethodSets(); }
-	public LdapObjectList<MethodSet> getMethodSets() {	
-		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
-		method.add("dn").setText(dn);
-		method.add("labeleduri").setText("*");
-		return new LdapObjectList<MethodSet>(system, method);
-	}
-	
-	public LdapObjectList<Role> getRole() { return getRoles(); }
-	public LdapObjectList<Role> getRoles() {	
-		XmlNode method=new XmlNode("GetRolesForOrganization", xmlns_ldap);
-		method.add("dn").setText(dn);
-		return new LdapObjectList<Role>(system, method);
-	}
-
-	public LdapObjectList<SoapNode> getSn() { return getSoapNodes(); }	
-	public LdapObjectList<SoapNode> getSoapNodes() {	
-		if (cachedSoapNodes==null || ! system.getCache()) {
-			XmlNode method=new XmlNode("GetSoapNodes", xmlns_ldap);
-			method.add("dn").setText(dn);
-			method.add("namespace").setText("*");
-			cachedSoapNodes=new LdapObjectList<SoapNode>(system, method);
-		}
-		return cachedSoapNodes;
-	}
-
-	public LdapObjectList<SoapProcessor> getSp() { 
-		return getSoapProcessors();
-	}
-
+	public LdapObjectList<SoapProcessor> getSp() { 	return getSoapProcessors();	}
 	public LdapObjectList<SoapProcessor> getSoapProcessors() {
 		LdapObjectList<SoapProcessor> result= new LdapObjectList<SoapProcessor>();
-		for (Object sn : getSoapNodes()) {
-			for (Object sp : ((SoapNode) sn).getSoapProcessors()) {
+		for (Object sn : soapNodes.get()) {
+			for (Object sp : ((SoapNode) sn).soapProcessors.get()) {
 				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
 			}
 		}
@@ -86,9 +54,9 @@ public class Organization extends CordysLdapObject {
 		if (this==other)
 			return;
 		Organization otherOrg = (Organization) other;
-		getSoapNodes().diff(otherOrg.getSoapNodes(),depth);
-		getUsers().diff(otherOrg.getUsers(), depth);
-		getRoles().diff(otherOrg.getRoles(), depth);
+		soapNodes.diff(otherOrg.soapNodes,depth);
+		users.diff(otherOrg.users, depth);
+		roles.diff(otherOrg.roles, depth);
 	}
 
 }

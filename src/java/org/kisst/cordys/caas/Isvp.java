@@ -24,30 +24,21 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class Isvp extends CordysLdapObject {
 	public final static String xmlns_isv="http://schemas.cordys.com/1.0/isvpackage";
 
+	public final LdapObjectListProperty<User> users= new LdapObjectListProperty<User>("", User.class);
+	public final LdapObjectListProperty<User> user = users;
+
+	public final LdapObjectListProperty<Role> roles= new LdapObjectListProperty<Role>("", Role.class);
+	public final LdapObjectListProperty<Role> role= roles;
+
+	public final LdapObjectListProperty<MethodSet> methodSets= new LdapObjectListProperty<MethodSet>("", MethodSet.class);
+	public final LdapObjectListProperty<MethodSet> ms = methodSets;
+
+
+	
 	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public LdapObjectList<MethodSet> getMs() { 
-		return getMethodSets(); 
-	}
-	public LdapObjectList<MethodSet> getMethodSets() {	
-		XmlNode method=new XmlNode("GetMethodSets", xmlns_ldap);
-		method.add("dn").setText(dn);
-		method.add("labeleduri").setText("*");
-		return new LdapObjectList<MethodSet>(system, method);
-	}
-	
-	
-	public LdapObjectList<Role> getRole() {
-		return getRoles();
-	}
-	public LdapObjectList<Role> getRoles() {	
-		XmlNode method=new XmlNode("GetRolesForSoftwarePackage", xmlns_ldap);
-		method.add("dn").setText(dn);
-		return new LdapObjectList<Role>(system, method);
-	}
-	
 	public void unload(boolean deletereferences) {
 		String filename=getFilename();
 		if (filename.endsWith(".isvp"))
@@ -75,7 +66,7 @@ public class Isvp extends CordysLdapObject {
 		if (this==other)
 			return;
 		Isvp otherIsvp=(Isvp) other;
-		getMethodSets().diff(otherIsvp.getMethodSets(), depth);
-		getRoles().diff(otherIsvp.getRoles(),depth);
+		methodSets.diff(otherIsvp.methodSets, depth);
+		roles.diff(otherIsvp.roles,depth);
 	}
 }

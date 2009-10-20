@@ -19,31 +19,68 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysLdapObject implements LdapObject {
-	protected class StringProperty {
+	public interface Property {
+		public Object get();
+		public void clearCache();
+	}
+	protected abstract class AbstractProperty implements Property {
+		abstract public Object get();
+		public void clearCache() {}
+		public String toString() { return ""+get(); }
+	}
+	protected class StringProperty extends AbstractProperty {
 		private final String path;
 		protected StringProperty(String path) {this.path=path;}
 		public String get() { return getEntry().getChildText(path); }
 	}
-	protected class BooleanProperty {
+	protected class BooleanProperty extends AbstractProperty {
 		private final String path;
 		protected BooleanProperty(String path) {this.path=path;}
-		public boolean get() { return "true".equals(getEntry().getChildText(path)); }
+		public Boolean get() { return "true".equals(getEntry().getChildText(path)); }
 		public void set(boolean value) { System.out.println("setting ");}
 	}
-	protected class RefProperty<T extends LdapObject> {
+	protected class RefProperty<T extends LdapObject> extends AbstractProperty {
 		private final String path;
 		protected RefProperty(String path) {this.path=path;}
 		@SuppressWarnings("unchecked")
 		public T get() { 
 			String dn= getEntry().getChildText(path);
 			return (T) getSystem().getObject(dn);
+		}
+	}
+	protected class LdapObjectListProperty<T extends LdapObject> extends AbstractProperty {
+		private final XmlNode method;
+		private final Class<? extends LdapObject> clz;
+		private LdapObjectList<T> result=null;
+		public boolean useCache=true;
+		protected LdapObjectListProperty(XmlNode method, Class<? extends LdapObject> clz) {
+			this.method=method;
+			this.clz=clz;
+			method.add("dn").setText(dn);
+		}
+		public LdapObjectListProperty(String prefix, Class<? extends LdapObject> clz) { 
+			this.method = new XmlNode("GetChildren", xmlns_ldap);
+			this.clz=clz;
+			method.add("dn").setText(prefix+dn);
+		}
+		public void clearCache() { result=null; }
+		public synchronized LdapObjectList<T> get() {
+			if (! useCache) result=null;
+			if (result==null) 
+				result = new LdapObjectList<T>(getSystem(), method, clz);
+			return result;
+		}
+		public void diff(LdapObjectListProperty<T> other) { this.diff(other,0); }
+		public void diff(LdapObjectListProperty<T> other, int depth) {
+			this.get().diff(other.get(), depth);
 		}
 	}
 
@@ -64,7 +101,11 @@ public abstract class CordysLdapObject implements LdapObject {
 		this.parent=parent;
 		this.dn=dn;
 	}
-	public void clear() { entry=null; }
+	public void clear() { 
+		entry=null;
+		for (Property p: getProps().values()) 
+			p.clearCache();
+	}
 	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
@@ -150,20 +191,16 @@ public abstract class CordysLdapObject implements LdapObject {
 	public void diff(LdapObject other) { diff(other,0); }
 	public abstract void diff(LdapObject other, int depth);
 
-	public String getProps() {
-		StringBuilder result= new StringBuilder();
-		result.append(this.getClass().getName()+"\n");
-		for (Method m:  this.getClass().getMethods()) {
-			if (m.getName().startsWith("get") && m.getParameterTypes().length==0) {
-				String name=m.getName().substring(3);
-				name=name.substring(0,1).toLowerCase()+name.substring(1);
-				if (name.equals("props"))
-					continue;
-				result.append(name);
-				Object ret=ReflectionUtil.invoke(this, m, null);
-				result.append("="+ret+"\n");
+	public Map<String, Property> getProps() {
+		Map<String, Property> result= new LinkedHashMap<String, Property>();
+		for (Field f: this.getClass().getFields()) {
+			if (Property.class.isAssignableFrom(f.getType())) {
+				try {
+					result.put(f.getName(), (Property) f.get(this));
+				} 
+				catch (IllegalAccessException e) { throw new RuntimeException(e);}
 			}
 		}
-		return result.toString();
+		return result;
 	}
 }
