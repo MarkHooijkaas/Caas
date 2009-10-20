@@ -42,7 +42,7 @@ public class SoapProcessor extends CordysLdapObject {
 	}
 	private static XmlNode inactiveWorkerProcess=new XmlNode("<dummy><status></status></dummy>");
 	public XmlNode getWorkerprocess() {
-		if (workerprocess!=null && useCache)
+		if (workerprocess!=null && useCache())
 			return this.workerprocess;
 		XmlNode method=new XmlNode("List", xmlns_monitor);
 		XmlNode response=call(method);

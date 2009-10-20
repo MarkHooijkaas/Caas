@@ -10,9 +10,10 @@ public abstract class CordysObject {
 	public final static String xmlns_ldap   = "http://schemas.cordys.com/1.0/ldap";
 	public final static String xmlns_isv    = "http://schemas.cordys.com/1.0/isvpackage";
 
-	public boolean useCache=true;
 	abstract public CordysSystem getSystem();
 	abstract public void clearCache();
+	
+	public boolean useCache() { return getSystem().useCache();}
 	
 	public Map<String, CordysObject> getProps() {
 		Map<String, CordysObject> result= new LinkedHashMap<String, CordysObject>();

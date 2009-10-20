@@ -44,7 +44,7 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	}
 
 	private ArrayList<T> fetchList() {
-		if (useCache && listAvailable)
+		if (useCache() && listAvailable)
 			return list;
 		list.clear();
 		retrieveList();

@@ -120,7 +120,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		entry.detach();
 	}
 	public XmlNode getEntry() {
-		if (entry!=null && useCache)
+		if (entry!=null && useCache())
 			return entry;
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(dn);

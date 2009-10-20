@@ -28,6 +28,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	final LdapCache ldapcache;
 	public final String dn; 
 	public boolean debug=false;
+	public boolean useCache=true;
 	private final String name;
 	public final String version;
 	public final String build;
@@ -41,6 +42,17 @@ public class CordysSystem extends CordysObject implements LdapObject {
 
 	public final ChildList<AuthenticatedUser> authenticatedUsers= new ChildList<AuthenticatedUser>(this, "cn=authenticated users,", AuthenticatedUser.class);
 	public final ChildList<AuthenticatedUser> auser = authenticatedUsers;
+	
+	@SuppressWarnings("unchecked")
+	public final LdapObjectList<SoapProcessor> soapProcessors = new LdapObjectList(this) {
+		protected void retrieveList() {
+			for (Organization o: organizations) {
+				for (SoapProcessor sp: o.getSoapProcessors())
+					add(sp);
+			}
+		}
+	}; 
+	public final LdapObjectList<SoapProcessor> sp = soapProcessors; 
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
@@ -59,9 +71,8 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public String getDn() { return dn;	}
 	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
-	public void clearCache() {
-		ldapcache.clear();
-	}
+	public void clearCache() {ldapcache.clear(); }
+	public boolean useCache() { return useCache; }
 
 	public LdapObject getObject(XmlNode elm) { return ldapcache.getObject(elm); }
 	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
@@ -73,19 +84,9 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public String call(String soap) { return caller.call(soap, debug); }
 	public XmlNode call(XmlNode method) { return caller.call(method, debug); }
 
-
-
-	public LdapObjectList<SoapProcessor> getSp() { return getSoapProcessors();	}
 	@SuppressWarnings("unchecked")
 	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		return new LdapObjectList(getSystem()) {
-			protected void retrieveList() {
-				for (Organization o: organizations) {
-					for (SoapProcessor sp: o.getSoapProcessors())
-						add(sp);
-				}
-			}
-		};
+		return null;
 	}
 	public void refreshSoapProcessors() {
 		XmlNode method=new XmlNode("List", xmlns_monitor);
