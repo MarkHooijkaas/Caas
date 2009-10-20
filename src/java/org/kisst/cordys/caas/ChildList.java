@@ -21,7 +21,7 @@ package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class ChildList<T extends LdapObject> extends LdapObjectList<T>  {
+public class ChildList<T extends CordysObject> extends CordysObjectList<T>  {
 	private static final long serialVersionUID = 1L;
 	private final LdapObject parent;
 	private final String prefix;

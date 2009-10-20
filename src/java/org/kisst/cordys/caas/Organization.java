@@ -40,10 +40,10 @@ public class Organization extends CordysLdapObject {
 
 	public String call(String input) { return getSystem().call(input, dn, null); }
 
-	public LdapObjectList<SoapProcessor> getSp() { 	return getSoapProcessors();	}
+	public CordysObjectList<SoapProcessor> getSp() { 	return getSoapProcessors();	}
 	@SuppressWarnings("unchecked")
-	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		return new LdapObjectList(getSystem()) {
+	public CordysObjectList<SoapProcessor> getSoapProcessors() {
+		return new CordysObjectList(getSystem()) {
 			protected void retrieveList() {
 				for (SoapNode sn: soapNodes) {
 					for (SoapProcessor sp: sn.soapProcessors)
@@ -62,5 +62,4 @@ public class Organization extends CordysLdapObject {
 		users.diff(otherOrg.users, depth);
 		roles.diff(otherOrg.roles, depth);
 	}
-
 }

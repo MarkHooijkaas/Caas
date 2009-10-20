@@ -44,7 +44,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public final ChildList<AuthenticatedUser> auser = authenticatedUsers;
 	
 	@SuppressWarnings("unchecked")
-	public final LdapObjectList<SoapProcessor> soapProcessors = new LdapObjectList(this) {
+	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
 		protected void retrieveList() {
 			for (Organization o: organizations) {
 				for (SoapProcessor sp: o.getSoapProcessors())
@@ -52,7 +52,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 			}
 		}
 	}; 
-	public final LdapObjectList<SoapProcessor> sp = soapProcessors; 
+	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
@@ -68,8 +68,9 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	}
 	public String toString() { return "CordysSystem("+name+")"; }
 	public CordysSystem getSystem() { return this; }
-	public String getDn() { return dn;	}
-	public String getName() { return name;}
+	public String getDn()   { return dn; }
+	public String getKey()  { return dn; }
+	public String getName() { return name; }
 	public LdapObject getParent() {return null;	}
 	public void clearCache() {ldapcache.clear(); }
 	public boolean useCache() { return useCache; }
@@ -85,7 +86,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public XmlNode call(XmlNode method) { return caller.call(method, debug); }
 
 	@SuppressWarnings("unchecked")
-	public LdapObjectList<SoapProcessor> getSoapProcessors() {
+	public CordysObjectList<SoapProcessor> getSoapProcessors() {
 		return null;
 	}
 	public void refreshSoapProcessors() {
@@ -119,8 +120,6 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	}
 	public int compareTo(LdapObject o) { return dn.compareTo(o.getDn()); }
 	
-	public void deepdiff(LdapObject other) { diff(other,100); }
-	public void diff(LdapObject other) { diff(other,0); }
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

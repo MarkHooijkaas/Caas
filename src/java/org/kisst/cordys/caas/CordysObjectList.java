@@ -30,7 +30,7 @@ import java.util.Iterator;
  * on objects that inherit from a List.
  * 
  */
-public abstract class LdapObjectList<T extends LdapObject> extends CordysObject implements  Iterable<T> {
+public abstract class CordysObjectList<T extends CordysObject> extends CordysObject implements  Iterable<T> {
 	private static final long serialVersionUID = 1L;
 	protected final CordysSystem system;
 	private final ArrayList<T> list=new ArrayList<T>();
@@ -39,10 +39,13 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
 
 
-	protected LdapObjectList(CordysSystem system) {
+	protected CordysObjectList(CordysSystem system) {
 		this.system=system;
 	}
 
+	public String getName() { return null; }
+	public String getKey() { return null; }
+	
 	private ArrayList<T> fetchList() {
 		if (useCache() && listAvailable)
 			return list;
@@ -59,7 +62,7 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	public boolean add(T obj) {
 		list.add(obj);
 		if (obj!=null) {
-			dnIndex.put(obj.getDn(), obj);
+			dnIndex.put(obj.getKey(), obj);
 			nameIndex.put(obj.getName(), obj);
 		}
 		return true;
@@ -106,11 +109,11 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	}
 	
 	@SuppressWarnings("unchecked")
-	public LdapObjectList <T> like(final String filter) {
-		return new LdapObjectList(system) {
+	public CordysObjectList <T> like(final String filter) {
+		return new CordysObjectList(system) {
 			final String expr=filter.toLowerCase();
 			protected void retrieveList() {
-				for(T obj: LdapObjectList.this) {
+				for(T obj: CordysObjectList.this) {
 					if (obj.getName().toLowerCase().indexOf(expr)>=0)
 						add(obj);
 				}
@@ -119,11 +122,11 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	}
 	
 	@SuppressWarnings("unchecked")
-	public LdapObjectList<T> sort() {
-		return new LdapObjectList(system) {
+	public CordysObjectList<T> sort() {
+		return new CordysObjectList(system) {
 			protected void retrieveList() {
 				ArrayList<T> tmp=new ArrayList<T>();
-				for (T obj : LdapObjectList.this)
+				for (T obj : CordysObjectList.this)
 					tmp.add(obj);
 				Collections.sort(tmp);
 				for (T obj : tmp)
@@ -132,15 +135,11 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 			}
 		};
 	}
-	public void diff(LdapObjectList<T> other) {
-		diff(other,0);
-	}
-	public void diff(LdapObjectList<T> other, int depth) {
-		diff("", other, depth);
-	}
-	public void diff(String prefix, LdapObjectList<T> other, int depth) {
-		LdapObjectList<T> l1=this.sort();
-		LdapObjectList<T> l2=other.sort();
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void mydiff(String prefix, CordysObject other, int depth) {
+		CordysObjectList<T> l1=this.sort();
+		CordysObjectList<T> l2=((CordysObjectList<T> )other).sort();
 		int pos1=0;
 		int pos2=0;
 		while (pos1<l1.getSize() || pos2<l2.getSize()) {

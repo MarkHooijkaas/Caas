@@ -75,6 +75,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	public CordysSystem getSystem() { return system; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
+	public String getKey() { return dn; }
 	public String getDn() { return dn; }
 	public String getName() {
 		int pos=dn.indexOf("=");
@@ -99,20 +100,6 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		if (o instanceof LdapObject)
 			return dn.equals(((LdapObject)o).getDn());
 		return false;
-	}
-	public int compareTo(LdapObject o) {
-		if (o==this)
-			return 0;
-		String[] d1=dn.split(",");
-		String[] d2=o.getDn().split(",");
-		int p1=d1.length-1;
-		int p2=d2.length-1;
-		while (p1>=0 && p2>=0 ) {
-			int comp=d1[p1--].compareTo(d2[p2--]);
-			if (comp!=0)
-				return comp;
-		}
-		return 0;
 	}
 
 	void setEntry(XmlNode entry) {
@@ -151,9 +138,4 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		call(method);
 		setEntry(newEntry);
 	}
-	
-	public void deepdiff(LdapObject other) { diff(other,100); }
-	public void diff(LdapObject other) { diff(other,0); }
-	public abstract void diff(LdapObject other, int depth);
-
 }

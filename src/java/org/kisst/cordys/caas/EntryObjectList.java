@@ -27,7 +27,7 @@ import org.kisst.cordys.caas.util.XmlNode;
  * on objects that inherit from a List.
  * 
  */
-public class EntryObjectList<T extends LdapObject> extends LdapObjectList<T>  {
+public class EntryObjectList<T extends CordysObject> extends CordysObjectList<T>  {
 	private final CordysLdapObject parent;
 	private final String group;
 

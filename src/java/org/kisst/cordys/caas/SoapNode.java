@@ -41,8 +41,8 @@ public class SoapNode extends CordysLdapObject {
 		return result;
 	}
 
-	public LdapObjectList<MethodSet> getMs() { return getMethodSets(); }
-	public LdapObjectList<MethodSet> getMethodSets() {
+	public CordysObjectList<MethodSet> getMs() { return getMethodSets(); }
+	public CordysObjectList<MethodSet> getMethodSets() {
 		return new EntryObjectList<MethodSet>(this, "busmethodsets");
 	}
 	
