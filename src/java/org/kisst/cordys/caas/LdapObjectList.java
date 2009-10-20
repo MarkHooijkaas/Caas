@@ -122,9 +122,13 @@ public abstract class LdapObjectList<T extends LdapObject> extends CordysObject 
 	public LdapObjectList<T> sort() {
 		return new LdapObjectList(system) {
 			protected void retrieveList() {
-				for (T obj :LdapObjectList.this)
+				ArrayList<T> tmp=new ArrayList<T>();
+				for (T obj : LdapObjectList.this)
+					tmp.add(obj);
+				Collections.sort(tmp);
+				for (T obj : tmp)
 					add(obj);
-				Collections.sort(list);
+				
 			}
 		};
 	}
