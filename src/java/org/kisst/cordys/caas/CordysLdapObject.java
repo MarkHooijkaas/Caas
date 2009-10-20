@@ -29,11 +29,14 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	protected abstract class AbstractProperty extends CordysObject {
 		public void clearCache() {}
 		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
+		abstract public Object get();
+		public String toString() { return ""+get(); }
 	}
 	protected class StringProperty extends AbstractProperty {
 		private final String path;
 		protected StringProperty(String path) {this.path=path;}
 		public String get() { return getEntry().getChildText(path); }
+		public String toString() { return "\""+get()+"\""; }
 	}
 	protected class BooleanProperty extends AbstractProperty {
 		private final String path;
@@ -56,12 +59,12 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		protected StringList(String path) {this.path=path;}
 		public List<String> get() { 
 			ArrayList<String> result=new ArrayList<String>();
-			XmlNode ms=getEntry().getChild(path);
-			for (XmlNode child: ms.getChildren("string")) 
-				result.add(child.getText());
+			XmlNode start=getEntry().getChild(path);
+			if (start!=null)
+				for (XmlNode child: start.getChildren("string")) 
+					result.add(child.getText());
 			return result;
 		}
-		public String toString() { return get().toString(); }
 	}
 
 	public final StringProperty description = new StringProperty("description/string");

@@ -19,7 +19,14 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+
 public class Role extends CordysLdapObject {
+	public final EntryObjectList<Role> roles = new EntryObjectList<Role>(this, "role");
+	public final EntryObjectList<Role> role = roles;
+
+	public final StringList toolbars= new StringList("toolbar"); 
+	public final StringList menus = new StringList("menu"); 
+
 	protected Role(LdapObject parent, String dn) {
 		super(parent, dn);
 	}

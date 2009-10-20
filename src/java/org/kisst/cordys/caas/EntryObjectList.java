@@ -48,6 +48,8 @@ public class EntryObjectList<T extends CordysObject> extends CordysObjectList<T>
 		//System.out.println(response.getIndented());
 		XmlNode start=response.getChild("tuple/old/entry/"+group);
 		//System.out.println(start.getIndented());
+		if (start==null)
+			return;
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();
 			LdapObject obj=system.getObject(dn);
