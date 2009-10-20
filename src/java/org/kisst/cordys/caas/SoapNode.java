@@ -21,6 +21,7 @@ package org.kisst.cordys.caas;
 
 
 
+
 public class SoapNode extends CordysLdapObject {
 	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
@@ -30,6 +31,9 @@ public class SoapNode extends CordysLdapObject {
 	
 	public final StringList namespaces= new StringList("labeleduri"); 
 	public final StringList ns = namespaces;
+	
+	public final XmlProperty config = new XmlProperty("bussoapnodeconfiguration/string");
+
 	
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);

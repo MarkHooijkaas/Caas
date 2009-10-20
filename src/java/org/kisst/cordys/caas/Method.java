@@ -20,10 +20,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 public class Method extends CordysLdapObject {
-	XmlProperty implementation = new XmlProperty("busmethodimplementation/string");
-	XmlProperty signature      = new XmlProperty("busmethodsignature/string");
-	XmlProperty wsdl           = new XmlProperty("busmethodwsdl/string");
-	XmlProperty iface          = new XmlProperty("busmethodinterface/string");
+	public final XmlProperty implementation = new XmlProperty("busmethodimplementation/string");
+	public final XmlProperty signature      = new XmlProperty("busmethodsignature/string");
+	public final XmlProperty wsdl           = new XmlProperty("busmethodwsdl/string");
+	public final XmlProperty iface          = new XmlProperty("busmethodinterface/string");
 	
 	protected Method(LdapObject parent, String dn) {
 		super(parent, dn);
