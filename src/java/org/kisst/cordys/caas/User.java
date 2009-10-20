@@ -20,38 +20,34 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 
+
 public class User extends CordysLdapObject {
 	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser/string");
-	
+
+	public final EntryObjectList<Role> roles = new EntryObjectList<Role>(this, "role");
+	public final EntryObjectList<Role> role = roles;
+
+	public final StringList toolbars= new StringList("toolbar"); 
+	public final StringList menus = new StringList("menu"); 
+
 	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public EntryObjectList<Role> getRole() { return getRoles(); }
-	public EntryObjectList<Role> getRoles() {
-		return new EntryObjectList<Role>(this, "role");
-	}
-	
 	public void addRole(Role r) { addLdapString("role", r.dn); }
 	public void removeRole(Role r) { removeLdapString("role", r.dn); }
 	
-	public AuthenticatedUser getAuser() { return authenticatedUser.get(); }
-	public AuthenticatedUser getAuthenticatedUser() {
-		String dn=getEntry().getChildText("authenticationuser/string");
-		return (AuthenticatedUser) getSystem().getObject(dn);
-	}
-
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;
 		User otherUser = (User) other;
-		String auser1=getAuthenticatedUser().getName();
-		String auser2=otherUser.getAuthenticatedUser().getName();
+		String auser1=authenticatedUser.get().getName();
+		String auser2=otherUser.authenticatedUser.get().getName();
 		if (! auser1.equals(auser2)) {
 			System.out.println("< "+this+".authenticatedUser="+auser1);
 			System.out.println("> "+this+".authenticatedUser="+auser2);
 		}
-		getRoles().diff(this+" has role: ",otherUser.getRoles(), depth);
+		roles.diff(this+" has role: ",otherUser.roles, depth);
 	}
 
 	// It is not yet possible to impersonate another user
