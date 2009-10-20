@@ -50,7 +50,7 @@ public class LdapCache {
 	public void clear() {
 		for (LdapObject o: tree.values()) {
 			if (o instanceof CordysLdapObject)
-				((CordysLdapObject) o).clearCache();
+				((CordysLdapObject) o).refresh();
 		}
 		tree.clear();
 		tree.put(system.dn,system);

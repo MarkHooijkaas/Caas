@@ -12,7 +12,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public final static String xmlns_xmlstore="http://schemas.cordys.com/1.0/xmlstore";
 	
 	abstract public CordysSystem getSystem();
-	abstract public void clearCache();
+	abstract public void refresh();
 	public String getName() { return null; } 
 	public String getKey()  { return null; } 
 	

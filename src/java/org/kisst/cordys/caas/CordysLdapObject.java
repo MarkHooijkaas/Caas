@@ -27,7 +27,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public abstract class CordysLdapObject extends CordysObject implements LdapObject {
 	protected abstract class AbstractProperty extends CordysObject {
-		public void clearCache() {}
+		public void refresh() {}
 		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
 		abstract public Object get();
 		public String toString() { return ""+get(); }
@@ -103,10 +103,10 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		this.parent=parent;
 		this.dn=dn;
 	}
-	public void clearCache() { 
+	public void refresh() { 
 		entry=null;
 		for (CordysObject o: getProps().values()) 
-			o.clearCache();
+			o.refresh();
 	}
 	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }

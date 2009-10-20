@@ -30,8 +30,8 @@ public class SoapProcessor extends CordysLdapObject {
 	}
 
 	@Override
-	public void clearCache() {
-		super.clearCache();
+	public void refresh() {
+		super.refresh();
 		this.workerprocess=null;
 	}
 

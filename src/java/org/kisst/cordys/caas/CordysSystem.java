@@ -72,7 +72,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public String getKey()  { return dn; }
 	public String getName() { return name; }
 	public LdapObject getParent() {return null;	}
-	public void clearCache() {ldapcache.clear(); }
+	public void refresh() {ldapcache.clear(); }
 	public boolean useCache() { return useCache; }
 
 	public LdapObject getObject(XmlNode elm) { return ldapcache.getObject(elm); }

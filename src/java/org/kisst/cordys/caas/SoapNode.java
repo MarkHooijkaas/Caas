@@ -38,11 +38,11 @@ public class SoapNode extends CordysLdapObject {
 	
 	public void addMethodSet(MethodSet m) { 
 		addLdapString("busmethodsets", m.dn); 
-		clearCache();
+		refresh();
 	}
 	public void removeMethodSet(MethodSet m) { 
 		removeLdapString("busmethodsets", m.dn);
-		clearCache();
+		refresh();
 	}
 	
 	public void diff(LdapObject other, int depth) {
