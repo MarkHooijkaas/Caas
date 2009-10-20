@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.lang.reflect.Method;
+
+import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -126,4 +129,20 @@ public abstract class CordysLdapObject implements LdapObject {
 	public void diff(LdapObject other) { diff(other,0); }
 	public abstract void diff(LdapObject other, int depth);
 
+	public String getProps() {
+		StringBuilder result= new StringBuilder();
+		result.append(this.getClass().getName()+"\n");
+		for (Method m:  this.getClass().getMethods()) {
+			if (m.getName().startsWith("get") && m.getParameterTypes().length==0) {
+				String name=m.getName().substring(3);
+				name=name.substring(0,1).toLowerCase()+name.substring(1);
+				if (name.equals("props"))
+					continue;
+				result.append(name);
+				Object ret=ReflectionUtil.invoke(this, m, null);
+				result.append("="+ret+"\n");
+			}
+		}
+		return result.toString();
+	}
 }
