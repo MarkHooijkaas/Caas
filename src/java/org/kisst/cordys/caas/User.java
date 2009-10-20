@@ -20,7 +20,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 public class User extends CordysLdapObject {
-
+	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser/string");
+	
 	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
@@ -33,6 +34,7 @@ public class User extends CordysLdapObject {
 	public void addRole(Role r) { addLdapString("role", r.dn); }
 	public void removeRole(Role r) { removeLdapString("role", r.dn); }
 	
+	public AuthenticatedUser getAuser() { return authenticatedUser.get(); }
 	public AuthenticatedUser getAuthenticatedUser() {
 		String dn=getEntry().getChildText("authenticationuser/string");
 		return (AuthenticatedUser) getSystem().getObject(dn);

@@ -103,7 +103,7 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 	
 	
 	public int getSize() { return list.size(); }
-	public String toString() { return toString("[\t",",\n\t","]"); }
+	public String toString() { return toString("\n[\t",",\n\t","\n]"); }
 	public String toString(String begin, String middle, String end) {
 		StringBuffer result=new StringBuffer(begin);
 		boolean first=true;

@@ -26,6 +26,27 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysLdapObject implements LdapObject {
+	protected class StringProperty {
+		private final String path;
+		protected StringProperty(String path) {this.path=path;}
+		public String get() { return getEntry().getChildText(path); }
+	}
+	protected class BooleanProperty {
+		private final String path;
+		protected BooleanProperty(String path) {this.path=path;}
+		public boolean get() { return "true".equals(getEntry().getChildText(path)); }
+		public void set(boolean value) { System.out.println("setting ");}
+	}
+	protected class RefProperty<T extends LdapObject> {
+		private final String path;
+		protected RefProperty(String path) {this.path=path;}
+		@SuppressWarnings("unchecked")
+		public T get() { 
+			String dn= getEntry().getChildText(path);
+			return (T) getSystem().getObject(dn);
+		}
+	}
+
 	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
 	protected final CordysSystem system;
 	private final LdapObject parent; 

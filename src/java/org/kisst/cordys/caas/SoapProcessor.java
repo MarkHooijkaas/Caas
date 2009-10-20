@@ -22,6 +22,7 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class SoapProcessor extends CordysLdapObject {
+	public final StringProperty automatic = new StringProperty("automaticstart/string");
 
 	private static final String nsmonitor="http://schemas.cordys.com/1.0/monitor";
 	private XmlNode workerprocess;

@@ -35,19 +35,22 @@ public class ReflectionUtil {
 		return null;
 	}
 	
+	public static Object invoke(Object o, Method m, Object[] args) {
+		try {
+			m.setAccessible(true);
+			return m.invoke(o, args);
+		}
+		catch (IllegalAccessException e) { throw new RuntimeException(e); }
+		catch (InvocationTargetException e) {throw new RuntimeException(e); }
+	}
 	public static Object invoke(Object o, String name, Object[] args) {
 		return invoke(o.getClass(),o, name, args);
 	}
 	public static Object invoke(Class<?> c, Object o, String name, Object[] args) {
 		try {
-			Method m = c.getDeclaredMethod(name, getSignature(args));
-			m.setAccessible(true);
-			return m.invoke(o, args);
+			return invoke(o, c.getDeclaredMethod(name, getSignature(args)), args);
 		}
 		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
-		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
-		catch (IllegalAccessException e) { throw new RuntimeException(e); }
-		catch (InvocationTargetException e) {throw new RuntimeException(e); }
 	}
 
 	private static Class[] getSignature(Object[] args) {
