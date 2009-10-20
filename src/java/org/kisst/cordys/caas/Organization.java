@@ -20,18 +20,19 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 
+
 public class Organization extends CordysLdapObject {
-	public final LdapObjectListProperty<User> users= new LdapObjectListProperty<User>("cn=organizational users,", User.class);
-	public final LdapObjectListProperty<User> user = users;
+	public final ChildList<User> users= new ChildList<User>(this, "cn=organizational users,", User.class);
+	public final ChildList<User> user = users;
 
-	public final LdapObjectListProperty<Role> roles= new LdapObjectListProperty<Role>("cn=organizational roles,", Role.class);
-	public final LdapObjectListProperty<Role> role= roles;
+	public final ChildList<Role> roles= new ChildList<Role>(this, "cn=organizational roles,", Role.class);
+	public final ChildList<Role> role= roles;
 
-	public final LdapObjectListProperty<MethodSet> methodSets= new LdapObjectListProperty<MethodSet>("cn=method sets,", MethodSet.class);
-	public final LdapObjectListProperty<MethodSet> ms = methodSets;
+	public final ChildList<MethodSet> methodSets= new ChildList<MethodSet>(this, "cn=method sets,", MethodSet.class);
+	public final ChildList<MethodSet> ms = methodSets;
 
-	public final LdapObjectListProperty<SoapNode> soapNodes= new LdapObjectListProperty<SoapNode>("cn=soap nodes,", SoapNode.class);
-	public final LdapObjectListProperty<SoapNode> sn = soapNodes;
+	public final ChildList<SoapNode> soapNodes= new ChildList<SoapNode>(this, "cn=soap nodes,", SoapNode.class);
+	public final ChildList<SoapNode> sn = soapNodes;
 	
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
@@ -40,15 +41,18 @@ public class Organization extends CordysLdapObject {
 	public String call(String input) { return getSystem().call(input, dn, null); }
 
 	public LdapObjectList<SoapProcessor> getSp() { 	return getSoapProcessors();	}
+	@SuppressWarnings("unchecked")
 	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		LdapObjectList<SoapProcessor> result= new LdapObjectList<SoapProcessor>();
-		for (Object sn : soapNodes.get()) {
-			for (Object sp : ((SoapNode) sn).soapProcessors.get()) {
-				result.add((SoapProcessor) sp); // using dn, to prevent duplicate names over organizations
+		return new LdapObjectList(getSystem()) {
+			protected void retrieveList() {
+				for (SoapNode sn: soapNodes) {
+					for (SoapProcessor sp: sn.soapProcessors)
+						add(sp);
+				}
 			}
-		}
-		return result;
+		};
 	}
+
 	
 	public void diff(LdapObject other, int depth) {
 		if (this==other)

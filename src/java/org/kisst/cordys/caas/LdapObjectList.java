@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-
-import org.kisst.cordys.caas.util.XmlNode;
 
 /**
  * This class works like a list, without being a real java.util.List
@@ -33,48 +30,32 @@ import org.kisst.cordys.caas.util.XmlNode;
  * on objects that inherit from a List.
  * 
  */
-public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
+public abstract class LdapObjectList<T extends LdapObject> extends CordysObject implements  Iterable<T> {
 	private static final long serialVersionUID = 1L;
-	private final ArrayList<T> list;
+	protected final CordysSystem system;
+	private final ArrayList<T> list=new ArrayList<T>();
+	private boolean listAvailable=false;
 	private final HashMap<String,T> dnIndex=new HashMap<String,T>(); 
 	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
-	
-	public LdapObjectList() {
-		list=new ArrayList<T>();
+
+
+	protected LdapObjectList(CordysSystem system) {
+		this.system=system;
 	}
 
-	public LdapObjectList(List<T> l) {
-		list=new ArrayList<T>(l);
+	private ArrayList<T> fetchList() {
+		if (useCache && listAvailable)
+			return list;
+		list.clear();
+		retrieveList();
+		listAvailable=true;
+		return list;
 	}
-	
-	public LdapObjectList(CordysSystem system, XmlNode method) {
-		this(system, method, (Class<? extends LdapObject>)null);
-	}
-	@SuppressWarnings("unchecked")
-	public LdapObjectList(CordysSystem system, XmlNode method, Class<? extends LdapObject> clz) {
-		this();
-		XmlNode response=system.call(method);
-		if (response.getName().equals("Envelope"))
-			response=response.getChild("Body").getChildren().get(0);
-		for (XmlNode tuple : response.getChildren("tuple")) {
-			XmlNode elm=tuple.getChild("old/entry");
-			LdapObject obj=system.getObject(elm);
-			if (clz==null || obj.getClass()==clz)
-				this.add((T) obj);
-			//System.out.println(dn);
-		}
-	}
-	@SuppressWarnings("unchecked")
-	public LdapObjectList(CordysSystem system, XmlNode start, String group) {
-		this();
-		start=start.getChild(group);
-		for (XmlNode s: start.getChildren("string")) {
-			String dn=s.getText();
-			LdapObject obj=system.getObject(dn);
-			this.add((T) obj);
-		}
-	}
-	
+	protected abstract void retrieveList();
+
+	public void clearCache() { list.clear(); listAvailable=false; }
+	public CordysSystem getSystem() {return system; }
+
 	public boolean add(T obj) {
 		list.add(obj);
 		if (obj!=null) {
@@ -83,9 +64,10 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 		}
 		return true;
 	}
-	public Iterator<T> iterator() { return list.iterator(); }
+	public Iterator<T> iterator() { fetchList(); return list.iterator(); }
 
 	public T get(String key) {
+		fetchList();
 		T result=dnIndex.get(key);
 		if (result!=null)
 			return result;
@@ -102,13 +84,14 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 		return null;
 	}
 
-	public T get(int index)  { return list.get(index); }
+	public T get(int index)  { fetchList(); return list.get(index); }
 	public T getAt(int index) { return get(index); } 
 	
 	
-	public int getSize() { return list.size(); }
+	public int getSize() { fetchList(); return list.size(); }
 	public String toString() { return toString("\n[\t",",\n\t","\n]"); }
 	public String toString(String begin, String middle, String end) {
+		fetchList(); 
 		StringBuffer result=new StringBuffer(begin);
 		boolean first=true;
 		for(Object o: this) {
@@ -122,22 +105,29 @@ public class LdapObjectList<T extends LdapObject> implements Iterable<T> {
 		return result.toString();
 	}
 	
-	public LdapObjectList <T> like(String expr) {
-		expr=expr.toLowerCase();
-		LdapObjectList <T> result=new LdapObjectList<T>();
-		for(T obj: this) {
-			if (obj.getName().toLowerCase().indexOf(expr)>=0)
-				result.add(obj);
-		}
-		return result;	
+	@SuppressWarnings("unchecked")
+	public LdapObjectList <T> like(final String filter) {
+		return new LdapObjectList(system) {
+			final String expr=filter.toLowerCase();
+			protected void retrieveList() {
+				for(T obj: LdapObjectList.this) {
+					if (obj.getName().toLowerCase().indexOf(expr)>=0)
+						add(obj);
+				}
+			}
+		};
 	}
 	
+	@SuppressWarnings("unchecked")
 	public LdapObjectList<T> sort() {
-		ArrayList<T> newList=new ArrayList<T>(list);
-		Collections.sort(newList);
-		return new LdapObjectList<T>(newList);
+		return new LdapObjectList(system) {
+			protected void retrieveList() {
+				for (T obj :LdapObjectList.this)
+					add(obj);
+				Collections.sort(list);
+			}
+		};
 	}
-
 	public void diff(LdapObjectList<T> other) {
 		diff(other,0);
 	}

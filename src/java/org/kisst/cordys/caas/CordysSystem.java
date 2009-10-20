@@ -23,7 +23,7 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public class CordysSystem implements LdapObject {
+public class CordysSystem extends CordysObject implements LdapObject {
 	public final static String xmlns_monitor="http://schemas.cordys.com/1.0/monitor";
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
@@ -34,8 +34,14 @@ public class CordysSystem implements LdapObject {
 	public final String build;
 	public int displayFormat=0;
 	
-	private boolean cache=true;
-	private LdapObjectList<Organization> cachedOrganizations; 
+	public final ChildList<Organization> organizations= new ChildList<Organization>(this, "", Organization.class);
+	public final ChildList<Organization> org = organizations;
+
+	public final ChildList<Isvp> isvps= new ChildList<Isvp>(this, "", Isvp.class);
+	public final ChildList<Isvp> isvp = isvps;
+
+	public final ChildList<AuthenticatedUser> authenticatedUsers= new ChildList<AuthenticatedUser>(this, "cn=authenticated users,", AuthenticatedUser.class);
+	public final ChildList<AuthenticatedUser> auser = authenticatedUsers;
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		this.name=name;
@@ -54,16 +60,8 @@ public class CordysSystem implements LdapObject {
 	public String getDn() { return dn;	}
 	public String getName() { return name;}
 	public LdapObject getParent() {return null;	}
-	public void clear() {
-		cachedOrganizations=null;
+	public void clearCache() {
 		ldapcache.clear();
-	}
-
-	public boolean getCache() { return cache; }
-	public void setCache(boolean value) {
-		this.cache=value;
-		if (! cache)
-			ldapcache.clear();
 	}
 
 	public LdapObject getObject(XmlNode elm) { return ldapcache.getObject(elm); }
@@ -77,58 +75,28 @@ public class CordysSystem implements LdapObject {
 	public XmlNode call(XmlNode method) { return caller.call(method, debug); }
 
 
-	public LdapObjectList<Organization> getOrg() { 	return getOrganizations();	}
-	public LdapObjectList<Organization> getOrganizations() {
-		if (cachedOrganizations==null || ! getCache()) {
-			XmlNode method=new XmlNode("GetOrganizations", CordysLdapObject.xmlns_ldap);
-			method.add("dn").setText(dn);
-			cachedOrganizations = new LdapObjectList<Organization>(this,method);
-		}
-		return cachedOrganizations;
-	}
 
-	public LdapObjectList<AuthenticatedUser> getAuthuser() {
-		return getAuthenticatedUsers();
-	}
-	public LdapObjectList<AuthenticatedUser> getAuthenticatedUsers() {
-		XmlNode method=new XmlNode("GetAuthenticatedUsers", CordysLdapObject.xmlns_ldap);
-		method.add("dn").setText(dn);
-		method.add("filter").setText("*");
-		return new LdapObjectList<AuthenticatedUser>(this,method);
-	}
-	
-	public LdapObjectList<Isvp> getIsvp() {
-		return getIsvps();
-	}
-	public LdapObjectList<Isvp> getIsvps() {
-		XmlNode method=new XmlNode("GetSoftwarePackages", CordysLdapObject.xmlns_ldap);
-		method.add("dn").setText(dn);
-		return new LdapObjectList<Isvp>(this,method);
-	}
-
-	public LdapObjectList<SoapProcessor> getSp() { 
-		return getSoapProcessors(); 
-	}
+	public LdapObjectList<SoapProcessor> getSp() { return getSoapProcessors();	}
+	@SuppressWarnings("unchecked")
 	public LdapObjectList<SoapProcessor> getSoapProcessors() {
-		LdapObjectList<SoapProcessor> result=new LdapObjectList<SoapProcessor>();
-		for (Organization o: getOrganizations()) {
-			for (SoapProcessor sp: o.getSoapProcessors())
-				result.add(sp);
-		}
-		return result;
+		return new LdapObjectList(getSystem()) {
+			protected void retrieveList() {
+				for (Organization o: organizations) {
+					for (SoapProcessor sp: o.getSoapProcessors())
+						add(sp);
+				}
+			}
+		};
 	}
-	public LdapObjectList<SoapProcessor> refreshSoapProcessors() {
+	public void refreshSoapProcessors() {
 		XmlNode method=new XmlNode("List", xmlns_monitor);
-		LdapObjectList<SoapProcessor> result=new LdapObjectList<SoapProcessor>();
 		XmlNode response=call(method);
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
 			String dn=workerprocess.getChildText("name");
 			SoapProcessor obj= (SoapProcessor) getObject(dn);
 			obj.setWorkerprocess(workerprocess);
-			result.add( obj);
 		}
-		return result;
 	}
 
 	public Isvp loadIsvp(String filename) {
@@ -157,8 +125,7 @@ public class CordysSystem implements LdapObject {
 		if (this==other)
 			return;
 		CordysSystem otherSystem = (CordysSystem) other;
-		getOrganizations().diff(otherSystem.getOrganizations(), depth);
-		getIsvps().diff(otherSystem.getIsvps(),depth);
+		organizations.diff(otherSystem.organizations, depth);
+		isvps.diff(otherSystem.isvps,depth);
 	}
-
 }

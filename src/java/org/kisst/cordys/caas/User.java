@@ -26,9 +26,9 @@ public class User extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public LdapObjectList<Role> getRole() { return getRoles(); }
-	public LdapObjectList<Role> getRoles() {
-		return new LdapObjectList<Role>(system, getEntry(),"role");
+	public EntryObjectList<Role> getRole() { return getRoles(); }
+	public EntryObjectList<Role> getRoles() {
+		return new EntryObjectList<Role>(this, "role");
 	}
 	
 	public void addRole(Role r) { addLdapString("role", r.dn); }

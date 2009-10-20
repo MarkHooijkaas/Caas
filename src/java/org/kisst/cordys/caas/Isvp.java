@@ -24,14 +24,14 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class Isvp extends CordysLdapObject {
 	public final static String xmlns_isv="http://schemas.cordys.com/1.0/isvpackage";
 
-	public final LdapObjectListProperty<User> users= new LdapObjectListProperty<User>("", User.class);
-	public final LdapObjectListProperty<User> user = users;
+	public final ChildList<User> users= new ChildList<User>(this, "", User.class);
+	public final ChildList<User> user = users;
 
-	public final LdapObjectListProperty<Role> roles= new LdapObjectListProperty<Role>("", Role.class);
-	public final LdapObjectListProperty<Role> role= roles;
+	public final ChildList<Role> roles= new ChildList<Role>(this, "", Role.class);
+	public final ChildList<Role> role= roles;
 
-	public final LdapObjectListProperty<MethodSet> methodSets= new LdapObjectListProperty<MethodSet>("", MethodSet.class);
-	public final LdapObjectListProperty<MethodSet> ms = methodSets;
+	public final ChildList<MethodSet> methodSets= new ChildList<MethodSet>(this, "", MethodSet.class);
+	public final ChildList<MethodSet> ms = methodSets;
 
 
 	

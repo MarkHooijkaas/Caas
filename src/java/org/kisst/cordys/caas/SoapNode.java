@@ -26,17 +26,13 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class SoapNode extends CordysLdapObject {
-	public final LdapObjectListProperty<SoapProcessor> soapProcessors= new LdapObjectListProperty<SoapProcessor>("", SoapProcessor.class);
-	public final LdapObjectListProperty<SoapProcessor> sn = soapProcessors;
+	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, "", SoapProcessor.class);
+	public final ChildList<SoapProcessor> sp = soapProcessors;
 
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public void clear() {
-		super.clear();
-	}
-	
 	public List<String> getNamespaces() {
 		ArrayList<String> result=new ArrayList<String>();
 		XmlNode ms=getEntry().getChild("labeleduri");
@@ -47,16 +43,16 @@ public class SoapNode extends CordysLdapObject {
 
 	public LdapObjectList<MethodSet> getMs() { return getMethodSets(); }
 	public LdapObjectList<MethodSet> getMethodSets() {
-		return new LdapObjectList<MethodSet>(system, getEntry(),"busmethodsets");
+		return new EntryObjectList<MethodSet>(this, "busmethodsets");
 	}
 	
 	public void addMethodSet(MethodSet m) { 
 		addLdapString("busmethodsets", m.dn); 
-		clear();
+		clearCache();
 	}
 	public void removeMethodSet(MethodSet m) { 
 		removeLdapString("busmethodsets", m.dn);
-		clear();
+		clearCache();
 	}
 	
 	public void diff(LdapObject other, int depth) {

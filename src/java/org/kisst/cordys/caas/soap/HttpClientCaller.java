@@ -116,7 +116,7 @@ public class HttpClientCaller implements SoapCaller {
 			System.out.println(soap);
 		String response = httpCall(soap, org, processor);
 		if (debug || response.indexOf("SOAP:Fault")>0)
-			System.out.println(response);
+			throw new RuntimeException(response);
 		return response;
 	}
 

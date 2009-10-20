@@ -19,22 +19,13 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public abstract class CordysLdapObject implements LdapObject {
-	public interface Property {
-		public Object get();
-		public void clearCache();
-	}
-	protected abstract class AbstractProperty implements Property {
-		abstract public Object get();
+public abstract class CordysLdapObject extends CordysObject implements LdapObject {
+	protected abstract class AbstractProperty extends CordysObject {
 		public void clearCache() {}
-		public String toString() { return ""+get(); }
+		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
 	}
 	protected class StringProperty extends AbstractProperty {
 		private final String path;
@@ -56,33 +47,6 @@ public abstract class CordysLdapObject implements LdapObject {
 			return (T) getSystem().getObject(dn);
 		}
 	}
-	protected class LdapObjectListProperty<T extends LdapObject> extends AbstractProperty {
-		private final XmlNode method;
-		private final Class<? extends LdapObject> clz;
-		private LdapObjectList<T> result=null;
-		public boolean useCache=true;
-		protected LdapObjectListProperty(XmlNode method, Class<? extends LdapObject> clz) {
-			this.method=method;
-			this.clz=clz;
-			method.add("dn").setText(dn);
-		}
-		public LdapObjectListProperty(String prefix, Class<? extends LdapObject> clz) { 
-			this.method = new XmlNode("GetChildren", xmlns_ldap);
-			this.clz=clz;
-			method.add("dn").setText(prefix+dn);
-		}
-		public void clearCache() { result=null; }
-		public synchronized LdapObjectList<T> get() {
-			if (! useCache) result=null;
-			if (result==null) 
-				result = new LdapObjectList<T>(getSystem(), method, clz);
-			return result;
-		}
-		public void diff(LdapObjectListProperty<T> other) { this.diff(other,0); }
-		public void diff(LdapObjectListProperty<T> other, int depth) {
-			this.get().diff(other.get(), depth);
-		}
-	}
 
 	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
 	protected final CordysSystem system;
@@ -90,6 +54,8 @@ public abstract class CordysLdapObject implements LdapObject {
 	protected final String dn;
 	private XmlNode entry;
 
+	public boolean cache;
+	
 	protected CordysLdapObject(CordysSystem system, String dn) {
 		this.system=system;
 		this.parent=null;
@@ -101,10 +67,10 @@ public abstract class CordysLdapObject implements LdapObject {
 		this.parent=parent;
 		this.dn=dn;
 	}
-	public void clear() { 
+	public void clearCache() { 
 		entry=null;
-		for (Property p: getProps().values()) 
-			p.clearCache();
+		for (CordysObject o: getProps().values()) 
+			o.clearCache();
 	}
 	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
@@ -155,7 +121,7 @@ public abstract class CordysLdapObject implements LdapObject {
 		entry.detach();
 	}
 	public XmlNode getEntry() {
-		if (entry!=null && getSystem().getCache())
+		if (entry!=null && useCache)
 			return entry;
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(dn);
@@ -191,16 +157,4 @@ public abstract class CordysLdapObject implements LdapObject {
 	public void diff(LdapObject other) { diff(other,0); }
 	public abstract void diff(LdapObject other, int depth);
 
-	public Map<String, Property> getProps() {
-		Map<String, Property> result= new LinkedHashMap<String, Property>();
-		for (Field f: this.getClass().getFields()) {
-			if (Property.class.isAssignableFrom(f.getType())) {
-				try {
-					result.put(f.getName(), (Property) f.get(this));
-				} 
-				catch (IllegalAccessException e) { throw new RuntimeException(e);}
-			}
-		}
-		return result;
-	}
 }

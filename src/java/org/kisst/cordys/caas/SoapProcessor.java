@@ -31,8 +31,8 @@ public class SoapProcessor extends CordysLdapObject {
 	}
 
 	@Override
-	public void clear() {
-		super.clear();
+	public void clearCache() {
+		super.clearCache();
 		this.workerprocess=null;
 	}
 
@@ -43,7 +43,7 @@ public class SoapProcessor extends CordysLdapObject {
 	}
 	private static XmlNode inactiveWorkerProcess=new XmlNode("<dummy><status></status></dummy>");
 	public XmlNode getWorkerprocess() {
-		if (workerprocess!=null && getSystem().getCache())
+		if (workerprocess!=null && useCache)
 			return this.workerprocess;
 		XmlNode method=new XmlNode("List", CordysSystem.xmlns_monitor);
 		XmlNode response=call(method);
