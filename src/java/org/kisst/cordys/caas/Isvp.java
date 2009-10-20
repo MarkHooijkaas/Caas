@@ -22,8 +22,6 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Isvp extends CordysLdapObject {
-	public final static String xmlns_isv="http://schemas.cordys.com/1.0/isvpackage";
-
 	public final ChildList<User> users= new ChildList<User>(this, User.class);
 	public final ChildList<User> user = users;
 

@@ -48,7 +48,6 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		}
 	}
 
-	public final static String xmlns_ldap="http://schemas.cordys.com/1.0/ldap";
 	protected final CordysSystem system;
 	private final LdapObject parent; 
 	protected final String dn;

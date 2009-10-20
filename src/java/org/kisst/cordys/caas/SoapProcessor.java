@@ -24,7 +24,6 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class SoapProcessor extends CordysLdapObject {
 	public final StringProperty automatic = new StringProperty("automaticstart/string");
 
-	private static final String nsmonitor="http://schemas.cordys.com/1.0/monitor";
 	private XmlNode workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
@@ -45,7 +44,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public XmlNode getWorkerprocess() {
 		if (workerprocess!=null && useCache)
 			return this.workerprocess;
-		XmlNode method=new XmlNode("List", CordysSystem.xmlns_monitor);
+		XmlNode method=new XmlNode("List", xmlns_monitor);
 		XmlNode response=call(method);
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
@@ -82,17 +81,17 @@ public class SoapProcessor extends CordysLdapObject {
 	public int getLastTime()       { return getIntChild(getWorkerprocess(), "last-time"); } 
 
 	public void start() {
-		XmlNode method=new XmlNode ("Start", nsmonitor);
+		XmlNode method=new XmlNode ("Start", xmlns_monitor);
 		method.add("dn").setText(dn);
 		call(method);
 	}
 	public void stop() {
-		XmlNode method=new XmlNode ("Stop", nsmonitor);
+		XmlNode method=new XmlNode ("Stop", xmlns_monitor);
 		method.add("dn").setText(dn);
 		call(method);
 	}
 	public void restart() {
-		XmlNode method=new XmlNode ("Restart", nsmonitor);
+		XmlNode method=new XmlNode ("Restart", xmlns_monitor);
 		method.add("dn").setText(dn);
 		call(method);
 	}

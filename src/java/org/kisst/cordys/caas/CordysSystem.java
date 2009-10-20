@@ -24,7 +24,6 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class CordysSystem extends CordysObject implements LdapObject {
-	public final static String xmlns_monitor="http://schemas.cordys.com/1.0/monitor";
 	private final SoapCaller caller;
 	final LdapCache ldapcache;
 	public final String dn; 
@@ -103,7 +102,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		filename=filename.trim();
 		if (filename.endsWith(".isvp"))
 			filename=filename.substring(0,filename.length()-5);
-		XmlNode method=new XmlNode("GetISVPackageDefinition", Isvp.xmlns_isv);
+		XmlNode method=new XmlNode("GetISVPackageDefinition", xmlns_isv);
 		XmlNode file=method.add("file");
 		file.setText(filename);
 		file.setAttribute("type", "isvpackage");
@@ -111,7 +110,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		file.setAttribute("wizardsteps", "true");
 		XmlNode details=call(method);
 		
-		method=new XmlNode("LoadISVPackage", Isvp.xmlns_isv);
+		method=new XmlNode("LoadISVPackage", xmlns_isv);
 		method.add("url").setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp");
 		method.add(details.getChild("ISVPackage").detach());
 		call(method);

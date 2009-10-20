@@ -39,7 +39,7 @@ public class EntryObjectList<T extends LdapObject> extends LdapObjectList<T>  {
 	
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
-		XmlNode method=new XmlNode("GetChildren", CordysLdapObject.xmlns_ldap);
+		XmlNode method=new XmlNode("GetChildren", xmlns_ldap);
 		method.add("dn").setText(parent.getDn());
 		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))
