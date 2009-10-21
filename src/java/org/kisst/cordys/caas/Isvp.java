@@ -40,6 +40,10 @@ public class Isvp extends CordysLdapObject {
 	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override
+	protected void preDeleteHook() {
+		throw new RuntimeException("It is not allowed to delete an Isvp, please use unload instead");
+	}
 
 	public void unload(boolean deletereferences) {
 		String filename=getFilename();

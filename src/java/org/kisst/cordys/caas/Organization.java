@@ -59,6 +59,13 @@ public class Organization extends CordysLdapObject {
 
 	public String call(String input) { return getSystem().call(input, dn, null); }
 
+	@Override
+	protected void preDeleteHook() {
+		for (SoapProcessor sp: soapProcessors)
+			sp.stop();
+	}
+
+	
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

@@ -46,7 +46,8 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 				return s.substring(startPos);
 			return s;
 		}
-		public void set(String value) { 
+		public void set(String value) {
+			checkIfMayBeModified(); 
 			XmlNode newEntry=getEntry().clone();
 			newEntry.getChild(path).setText(value);
 			updateLdap(newEntry);
@@ -97,11 +98,13 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 			return result;
 		}
 		public void add(String value) {
+			checkIfMayBeModified(); 
 			XmlNode newEntry=getEntry().clone();
 			newEntry.getChild(path).add("string").setText(value);
 			updateLdap(newEntry);
 		}
 		public void remove(String value) {
+			checkIfMayBeModified(); 
 			XmlNode newEntry= getEntry().clone();
 			XmlNode list=newEntry.getChild(path);
 			for(XmlNode e: list.getChildren()) {
@@ -115,6 +118,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 
 	public final StringProperty description = new StringProperty("description");
+	public final StringProperty desc = description;
 
 	private final CordysSystem system;
 	private final LdapObject parent; 
@@ -192,5 +196,23 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		tuple.add("new").add(newEntry);
 		call(method);
 		setEntry(newEntry);
+	}
+	protected void preDeleteHook() {}
+	public void checkIfMayBeModified() {
+		LdapObject obj=this;
+		while (obj!=null && ! (obj instanceof CordysSystem)) {
+			if (obj instanceof Isvp)
+				throw new RuntimeException("It is not allowed to delete any part of an ISVP");
+			obj=obj.getParent();
+		}
+	}
+	public void delete() {
+		checkIfMayBeModified(); 
+		preDeleteHook();
+		XmlNode method=new XmlNode("DeleteRecursive", xmlns_ldap);
+		XmlNode tuple=method.add("tuple");
+		tuple.add("old").add(entry.clone());
+		call(method);
+		getSystem().remove(getDn());
 	}
 }
