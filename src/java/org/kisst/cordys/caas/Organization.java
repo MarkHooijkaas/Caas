@@ -36,26 +36,27 @@ public class Organization extends CordysLdapObject {
 	public final ChildList<SoapNode> soapNodes= new ChildList<SoapNode>(this, "cn=soap nodes,", SoapNode.class);
 	public final ChildList<SoapNode> sn = soapNodes;
 	
+	// These fields must be initialized in constructor because system is only known there
+	public final CordysObjectList<SoapProcessor> soapProcessors; 
+	public final CordysObjectList<SoapProcessor> sp; 
+	
+
+	@SuppressWarnings("unchecked")
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
-	}
-
-	public String call(String input) { return getSystem().call(input, dn, null); }
-
-	public CordysObjectList<SoapProcessor> getSp() { 	return getSoapProcessors();	}
-	@SuppressWarnings("unchecked")
-	public CordysObjectList<SoapProcessor> getSoapProcessors() {
-		return new CordysObjectList(getSystem()) {
+		soapProcessors = new CordysObjectList(parent.getSystem()) {
 			protected void retrieveList() {
 				for (SoapNode sn: soapNodes) {
 					for (SoapProcessor sp: sn.soapProcessors)
 						add(sp);
 				}
 			}
-		};
+		}; 
+		sp = soapProcessors;
 	}
 
-	
+	public String call(String input) { return getSystem().call(input, dn, null); }
+
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

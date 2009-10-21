@@ -25,14 +25,15 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public class CordysSystem extends CordysObject implements LdapObject {
 	private final SoapCaller caller;
-	final LdapCache ldapcache;
-	public final String dn; 
-	public boolean debug=false;
-	public boolean useCache=true;
+	private final LdapCache ldapcache;
 	private final String name;
+	private final String dn; 
+
 	public final String version;
 	public final String build;
-	public int displayFormat=0;
+	public boolean debug=false;
+	public boolean useCache=true;
+	//public int displayFormat=0;
 	
 	public final ChildList<Organization> organizations= new ChildList<Organization>(this, Organization.class);
 	public final ChildList<Organization> org = organizations;
@@ -47,7 +48,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
 		protected void retrieveList() {
 			for (Organization o: organizations) {
-				for (SoapProcessor sp: o.getSoapProcessors())
+				for (SoapProcessor sp: o.soapProcessors)
 					add(sp);
 			}
 		}
@@ -85,10 +86,6 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	public String call(String soap) { return caller.call(soap, debug); }
 	public XmlNode call(XmlNode method) { return caller.call(method, debug); }
 
-	@SuppressWarnings("unchecked")
-	public CordysObjectList<SoapProcessor> getSoapProcessors() {
-		return null;
-	}
 	public void refreshSoapProcessors() {
 		XmlNode method=new XmlNode("List", xmlns_monitor);
 		XmlNode response=call(method);

@@ -135,7 +135,8 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		return dn.substring(pos+1,pos2);
 	}
 	public String toString() {
-		if (getSystem().displayFormat==0) {
+		//if (getSystem().displayFormat==0) {
+		if (true) {
 			String c=this.getClass().getSimpleName()+"("+getName()+")";
 			if (parent!=null && (parent instanceof CordysLdapObject))
 				c=parent.toString()+"."+c;

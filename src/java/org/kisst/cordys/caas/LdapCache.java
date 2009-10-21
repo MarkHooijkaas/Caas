@@ -123,7 +123,7 @@ public class LdapCache {
 	private LdapObject getParent(XmlNode entry) {
 		String dn=entry.getAttribute("dn");
 		//System.out.println("getParent ["+dn+"]");
-		if (dn.length()<=system.dn.length()) // Safeguard
+		if (dn.length()<=system.getDn().length()) // Safeguard
 			return null;
 		do {
 			int pos=dn.indexOf(",");
