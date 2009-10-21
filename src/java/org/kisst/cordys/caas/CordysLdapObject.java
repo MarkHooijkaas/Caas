@@ -82,6 +82,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		protected RefProperty(String path) {super(path);}
 		@SuppressWarnings("unchecked")
 		public T getRef() { return (T) getSystem().getObject(get()); }
+		public void set(T value) { set(value.getDn()); }
 	}
 	protected class StringList extends AbstractProperty {
 		// TODO: cache this?
