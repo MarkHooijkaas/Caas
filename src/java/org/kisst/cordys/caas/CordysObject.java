@@ -28,12 +28,17 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				StringBuilder result=new StringBuilder();
 				result.append("{");
 				boolean first=true;
+				Map.Entry<String, Object> previous=null;
 				for (Map.Entry<String, Object> entry : this.entrySet()) {
-					result.append("\n"+entry.getKey()+"="+entry.getValue());
+					if (previous!=null && previous.getValue()==entry.getValue() && entry.getValue()!=null)
+						result.append("\n"+entry.getKey()+"=alias("+previous.getKey()+")");
+					else 
+						result.append("\n"+entry.getKey()+"="+entry.getValue());
 					if (first)
 						first=false;
 					else
 						result.append(",");
+					previous=entry;
 				}
 				result.append("\n}");
 				return result.toString();

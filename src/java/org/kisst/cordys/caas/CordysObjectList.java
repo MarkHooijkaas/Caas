@@ -92,7 +92,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	
 	
 	public int getSize() { fetchList(); return list.size(); }
-	public String toString() { return toString("\n[\t",",\n\t","\n]"); }
+	public String toString() { return toString("[\n\t",",\n\t","\n]"); }
 	public String toString(String begin, String middle, String end) {
 		fetchList(); 
 		if (this.list.size()==0)
