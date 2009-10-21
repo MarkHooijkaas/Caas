@@ -22,7 +22,9 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class SoapProcessor extends CordysLdapObject {
-	public final StringProperty automatic = new StringProperty("automaticstart");
+	public final ChildList<ConnectionPoint> connectionPoints = new ChildList<ConnectionPoint>(this, ConnectionPoint.class);
+	public final ChildList<ConnectionPoint> cpoint = connectionPoints;
+
 	public final StringProperty computer = new StringProperty("computer");
 	public final StringProperty host = new StringProperty("busoshost");
 

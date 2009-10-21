@@ -38,6 +38,7 @@ public class LdapCache {
 		ldapObjectTypes.put("bussoapnode", SoapNode.class);
 		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
 		ldapObjectTypes.put("busorganizationaluser", User.class);
+		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
 	}
 	private final HashMap<String, LdapObject> tree=new HashMap<String, LdapObject>();
 	private final CordysSystem system;
