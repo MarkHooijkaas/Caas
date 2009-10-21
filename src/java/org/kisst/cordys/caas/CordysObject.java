@@ -11,14 +11,14 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public final static String xmlns_ldap   = "http://schemas.cordys.com/1.0/ldap";
 	public final static String xmlns_isv    = "http://schemas.cordys.com/1.0/isvpackage";
 	public final static String xmlns_xmlstore="http://schemas.cordys.com/1.0/xmlstore";
-	
+
 	abstract public CordysSystem getSystem();
 	abstract public void refresh();
 	public String getName() { return null; } 
 	public String getKey()  { return null; } 
-	
+
 	public boolean useCache() { return getSystem().useCache();}
-	
+
 	public Map<String, Object> getProps() {
 		Map<String, Object> result= new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 1L;
@@ -39,7 +39,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				return result.toString();
 			}
 		};
-		
+
 		for (Field f: this.getClass().getFields()) {
 			if (! Modifier.isStatic(f.getModifiers())) {
 				try {
@@ -65,7 +65,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		}
 		return 0;
 	}
-	
+
 	public void deepdiff(CordysObject other) { diff(other,100); }
 	public void diff(CordysObject other) { diff(other,0); }
 	public void diff(CordysObject other, int depth) { diff("", other, depth); }
