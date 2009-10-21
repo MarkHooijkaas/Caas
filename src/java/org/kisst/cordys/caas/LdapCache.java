@@ -49,12 +49,13 @@ public class LdapCache {
 	}
 
 	public void clear() {
+		/*
 		for (LdapObject o: tree.values()) {
 			if (o instanceof CordysLdapObject)
 				((CordysLdapObject) o).refresh();
-		}
+		}*/
 		tree.clear();
-		tree.put(system.dn,system);
+		tree.put(system.getDn(),system);
 	}
 
 	public synchronized LdapObject getObject(String newdn) {
