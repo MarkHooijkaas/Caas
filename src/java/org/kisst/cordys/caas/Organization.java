@@ -26,9 +26,11 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class Organization extends CordysLdapObject {
 	public final ChildList<User> users= new ChildList<User>(this, "cn=organizational users,", User.class);
 	public final ChildList<User> user = users;
+	public final ChildList<User> u    = users;
 
 	public final ChildList<Role> roles= new ChildList<Role>(this, "cn=organizational roles,", Role.class);
 	public final ChildList<Role> role= roles;
+	public final ChildList<Role> r   = roles;
 
 	public final ChildList<MethodSet> methodSets= new ChildList<MethodSet>(this, "cn=method sets,", MethodSet.class);
 	public final ChildList<MethodSet> ms = methodSets;

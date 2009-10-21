@@ -37,12 +37,15 @@ public class CordysSystem extends CordysObject implements LdapObject {
 	
 	public final ChildList<Organization> organizations= new ChildList<Organization>(this, Organization.class);
 	public final ChildList<Organization> org = organizations;
+	public final ChildList<Organization> o   = organizations;
 
 	public final ChildList<Isvp> isvps= new ChildList<Isvp>(this, Isvp.class);
 	public final ChildList<Isvp> isvp = isvps;
+	public final ChildList<Isvp> i    = isvps;
 
 	public final ChildList<AuthenticatedUser> authenticatedUsers= new ChildList<AuthenticatedUser>(this, "cn=authenticated users,", AuthenticatedUser.class);
 	public final ChildList<AuthenticatedUser> auser = authenticatedUsers;
+	public final ChildList<AuthenticatedUser> au    = authenticatedUsers;
 	
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {

@@ -22,10 +22,12 @@ package org.kisst.cordys.caas;
 
 
 public class User extends CordysLdapObject {
-	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser/string");
+	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser");
+	public final RefProperty<AuthenticatedUser> au = authenticatedUser;
 
 	public final EntryObjectList<Role> roles = new EntryObjectList<Role>(this, "role");
 	public final EntryObjectList<Role> role = roles;
+	public final EntryObjectList<Role> r    = roles;
 
 	public final StringList toolbars= new StringList("toolbar"); 
 	public final StringList menus = new StringList("menu"); 

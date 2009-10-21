@@ -23,6 +23,7 @@ package org.kisst.cordys.caas;
 public class Role extends CordysLdapObject {
 	public final EntryObjectList<Role> roles = new EntryObjectList<Role>(this, "role");
 	public final EntryObjectList<Role> role = roles;
+	public final EntryObjectList<Role> r    = roles;
 
 	public final StringList toolbars= new StringList("toolbar"); 
 	public final StringList menus = new StringList("menu"); 

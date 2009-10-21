@@ -24,9 +24,11 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class Isvp extends CordysLdapObject {
 	public final ChildList<User> users= new ChildList<User>(this, User.class);
 	public final ChildList<User> user = users;
+	public final ChildList<User> u    = users;
 
 	public final ChildList<Role> roles= new ChildList<Role>(this, Role.class);
 	public final ChildList<Role> role= roles;
+	public final ChildList<Role> r   = roles;
 
 	public final ChildList<MethodSet> methodSets= new ChildList<MethodSet>(this, MethodSet.class);
 	public final ChildList<MethodSet> ms = methodSets;
