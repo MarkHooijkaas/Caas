@@ -34,8 +34,18 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	protected class StringProperty extends AbstractProperty {
 		private final String path;
-		protected StringProperty(String path) {this.path=path+"/string";}
-		public String get() { return getEntry().getChildText(path); }
+		private final int startPos;
+		protected StringProperty(String path) { this(path,0);}
+		public StringProperty(String path, int startPos) {
+			this.startPos=startPos;
+			this.path=path+"/string";
+		}
+		public String get() { 
+			String s= getEntry().getChildText(path);
+			if (s!=null && startPos>0)
+				return s.substring(startPos);
+			return s;
+		}
 		public String toString() {
 			String s=get();
 			if (s==null)

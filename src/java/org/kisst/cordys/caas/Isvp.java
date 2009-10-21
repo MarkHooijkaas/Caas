@@ -31,6 +31,8 @@ public class Isvp extends CordysLdapObject {
 	public final ChildList<MethodSet> methodSets= new ChildList<MethodSet>(this, MethodSet.class);
 	public final ChildList<MethodSet> ms = methodSets;
 
+	public final StringProperty filename = new StringProperty("member", 3);
+
 
 	
 	protected Isvp(LdapObject parent, String dn) {

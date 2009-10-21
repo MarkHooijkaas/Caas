@@ -19,7 +19,26 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public boolean useCache() { return getSystem().useCache();}
 	
 	public Map<String, CordysObject> getProps() {
-		Map<String, CordysObject> result= new LinkedHashMap<String, CordysObject>();
+		Map<String, CordysObject> result= new LinkedHashMap<String, CordysObject>() {
+			private static final long serialVersionUID = 1L;
+			public String toString() {
+				if (size()==0)
+					return "{}";
+				StringBuilder result=new StringBuilder();
+				result.append("{");
+				boolean first=true;
+				for (Entry<String, CordysObject> entry : this.entrySet()) {
+					result.append("\n"+entry.getKey()+"="+entry.getValue());
+					if (first)
+						first=false;
+					else
+						result.append(",");
+				}
+				result.append("\n}");
+				return result.toString();
+			}
+		};
+		
 		for (Field f: this.getClass().getFields()) {
 			if (CordysObject.class.isAssignableFrom(f.getType())) {
 				try {

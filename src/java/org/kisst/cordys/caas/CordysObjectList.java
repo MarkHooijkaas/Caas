@@ -95,6 +95,10 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	public String toString() { return toString("\n[\t",",\n\t","\n]"); }
 	public String toString(String begin, String middle, String end) {
 		fetchList(); 
+		if (this.list.size()==0)
+			return "[]";
+		if (this.list.size()==1)
+			return "["+get(0)+"]";
 		StringBuffer result=new StringBuffer(begin);
 		boolean first=true;
 		for(Object o: this) {

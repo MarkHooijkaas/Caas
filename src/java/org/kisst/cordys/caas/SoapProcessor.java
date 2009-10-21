@@ -32,7 +32,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public final XmlSubProperty ui_type = new XmlSubProperty(config, "routing/@ui_type");  
 	public final XmlSubProperty preference = new XmlSubProperty(config, "routing/preference");  
 	public final XmlSubProperty gracefulCompleteTime = new XmlSubProperty(config, "gracefulCompleteTime");  
-	public final XmlSubProperty abortTime = new XmlSubProperty(config, "abortTime ");  
+	public final XmlSubProperty abortTime = new XmlSubProperty(config, "abortTime");  
 	public final XmlSubProperty cancelReplyInterval = new XmlSubProperty(config, "cancelReplyInterval");  
 	public final XmlSubProperty implementation = new XmlSubProperty(config, "configuration/@implementation");  
 	
