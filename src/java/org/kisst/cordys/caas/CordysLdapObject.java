@@ -100,9 +100,9 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 
 	public final StringProperty description = new StringProperty("description");
 
-	public final CordysSystem system;
-	public final LdapObject parent; 
-	public final String dn;
+	private final CordysSystem system;
+	private final LdapObject parent; 
+	protected final String dn;
 	private XmlNode entry;
 
 	protected CordysLdapObject(CordysSystem system, String dn) {

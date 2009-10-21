@@ -95,9 +95,15 @@ public class XmlNode {
 	
 	public String toString() {
 		XMLOutputter out=new XMLOutputter();
-		String xml= out.outputString(element);
-		return xml;
+		return out.outputString(element);
 	}
+	public String shortString(int maxlen) {
+		String xml= toString();
+		if (xml.length()<=maxlen) 
+			return xml;
+		return "<"+getName()+">...<"+getName()+">";
+	}
+
 	public XmlNode setAttribute(String name, String value) {
 		element.setAttribute(name, value);
 		return this;

@@ -83,11 +83,12 @@ public class SoapProcessor extends CordysLdapObject {
 		else
 			return Integer.parseInt(result);
 	}
-	public String getStatus(){ return getWorkerprocess().getChildText("status"); } 
+	public String getStatus()      { return getWorkerprocess().getChildText("status"); } 
+	public String getCpuTime()     { return getWorkerprocess().getChildText("totalCpuTime"); }
+	
 	public int getPid()            { return getIntChild(getWorkerprocess(), "process-id"); } 
 	public int getNomMemory()      { return getIntChild(getWorkerprocess(), "totalNOMMemory"); } 
 	public int getNomNodesMemory() { return getIntChild(getWorkerprocess(), "totalNOMNodesMemory"); } 
-	public int getCpuTime()        { return getIntChild(getWorkerprocess(), "totalCpuTime"); } 
 	public int getVirtualMemory()  { return getIntChild(getWorkerprocess(), "virtualMemoryUsage"); } 
 	public int getResidentMemory() { return getIntChild(getWorkerprocess(), "residentMemoryUsage"); } 
 	public int getSequenceNumber() { return getIntChild(getWorkerprocess(), "sequence-number"); } 
