@@ -1,6 +1,7 @@
 package org.kisst.cordys.caas;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,8 +19,8 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	
 	public boolean useCache() { return getSystem().useCache();}
 	
-	public Map<String, CordysObject> getProps() {
-		Map<String, CordysObject> result= new LinkedHashMap<String, CordysObject>() {
+	public Map<String, Object> getProps() {
+		Map<String, Object> result= new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = 1L;
 			public String toString() {
 				if (size()==0)
@@ -27,7 +28,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				StringBuilder result=new StringBuilder();
 				result.append("{");
 				boolean first=true;
-				for (Entry<String, CordysObject> entry : this.entrySet()) {
+				for (Entry<String, Object> entry : this.entrySet()) {
 					result.append("\n"+entry.getKey()+"="+entry.getValue());
 					if (first)
 						first=false;
@@ -40,9 +41,9 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		};
 		
 		for (Field f: this.getClass().getFields()) {
-			if (CordysObject.class.isAssignableFrom(f.getType())) {
+			if (! Modifier.isStatic(f.getModifiers())) {
 				try {
-					result.put(f.getName(), (CordysObject) f.get(this));
+					result.put(f.getName(),  f.get(this));
 				} 
 				catch (IllegalAccessException e) { throw new RuntimeException(e);}
 			}

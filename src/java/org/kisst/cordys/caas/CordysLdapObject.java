@@ -46,13 +46,6 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 				return s.substring(startPos);
 			return s;
 		}
-		public String toString() {
-			String s=get();
-			if (s==null)
-				return "null";
-			else
-				return "\""+s+"\""; 
-		}
 	}
 	protected class XmlProperty extends AbstractProperty {
 		private final String path;
@@ -105,13 +98,11 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 
 	public final StringProperty description = new StringProperty("description");
 
-	protected final CordysSystem system;
-	private final LdapObject parent; 
-	protected final String dn;
+	public final CordysSystem system;
+	public final LdapObject parent; 
+	public final String dn;
 	private XmlNode entry;
 
-	public boolean cache;
-	
 	protected CordysLdapObject(CordysSystem system, String dn) {
 		this.system=system;
 		this.parent=null;
@@ -125,8 +116,10 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	public void refresh() { 
 		entry=null;
-		for (CordysObject o: getProps().values()) 
-			o.refresh();
+		for (Object o: getProps().values()) {
+			if (o instanceof CordysObject)
+				((CordysObject) o).refresh();
+		}
 	}
 	public LdapObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
