@@ -40,13 +40,15 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 					result.append(entry.getKey()+"=");
 					if (previous!=null && previous.getValue()==entry.getValue() && entry.getValue()!=null)
 						result.append("alias("+previous.getKey()+")");
-					else if (entry.getValue() instanceof XmlNode) 
-						result.append(((XmlNode)entry.getValue()).shortString(40));
-					else if (entry.getValue() instanceof CordysLdapObject.XmlProperty) 
-						result.append(((CordysLdapObject.XmlProperty)entry.getValue()).getXml().shortString(40));
-					else
-						result.append(entry.getValue());
-					previous=entry;
+					else {
+						previous=entry; 
+						if (entry.getValue() instanceof XmlNode) 
+							result.append(((XmlNode)entry.getValue()).shortString(40));
+						else if (entry.getValue() instanceof CordysLdapObject.XmlProperty) 
+							result.append(((CordysLdapObject.XmlProperty)entry.getValue()).getXml().shortString(40));
+						else
+							result.append(entry.getValue());
+					}
 				}
 				result.append("\n}");
 				return result.toString();
