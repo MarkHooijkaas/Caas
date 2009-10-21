@@ -19,6 +19,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.LinkedHashMap;
+
+import org.kisst.cordys.caas.util.XmlNode;
+
 
 
 
@@ -44,6 +48,22 @@ public class SoapNode extends CordysLdapObject {
 		super(parent, dn);
 	}
 	
+	public void recalcNamespaces() {
+		LinkedHashMap<String, String> all=new LinkedHashMap<String, String>();
+		for (MethodSet ms : methodSets) {
+			if (ms!=null) {
+				for (String s : ms.namespaces.get())
+					all.put(s,s);
+			}
+		}
+		XmlNode newEntry=getEntry().clone();
+		XmlNode msNode=newEntry.getChild("labeleduri");
+		for (XmlNode child: msNode.getChildren())
+			msNode.remove(child);
+		for (String s: all.keySet())
+			msNode.add("string").setText(s);
+		updateLdap(newEntry);
+	}
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;
