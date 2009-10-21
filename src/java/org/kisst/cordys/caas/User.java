@@ -41,8 +41,8 @@ public class User extends CordysLdapObject {
 		if (this==other)
 			return;
 		User otherUser = (User) other;
-		String auser1=authenticatedUser.get().getName();
-		String auser2=otherUser.authenticatedUser.get().getName();
+		String auser1=authenticatedUser.getRef().getName();
+		String auser2=otherUser.authenticatedUser.getRef().getName();
 		if (! auser1.equals(auser2)) {
 			System.out.println("< "+this+".authenticatedUser="+auser1);
 			System.out.println("> "+this+".authenticatedUser="+auser2);

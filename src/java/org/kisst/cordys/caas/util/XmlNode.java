@@ -53,6 +53,12 @@ public class XmlNode {
 			return (String) child;
 		return ((XmlNode) child).getText();
 	}
+	public void setChildText(String path, String value) {
+		if (path.indexOf("@")>=0)
+			throw new RuntimeException("changing an attribute not yet supported in path "+path);
+		Object child=get(path);
+		((XmlNode) child).setText(value);
+	}
 
 	public List<XmlNode> getChildren() {
 		List l = element.getChildren();

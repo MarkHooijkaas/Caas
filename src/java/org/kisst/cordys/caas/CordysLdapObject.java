@@ -46,41 +46,42 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 				return s.substring(startPos);
 			return s;
 		}
-	}
-	protected class XmlProperty extends AbstractProperty {
-		private final String path;
-		protected XmlProperty(String path) {this.path=path+"/string";}
-		public XmlNode get() { 
-			String s=getEntry().getChildText(path);
-			if (s==null || s.length()==0)
-				return null;
-			return new XmlNode(s);
+		public void set(String value) { 
+			XmlNode newEntry=getEntry().clone();
+			newEntry.getChild(path).setText(value);
+			updateLdap(newEntry);
 		}
 	}
-	protected class XmlSubProperty extends AbstractProperty {
+	protected class XmlProperty extends StringProperty {
+		protected XmlProperty(String path) {super(path);}
+		public XmlNode getXml() { return new XmlNode(get()); }
+		public void set(XmlNode value) { set(value.toString()); }
+	}
+	protected class XmlSubProperty {
 		private final XmlProperty xml;
 		private final String path;
 		protected XmlSubProperty(XmlProperty xml, String path) {
 			this.xml=xml;
 			this.path=path;
 		}
-		public String get() {return xml.get().getChildText(path); }
+		public String get() {return xml.getXml().getChildText(path); }
+		public void set(String value) {
+			XmlNode newnode=xml.getXml().clone();
+			newnode.setChildText(path, value);
+			xml.set(newnode);
+		}
+		public String toString() { return ""+get(); }
 	}
 
-	protected class BooleanProperty extends AbstractProperty {
-		private final String path;
-		protected BooleanProperty(String path) {this.path=path;}
-		public Boolean get() { return "true".equals(getEntry().getChildText(path)); }
-		public void set(boolean value) { System.out.println("setting ");}
+	protected class BooleanProperty extends StringProperty {
+		protected BooleanProperty(String path) {super(path);}
+		public Boolean getBool() { return "true".equals(get()); }
+		public void set(boolean value) { set(""+value);}
 	}
-	protected class RefProperty<T extends LdapObject> extends AbstractProperty {
-		private final String path;
-		protected RefProperty(String path) {this.path=path+"/string";}
+	protected class RefProperty<T extends LdapObject> extends StringProperty {
+		protected RefProperty(String path) {super(path);}
 		@SuppressWarnings("unchecked")
-		public T get() { 
-			String dn= getEntry().getChildText(path);
-			return (T) getSystem().getObject(dn);
-		}
+		public T getRef() { return (T) getSystem().getObject(get()); }
 	}
 	protected class StringList extends AbstractProperty {
 		// TODO: cache this?
