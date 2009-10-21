@@ -48,7 +48,7 @@ public class Organization extends CordysLdapObject {
 			protected void retrieveList() {
 				for (SoapNode sn: soapNodes) {
 					for (SoapProcessor sp: sn.soapProcessors)
-						add(sp);
+						grow(sp);
 				}
 			}
 		}; 

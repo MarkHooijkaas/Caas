@@ -50,7 +50,7 @@ public class ChildList<T extends CordysObject> extends CordysObjectList<T>  {
 			XmlNode elm=tuple.getChild("old/entry");
 			LdapObject obj=system.getObject(elm);
 			if (clz==null || obj.getClass()==clz)
-				this.add((T) obj);
+				this.grow((T) obj);
 			//System.out.println(dn);
 		}
 	}

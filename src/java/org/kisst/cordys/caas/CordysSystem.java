@@ -49,7 +49,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		protected void retrieveList() {
 			for (Organization o: organizations) {
 				for (SoapProcessor sp: o.soapProcessors)
-					add(sp);
+					grow(sp);
 			}
 		}
 	}; 

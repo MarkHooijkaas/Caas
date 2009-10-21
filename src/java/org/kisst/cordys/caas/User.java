@@ -34,9 +34,6 @@ public class User extends CordysLdapObject {
 		super(parent, dn);
 	}
 
-	public void addRole(Role r) { addLdapString("role", r.dn); }
-	public void removeRole(Role r) { removeLdapString("role", r.dn); }
-	
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

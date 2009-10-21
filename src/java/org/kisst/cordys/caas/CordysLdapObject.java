@@ -96,6 +96,22 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 					result.add(child.getText());
 			return result;
 		}
+		public void add(String value) {
+			XmlNode newEntry=getEntry().clone();
+			newEntry.getChild(path).add("string").setText(value);
+			updateLdap(newEntry);
+		}
+		public void remove(String value) {
+			XmlNode newEntry= getEntry().clone();
+			XmlNode list=newEntry.getChild(path);
+			for(XmlNode e: list.getChildren()) {
+				if (value.equals(e.getText())) {
+					list.remove(e);
+				}
+			}
+			updateLdap(newEntry);
+		}
+
 	}
 
 	public final StringProperty description = new StringProperty("description");
@@ -167,20 +183,6 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		XmlNode response = call(method);
 		setEntry(response.getChild("tuple/old/entry"));
 		return entry;
-	}
-
-	protected void addLdapString(String group, String value) {
-		XmlNode newEntry=getEntry().clone();
-		newEntry.getChild(group).add("string").setText(value);
-		updateLdap(newEntry);
-	}
-	protected void removeLdapString(String group, String value) {
-		XmlNode newEntry= getEntry().clone();
-		for(XmlNode e: newEntry.getChild(group).getChildren()) {
-			if (e.getText().equals(value))
-				newEntry.remove(e);
-		}
-		updateLdap(newEntry);
 	}
 
 	protected void updateLdap(XmlNode newEntry) {

@@ -59,13 +59,12 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	public void refresh() { list.clear(); listAvailable=false; }
 	public CordysSystem getSystem() {return system; }
 
-	public boolean add(T obj) {
+	protected void grow(T obj) {
 		list.add(obj);
 		if (obj!=null) {
 			dnIndex.put(obj.getKey(), obj);
 			nameIndex.put(obj.getName(), obj);
 		}
-		return true;
 	}
 	public Iterator<T> iterator() { fetchList(); return list.iterator(); }
 
@@ -119,7 +118,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 			protected void retrieveList() {
 				for(T obj: CordysObjectList.this) {
 					if (obj.getName().toLowerCase().indexOf(expr)>=0)
-						add(obj);
+						grow(obj);
 				}
 			}
 		};
@@ -134,7 +133,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 					tmp.add(obj);
 				Collections.sort(tmp);
 				for (T obj : tmp)
-					add(obj);
+					grow(obj);
 				
 			}
 		};

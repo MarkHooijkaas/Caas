@@ -43,16 +43,6 @@ public class SoapNode extends CordysLdapObject {
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-
-	
-	public void addMethodSet(MethodSet m) { 
-		addLdapString("busmethodsets", m.dn); 
-		refresh();
-	}
-	public void removeMethodSet(MethodSet m) { 
-		removeLdapString("busmethodsets", m.dn);
-		refresh();
-	}
 	
 	public void diff(LdapObject other, int depth) {
 		if (this==other)

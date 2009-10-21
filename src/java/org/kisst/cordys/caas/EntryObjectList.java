@@ -27,7 +27,7 @@ import org.kisst.cordys.caas.util.XmlNode;
  * on objects that inherit from a List.
  * 
  */
-public class EntryObjectList<T extends CordysObject> extends CordysObjectList<T>  {
+public class EntryObjectList<T extends CordysLdapObject> extends CordysObjectList<T>  {
 	private final CordysLdapObject parent;
 	private final String group;
 
@@ -53,7 +53,23 @@ public class EntryObjectList<T extends CordysObject> extends CordysObjectList<T>
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();
 			LdapObject obj=system.getObject(dn);
-			this.add((T) obj);
+			this.grow((T) obj);
 		}
+	}
+	public void add(T obj) { add(obj.getDn()); }
+	public void remove(T obj) { remove(obj.getDn()); }
+	public void add(String value) {
+		XmlNode newEntry=parent.getEntry().clone();
+		newEntry.getChild(group).add("string").setText(value);
+		parent.updateLdap(newEntry);
+	}
+	public void remove(String value) {
+		XmlNode newEntry= parent.getEntry().clone();
+		XmlNode list=newEntry.getChild(group);
+		for(XmlNode e: list.getChildren()) {
+			if (e.getText().equals(value))
+				list.remove(e);
+		}
+		parent.updateLdap(newEntry);
 	}
 }
