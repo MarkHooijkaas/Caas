@@ -27,6 +27,7 @@ public class SoapProcessor extends CordysLdapObject {
 
 	public final StringProperty computer = new StringProperty("computer");
 	public final StringProperty host = new StringProperty("busoshost");
+	public final BooleanProperty automatic = new BooleanProperty("automaticstart");
 
 	public final XmlProperty config = new XmlProperty("bussoapprocessorconfiguration");
 
@@ -37,6 +38,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public final XmlSubProperty abortTime = new XmlSubProperty(config, "abortTime");  
 	public final XmlSubProperty cancelReplyInterval = new XmlSubProperty(config, "cancelReplyInterval");  
 	public final XmlSubProperty implementation = new XmlSubProperty(config, "configuration/@implementation");  
+	public final XmlSubProperty UseSystemLogPolicy = new XmlSubProperty(config, "loggerconfiguration/systempolicy");  
 	
 	private XmlNode workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {
@@ -109,24 +111,7 @@ public class SoapProcessor extends CordysLdapObject {
 		method.add("dn").setText(dn);
 		call(method);
 	}
-	public String getComputer() {
-		return getEntry().getChildText("computer/string");
-	}
-	public boolean getAutomatic() {
-		String s=getEntry().getChildText("automaticstart/string");
-		return s.equals("true");
-	}
-	public XmlNode getConfig() {
-		String s=getEntry().getChildText("bussoapprocessorconfiguration/string");
-		return new XmlNode(s);
-	}
-	public boolean getUseSystemLogPolicy() {
-		XmlNode e=getConfig().getChild("loggerconfiguration");
-		if (e==null)
-			return true; // defautl is true
-		return e.getChildText("systempolicy").equals("true");
-	}
-	
+
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;
