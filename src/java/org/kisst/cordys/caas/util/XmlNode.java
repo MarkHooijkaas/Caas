@@ -46,10 +46,12 @@ public class XmlNode {
 	public XmlNode getParent() { return new XmlNode(element.getParentElement()); }
 	public Object  propertyMissing(String name) { return get(name); }
 	public String getChildText(String path) {
-		XmlNode child=getChild(path);
+		Object child=get(path);
 		if (child==null)
 			return null;
-		return child.getText();
+		if (child instanceof String)
+			return (String) child;
+		return ((XmlNode) child).getText();
 	}
 
 	public List<XmlNode> getChildren() {

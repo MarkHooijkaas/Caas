@@ -34,7 +34,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	protected class StringProperty extends AbstractProperty {
 		private final String path;
-		protected StringProperty(String path) {this.path=path;}
+		protected StringProperty(String path) {this.path=path+"/string";}
 		public String get() { return getEntry().getChildText(path); }
 		public String toString() {
 			String s=get();
@@ -46,7 +46,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	protected class XmlProperty extends AbstractProperty {
 		private final String path;
-		protected XmlProperty(String path) {this.path=path;}
+		protected XmlProperty(String path) {this.path=path+"/string";}
 		public XmlNode get() { 
 			String s=getEntry().getChildText(path);
 			if (s==null || s.length()==0)
@@ -54,6 +54,16 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 			return new XmlNode(s);
 		}
 	}
+	protected class XmlSubProperty extends AbstractProperty {
+		private final XmlProperty xml;
+		private final String path;
+		protected XmlSubProperty(XmlProperty xml, String path) {
+			this.xml=xml;
+			this.path=path;
+		}
+		public String get() {return xml.get().getChildText(path); }
+	}
+
 	protected class BooleanProperty extends AbstractProperty {
 		private final String path;
 		protected BooleanProperty(String path) {this.path=path;}
@@ -62,7 +72,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	protected class RefProperty<T extends LdapObject> extends AbstractProperty {
 		private final String path;
-		protected RefProperty(String path) {this.path=path;}
+		protected RefProperty(String path) {this.path=path+"/string";}
 		@SuppressWarnings("unchecked")
 		public T get() { 
 			String dn= getEntry().getChildText(path);
@@ -83,7 +93,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		}
 	}
 
-	public final StringProperty description = new StringProperty("description/string");
+	public final StringProperty description = new StringProperty("description");
 
 	protected final CordysSystem system;
 	private final LdapObject parent; 

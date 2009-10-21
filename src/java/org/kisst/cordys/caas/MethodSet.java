@@ -26,7 +26,7 @@ public class MethodSet extends CordysLdapObject {
 	public final StringList namespaces= new StringList("labeleduri"); 
 	public final StringList ns = namespaces;
 
-	public final StringProperty implementationclass=new StringProperty("implementationclass/string");
+	public final StringProperty implementationclass=new StringProperty("implementationclass");
 	
 	protected MethodSet(LdapObject parent, String dn) {
 		super(parent, dn);

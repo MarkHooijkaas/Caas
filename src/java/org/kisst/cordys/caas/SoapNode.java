@@ -32,7 +32,12 @@ public class SoapNode extends CordysLdapObject {
 	public final StringList namespaces= new StringList("labeleduri"); 
 	public final StringList ns = namespaces;
 	
-	public final XmlProperty config = new XmlProperty("bussoapnodeconfiguration/string");
+	public final XmlProperty config = new XmlProperty("bussoapnodeconfiguration");
+	
+	public final XmlSubProperty ui_algorithm = new XmlSubProperty(config, "routing/@ui_algorithm");  
+	public final XmlSubProperty ui_type = new XmlSubProperty(config, "routing/@ui_type");  
+	public final XmlSubProperty numprocessors = new XmlSubProperty(config, "routing/numprocessors");  
+	public final XmlSubProperty algorithm= new XmlSubProperty(config, "routing/algorithm");  
 
 	
 	protected SoapNode(LdapObject parent, String dn) {

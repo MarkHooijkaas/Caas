@@ -22,8 +22,20 @@ package org.kisst.cordys.caas;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class SoapProcessor extends CordysLdapObject {
-	public final StringProperty automatic = new StringProperty("automaticstart/string");
+	public final StringProperty automatic = new StringProperty("automaticstart");
+	public final StringProperty computer = new StringProperty("computer");
+	public final StringProperty host = new StringProperty("busoshost");
 
+	public final XmlProperty config = new XmlProperty("bussoapprocessorconfiguration");
+
+	public final XmlSubProperty ui_algorithm = new XmlSubProperty(config, "routing/@ui_algorithm");  
+	public final XmlSubProperty ui_type = new XmlSubProperty(config, "routing/@ui_type");  
+	public final XmlSubProperty preference = new XmlSubProperty(config, "routing/preference");  
+	public final XmlSubProperty gracefulCompleteTime = new XmlSubProperty(config, "gracefulCompleteTime");  
+	public final XmlSubProperty abortTime = new XmlSubProperty(config, "abortTime ");  
+	public final XmlSubProperty cancelReplyInterval = new XmlSubProperty(config, "cancelReplyInterval");  
+	public final XmlSubProperty implementation = new XmlSubProperty(config, "configuration/@implementation");  
+	
 	private XmlNode workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
