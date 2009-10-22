@@ -25,7 +25,7 @@ public class Method extends CordysLdapObject {
 	public final XmlProperty wsdl           = new XmlProperty("busmethodwsdl");
 	public final XmlProperty iface          = new XmlProperty("busmethodinterface");
 	
-	protected Method(LdapObject parent, String dn) {
+	protected Method(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 }

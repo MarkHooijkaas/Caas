@@ -23,7 +23,7 @@ public class ConnectionPoint extends CordysLdapObject {
 	public final StringProperty uri = new StringProperty("labeleduri");
 	public final BooleanProperty privatePoint = new BooleanProperty("busprivatepoint");
 	
-	protected ConnectionPoint(LdapObject parent, String dn) {
+	protected ConnectionPoint(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 }

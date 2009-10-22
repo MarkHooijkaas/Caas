@@ -29,7 +29,7 @@ public class MethodSet extends CordysLdapObject {
 
 	public final StringProperty implementationclass=new StringProperty("implementationclass");
 	
-	protected MethodSet(LdapObject parent, String dn) {
+	protected MethodSet(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 
@@ -38,7 +38,7 @@ public class MethodSet extends CordysLdapObject {
 		methods.refresh();
 	}
 
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		MethodSet otherMs=(MethodSet) other;

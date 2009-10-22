@@ -44,7 +44,7 @@ public class Organization extends CordysLdapObject {
 	
 
 	@SuppressWarnings("unchecked")
-	protected Organization(LdapObject parent, String dn) {
+	protected Organization(CordysObject parent, String dn) {
 		super(parent, dn);
 		soapProcessors = new CordysObjectList(parent.getSystem()) {
 			protected void retrieveList() {
@@ -57,7 +57,7 @@ public class Organization extends CordysLdapObject {
 		sp = soapProcessors;
 	}
 
-	public String call(String input) { return getSystem().call(input, dn, null); }
+	public String call(String input) { return getSystem().call(input, getDn(), null); }
 
 	@Override
 	protected void preDeleteHook() {
@@ -94,7 +94,7 @@ public class Organization extends CordysLdapObject {
 	}
 
 	
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		Organization otherOrg = (Organization) other;
@@ -103,6 +103,6 @@ public class Organization extends CordysLdapObject {
 		roles.diff(otherOrg.roles, depth);
 	}
 	
-	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, dn); }
-	public XmlNode getXml(String key) { return getSystem().getXml(key, "organization", dn); }
+	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getDn()); }
+	public XmlNode getXml(String key) { return getSystem().getXml(key, "organization", getDn()); }
 }

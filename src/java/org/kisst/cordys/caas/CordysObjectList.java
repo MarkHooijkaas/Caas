@@ -43,9 +43,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		this.system=system;
 	}
 
-	public String getName() { return null; }
-	public String getKey() { return null; }
-	
+
 	private ArrayList<T> fetchList() {
 		if (useCache() && listAvailable)
 			return list;

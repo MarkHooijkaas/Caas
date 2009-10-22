@@ -19,6 +19,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	abstract public void refresh();
 	public String getName() { return null; } 
 	public String getKey()  { return null; } 
+	public CordysObject getParent()  { return null; } 
 
 	public boolean useCache() { return getSystem().useCache();}
 

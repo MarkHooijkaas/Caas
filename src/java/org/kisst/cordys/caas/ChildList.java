@@ -21,16 +21,16 @@ package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class ChildList<T extends CordysObject> extends CordysObjectList<T>  {
+public class ChildList<T extends CordysLdapObject> extends CordysObjectList<T>  {
 	private static final long serialVersionUID = 1L;
-	private final LdapObject parent;
+	private final CordysObject parent;
 	private final String prefix;
-	private final Class<? extends LdapObject> clz;
+	private final Class<? extends CordysLdapObject> clz;
 
-	protected ChildList(LdapObject parent, Class<? extends LdapObject> clz) {
+	protected ChildList(CordysObject parent, Class<? extends CordysLdapObject> clz) {
 		this(parent,"",clz);
 	}
-	protected ChildList(LdapObject parent, String prefix, Class<? extends LdapObject> clz) {
+	protected ChildList(CordysObject parent, String prefix, Class<? extends CordysLdapObject> clz) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.prefix=prefix;
@@ -42,13 +42,21 @@ public class ChildList<T extends CordysObject> extends CordysObjectList<T>  {
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
 		XmlNode method = new XmlNode("GetChildren", xmlns_ldap);
-		method.add("dn").setText(prefix+parent.getDn());
+		//method.add("dn").setText(prefix+((CordysLdapObject) parent).getDn());
+		String dn;
+		if (parent instanceof CordysSystem)
+			dn=((CordysSystem) parent).getDn();
+		else if (parent instanceof CordysLdapObject)
+			dn=((CordysLdapObject) parent).getDn();
+		else 
+			throw new RuntimeException("parent "+parent+"of wrong type");
+		method.add("dn").setText(prefix+dn); 
 		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {
 			XmlNode elm=tuple.getChild("old/entry");
-			LdapObject obj=system.getObject(elm);
+			CordysObject obj=system.getObject(elm);
 			if (clz==null || obj.getClass()==clz)
 				this.grow((T) obj);
 			//System.out.println(dn);

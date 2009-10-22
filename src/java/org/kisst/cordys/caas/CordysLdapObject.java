@@ -19,13 +19,17 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public abstract class CordysLdapObject extends CordysObject implements LdapObject {
+public abstract class CordysLdapObject extends CordysObject {
 	protected abstract class AbstractProperty extends CordysObject {
 		public void refresh() {}
 		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
@@ -79,10 +83,10 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		public Boolean getBool() { return "true".equals(get()); }
 		public void set(boolean value) { set(""+value);}
 	}
-	protected class RefProperty<T extends LdapObject> extends StringProperty {
+	protected class RefProperty<T extends CordysLdapObject> extends StringProperty {
 		protected RefProperty(String path) {super(path);}
 		@SuppressWarnings("unchecked")
-		public T getRef() { return (T) getSystem().getObject(get()); }
+		public T getRef() { return (T) getSystem().getObject("ldap:"+get()); }
 		public void set(T value) { set(value.getDn()); }
 	}
 	protected class StringList extends AbstractProperty {
@@ -121,8 +125,8 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	public final StringProperty desc = description;
 
 	private final CordysSystem system;
-	private final LdapObject parent; 
-	protected final String dn;
+	private final CordysObject parent; 
+	private final String dn;
 	private XmlNode entry;
 
 	protected CordysLdapObject(CordysSystem system, String dn) {
@@ -131,7 +135,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		this.dn=dn;
 	}
 	
-	protected CordysLdapObject(LdapObject parent, String dn) {
+	protected CordysLdapObject(CordysObject parent, String dn) {
 		this.system=parent.getSystem();
 		this.parent=parent;
 		this.dn=dn;
@@ -143,11 +147,11 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 				((CordysObject) o).refresh();
 		}
 	}
-	public LdapObject getParent() { return parent; }
+	public CordysObject getParent() { return parent; }
 	public CordysSystem getSystem() { return system; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
-	public String getKey() { return dn; }
+	public String getKey() { return "ldap:"+dn; }
 	public String getDn() { return dn; }
 	public String getName() {
 		int pos=dn.indexOf("=");
@@ -170,8 +174,8 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		}
 	}
 	public boolean equals(Object o) {
-		if (o instanceof LdapObject)
-			return dn.equals(((LdapObject)o).getDn());
+		if (o instanceof CordysLdapObject)
+			return dn.equals(((CordysLdapObject)o).getDn());
 		return false;
 	}
 
@@ -213,7 +217,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 	}
 	protected void preDeleteHook() {}
 	public void checkIfMayBeModified() {
-		LdapObject obj=this;
+		CordysObject obj=this;
 		while (obj!=null && ! (obj instanceof CordysSystem)) {
 			if (obj instanceof Isvp)
 				throw new RuntimeException("It is not allowed to delete any part of an ISVP");
@@ -229,5 +233,77 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		call(method);
 		getParent().refresh();
 		getSystem().remove(getDn());
+	}
+	
+	
+	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
+	static {
+		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
+		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
+		ldapObjectTypes.put("busmethod", Method.class);
+		ldapObjectTypes.put("busmethodset", MethodSet.class);
+		ldapObjectTypes.put("organization", Organization.class);
+		ldapObjectTypes.put("busorganizationalrole", Role.class);
+		ldapObjectTypes.put("bussoapnode", SoapNode.class);
+		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
+		ldapObjectTypes.put("busorganizationaluser", User.class);
+		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
+	}
+	static private Class determineClass(CordysSystem system, XmlNode entry) {
+		XmlNode objectclass=entry.getChild("objectclass");
+		for(XmlNode o:objectclass.getChildren("string")) {
+			Class c=ldapObjectTypes.get(o.getText());
+			if (c!=null)
+				return c;
+		}
+		String dn=entry.getAttribute("dn");
+		if (dn.substring(dn.indexOf(",")+1).equals(system.getDn()) && dn.startsWith("cn="))
+			return Isvp.class;
+		return null;
+	}
+	static CordysObject createObject(CordysSystem system, String dn) {
+		XmlNode method=new XmlNode("GetLDAPObject", CordysObject.xmlns_ldap);
+		method.add("dn").setText(dn);
+		XmlNode response = system.call(method);
+		XmlNode entry=response.getChild("tuple/old/entry");
+		return CordysLdapObject.createObject(system, entry);
+	}
+
+	static CordysObject createObject(CordysSystem system, XmlNode entry) {
+		if (entry==null)
+			return null;
+		String newdn=entry.getAttribute("dn");
+		CordysObject parent = calcParent(system, entry);
+		Class resultClass = determineClass(system, entry);
+		if (resultClass==null)
+			return null;
+		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
+		cons.setAccessible(true);
+		try {
+			CordysLdapObject result = (CordysLdapObject) cons.newInstance(new Object[]{parent, newdn});
+			result.setEntry(entry);
+			//tree.put(newdn, result);
+			return result;
+		}
+		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
+		catch (InstantiationException e) { throw new RuntimeException(e); }
+		catch (IllegalAccessException e) { throw new RuntimeException(e); }
+		catch (InvocationTargetException e) { throw new RuntimeException(e); }
+	}
+	static private CordysObject calcParent(CordysSystem system, XmlNode entry) {
+		String dn=entry.getAttribute("dn");
+		//System.out.println("calcParent ["+dn+"]");
+		if (dn.equals(system.getDn())) // Safeguard
+			return system;
+		if (dn.length()<=system.getDn().length()) // Safeguard
+			return null;
+		do {
+			int pos=dn.indexOf(",");
+			dn=dn.substring(pos+1);
+			CordysObject parent=system.getObject("ldap:"+dn);
+			if (parent!=null)
+				return parent;
+		} while (dn.length()>0);
+		throw new RuntimeException("Could not find a parent for "+dn);
 	}
 }

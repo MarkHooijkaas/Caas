@@ -37,7 +37,7 @@ public class Isvp extends CordysLdapObject {
 
 
 	
-	protected Isvp(LdapObject parent, String dn) {
+	protected Isvp(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 	@Override
@@ -58,7 +58,7 @@ public class Isvp extends CordysLdapObject {
 		else
 			file.setAttribute("deletereference", "false");
 		call(method);
-		getSystem().remove(dn);
+		getSystem().remove(getDn());
 	}
 	
 	public String getFilename() {
@@ -68,7 +68,7 @@ public class Isvp extends CordysLdapObject {
 		else
 			return result;
 	}
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		Isvp otherIsvp=(Isvp) other;

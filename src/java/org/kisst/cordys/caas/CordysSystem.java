@@ -23,9 +23,9 @@ import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public class CordysSystem extends CordysObject implements LdapObject {
+public class CordysSystem extends CordysObject {
 	private final SoapCaller caller;
-	private final LdapCache ldapcache;
+	private final CordysObjectCache cache;
 	private final String name;
 	private final String dn; 
 
@@ -68,20 +68,30 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
 		this.version=response.getChildText("version");
 		this.build=response.getChildText("build");
-		this.ldapcache=new LdapCache(this);
+		this.cache=new CordysObjectCache(this);
 	}
 	public String toString() { return "CordysSystem("+name+")"; }
 	public CordysSystem getSystem() { return this; }
 	public String getDn()   { return dn; }
-	public String getKey()  { return dn; }
+	public String getKey()  { return "ldap:"+dn; }
 	public String getName() { return name; }
-	public LdapObject getParent() {return null;	}
-	public void refresh() {ldapcache.clear(); }
+	public void refresh() {cache.clear(); }
 	public boolean useCache() { return useCache; }
 
-	public LdapObject getObject(XmlNode elm) { return ldapcache.getObject(elm); }
-	public LdapObject getObject(String dn)   { return ldapcache.getObject(dn); }
-	public void remove(String dn)   { ldapcache.remove(dn); }
+	public CordysObject getObject(XmlNode entry) { 
+		String newdn=entry.getAttribute("dn");
+		String key="ldap:"+newdn;
+		//System.out.println("get ["+newdn+"]");
+		CordysObject result=cache.findObject(key);
+		if (result==null) {
+			result=CordysLdapObject.createObject(this, entry);
+			cache.remember(result);
+		}
+		return result;
+	}
+	//public CordysObject findObject(String key)   { return cache.getObject(key); }
+	public CordysObject getObject(String key)   { return cache.getObject(key); }
+	public void remove(String dn)   { cache.remove(dn); }
 
 	public String call(String input, String org, String processor) {
 		return caller.call(input, debug, org, processor); 
@@ -95,7 +105,7 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
 			String dn=workerprocess.getChildText("name");
-			SoapProcessor obj= (SoapProcessor) getObject(dn);
+			SoapProcessor obj= (SoapProcessor) getObject("ldap:"+dn);
 			obj.setWorkerprocess(workerprocess);
 		}
 	}
@@ -118,9 +128,9 @@ public class CordysSystem extends CordysObject implements LdapObject {
 		call(method);
 		return null;
 	}
-	public int compareTo(LdapObject o) { return dn.compareTo(o.getDn()); }
+	public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
 	
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		CordysSystem otherSystem = (CordysSystem) other;

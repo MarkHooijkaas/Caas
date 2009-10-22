@@ -41,7 +41,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public final XmlSubProperty UseSystemLogPolicy = new XmlSubProperty(config, "loggerconfiguration/systempolicy");  
 	
 	private XmlNode workerprocess;
-	protected SoapProcessor(LdapObject parent, String dn) {
+	protected SoapProcessor(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 
@@ -51,7 +51,7 @@ public class SoapProcessor extends CordysLdapObject {
 		this.workerprocess=null;
 	}
 
-	public String call(String input) { return getSystem().call(input, null, dn); }
+	public String call(String input) { return getSystem().call(input, null, getDn()); }
 	
 	public void setWorkerprocess(XmlNode workerprocess) {
 		this.workerprocess=workerprocess;
@@ -65,7 +65,7 @@ public class SoapProcessor extends CordysLdapObject {
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
 			String dn=workerprocess.getChildText("name");
-			if (dn.equals(this.dn)) {
+			if (dn.equals(getDn())) {
 				this.workerprocess=workerprocess;
 				return workerprocess;
 			}
@@ -99,21 +99,21 @@ public class SoapProcessor extends CordysLdapObject {
 
 	public void start() {
 		XmlNode method=new XmlNode ("Start", xmlns_monitor);
-		method.add("dn").setText(dn);
+		method.add("dn").setText(getDn());
 		call(method);
 	}
 	public void stop() {
 		XmlNode method=new XmlNode ("Stop", xmlns_monitor);
-		method.add("dn").setText(dn);
+		method.add("dn").setText(getDn());
 		call(method);
 	}
 	public void restart() {
 		XmlNode method=new XmlNode ("Restart", xmlns_monitor);
-		method.add("dn").setText(dn);
+		method.add("dn").setText(getDn());
 		call(method);
 	}
 
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		// TODO: which attributes to compare

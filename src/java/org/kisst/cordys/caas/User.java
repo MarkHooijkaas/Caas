@@ -32,11 +32,11 @@ public class User extends CordysLdapObject {
 	public final StringList toolbars= new StringList("toolbar"); 
 	public final StringList menus = new StringList("menu"); 
 
-	protected User(LdapObject parent, String dn) {
+	protected User(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		User otherUser = (User) other;

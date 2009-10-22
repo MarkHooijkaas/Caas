@@ -24,8 +24,8 @@ public class AuthenticatedUser extends CordysLdapObject {
 	public final RefProperty<Organization> defaultOrg = new RefProperty<Organization>("defaultcontext");
 	public final StringList osidentity= new StringList("osidentity"); 
 
-	protected AuthenticatedUser(LdapObject parent, String dn) {
+	protected AuthenticatedUser(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
-	public void diff(LdapObject other, int depth) {}
+	public void diff(CordysObject other, int depth) {}
 }

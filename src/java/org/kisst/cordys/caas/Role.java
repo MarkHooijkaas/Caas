@@ -28,8 +28,8 @@ public class Role extends CordysLdapObject {
 	public final StringList toolbars= new StringList("toolbar"); 
 	public final StringList menus = new StringList("menu"); 
 
-	protected Role(LdapObject parent, String dn) {
+	protected Role(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
-	public void diff(LdapObject other, int depth) {}
+	public void diff(CordysObject other, int depth) {}
 }

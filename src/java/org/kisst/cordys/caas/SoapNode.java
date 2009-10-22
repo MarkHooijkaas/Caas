@@ -44,7 +44,7 @@ public class SoapNode extends CordysLdapObject {
 	public final XmlSubProperty algorithm= new XmlSubProperty(config, "routing/algorithm");  
 
 	
-	protected SoapNode(LdapObject parent, String dn) {
+	protected SoapNode(CordysObject parent, String dn) {
 		super(parent, dn);
 	}
 	
@@ -64,7 +64,7 @@ public class SoapNode extends CordysLdapObject {
 			msNode.add("string").setText(s);
 		updateLdap(newEntry);
 	}
-	public void diff(LdapObject other, int depth) {
+	public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		SoapNode otherSn = (SoapNode) other;
