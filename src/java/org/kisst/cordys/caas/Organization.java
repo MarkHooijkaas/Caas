@@ -65,7 +65,19 @@ public class Organization extends CordysLdapObject {
 			sp.stop();
 	}
 
-	
+	public void createMethodSet(String name, String namespace, String implementationclass) {
+		XmlNode newEntry = new XmlNode("entry",xmlns_ldap);
+		newEntry.setAttribute("dn", "cn="+name+","+dn);
+		XmlNode child = newEntry.add("objectclass");
+		child.add("string").setText("top");
+		child.add("string").setText("busmethodset");
+		newEntry.add("cn").add("string").setText(name);
+		newEntry.add("labeleduri").add("string").setText(namespace);
+		newEntry.add("implementationclass").add("string").setText(implementationclass);
+		createInLdap(newEntry);
+		methodSets.refresh();
+	}
+
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

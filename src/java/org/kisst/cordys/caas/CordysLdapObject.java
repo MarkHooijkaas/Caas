@@ -189,11 +189,15 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		return entry;
 	}
 
-	protected void updateLdap(XmlNode newEntry) {
+	protected void createInLdap(XmlNode newEntry) { updateLdap(null, newEntry); }
+	protected void updateLdap(XmlNode newEntry) { updateLdap(entry.clone(), newEntry); }
+	protected void updateLdap(XmlNode oldEntry, XmlNode newEntry) {
 		XmlNode method=new XmlNode("Update", xmlns_ldap);
 		XmlNode tuple=method.add("tuple");
-		tuple.add("old").add(entry.clone());
-		tuple.add("new").add(newEntry);
+		if (oldEntry!=null)
+			tuple.add("old").add(oldEntry);
+		if (newEntry!=null)
+			tuple.add("new").add(newEntry);
 		call(method);
 		setEntry(newEntry);
 	}
@@ -213,6 +217,7 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		XmlNode tuple=method.add("tuple");
 		tuple.add("old").add(entry.clone());
 		call(method);
+		getParent().refresh();
 		getSystem().remove(getDn());
 	}
 }

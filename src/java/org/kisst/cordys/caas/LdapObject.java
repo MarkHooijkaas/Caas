@@ -26,4 +26,5 @@ public interface LdapObject {
 	public LdapObject getParent();
 	public String getDn();
 	public String getName();
+	public void refresh();
 }
