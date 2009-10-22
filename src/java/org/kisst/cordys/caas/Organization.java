@@ -66,18 +66,34 @@ public class Organization extends CordysLdapObject {
 	}
 
 	public void createMethodSet(String name, String namespace, String implementationclass) {
-		XmlNode newEntry = new XmlNode("entry",xmlns_ldap);
-		newEntry.setAttribute("dn", "cn="+name+","+dn);
-		XmlNode child = newEntry.add("objectclass");
-		child.add("string").setText("top");
-		child.add("string").setText("busmethodset");
-		newEntry.add("cn").add("string").setText(name);
+		XmlNode newEntry=newEntryXml("cn=method sets,", name,"busmethodset");
 		newEntry.add("labeleduri").add("string").setText(namespace);
 		newEntry.add("implementationclass").add("string").setText(implementationclass);
 		createInLdap(newEntry);
 		methodSets.refresh();
 	}
 
+	public void createUser(String name, AuthenticatedUser au) {
+		XmlNode newEntry=newEntryXml("cn=organizational users,", name,"busorganizationaluser","busorganizationalobject");
+		newEntry.add("authenticationuser").add("string").setText(au.getDn());
+		newEntry.add("menu");
+		newEntry.add("toolbar");
+		newEntry.add("role").add("string").setText("cn=everyoneIn"+getName()+",cn=organizational roles,"+getDn());
+		createInLdap(newEntry);
+		users.refresh();
+	}
+
+	public void createRole(String name) {
+		XmlNode newEntry=newEntryXml("cn=organizational roles,", name,"busorganizationalrole","busorganizationalobject");
+		newEntry.add("description").add("string").setText(name);
+		newEntry.add("menu");
+		newEntry.add("toolbar");
+		newEntry.add("role").add("string").setText("cn=everyoneIn"+getName()+",cn=organizational roles,"+getDn());
+		createInLdap(newEntry);
+		roles.refresh();
+	}
+
+	
 	public void diff(LdapObject other, int depth) {
 		if (this==other)
 			return;

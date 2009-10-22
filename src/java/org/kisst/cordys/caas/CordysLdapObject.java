@@ -189,6 +189,16 @@ public abstract class CordysLdapObject extends CordysObject implements LdapObjec
 		return entry;
 	}
 
+	protected XmlNode newEntryXml(String prefix, String name, String ... types) {
+		XmlNode newEntry = new XmlNode("entry",xmlns_ldap);
+		newEntry.setAttribute("dn", "cn="+name+","+prefix+dn);
+		XmlNode child = newEntry.add("objectclass");
+		child.add("string").setText("top");
+		for (String t: types)
+			child.add("string").setText(t);
+		newEntry.add("cn").add("string").setText(name);
+		return newEntry;
+	}
 	protected void createInLdap(XmlNode newEntry) { updateLdap(null, newEntry); }
 	protected void updateLdap(XmlNode newEntry) { updateLdap(entry.clone(), newEntry); }
 	protected void updateLdap(XmlNode oldEntry, XmlNode newEntry) {
