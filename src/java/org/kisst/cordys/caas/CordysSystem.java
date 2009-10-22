@@ -47,6 +47,10 @@ public class CordysSystem extends CordysObject {
 	public final ChildList<AuthenticatedUser> auser = authenticatedUsers;
 	public final ChildList<AuthenticatedUser> au    = authenticatedUsers;
 	
+	public final XmlObjectList<Connector> connectors= new XmlObjectList<Connector>(this, "/Cordys/WCP/Application Connector", null);
+	public final XmlObjectList<Connector> connector = connectors;
+	public final XmlObjectList<Connector> conn = connectors;
+	
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
 		protected void retrieveList() {
@@ -89,8 +93,9 @@ public class CordysSystem extends CordysObject {
 		}
 		return result;
 	}
-	//public CordysObject findObject(String key)   { return cache.getObject(key); }
-	public CordysObject getObject(String key)   { return cache.getObject(key); }
+	public CordysObject getLdap(String dn)   { return cache.getObject("ldap:"+dn); }
+	public CordysObject getObject(String key) { return cache.getObject(key); }
+
 	public void remove(String dn)   { cache.remove(dn); }
 
 	public String call(String input, String org, String processor) {
@@ -105,7 +110,7 @@ public class CordysSystem extends CordysObject {
 		for (XmlNode s: response.getChildren("tuple")) {
 			XmlNode workerprocess=s.getChild("old/workerprocess");
 			String dn=workerprocess.getChildText("name");
-			SoapProcessor obj= (SoapProcessor) getObject("ldap:"+dn);
+			SoapProcessor obj= (SoapProcessor) getLdap(dn);
 			obj.setWorkerprocess(workerprocess);
 		}
 	}

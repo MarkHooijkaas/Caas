@@ -52,7 +52,7 @@ public class EntryObjectList<T extends CordysLdapObject> extends CordysObjectLis
 			return;
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();
-			CordysObject obj=system.getObject("ldap:"+dn);
+			CordysObject obj=system.getLdap(dn);
 			this.grow((T) obj);
 		}
 	}

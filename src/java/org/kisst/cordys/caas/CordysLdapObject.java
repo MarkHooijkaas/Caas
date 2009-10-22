@@ -86,7 +86,7 @@ public abstract class CordysLdapObject extends CordysObject {
 	protected class RefProperty<T extends CordysLdapObject> extends StringProperty {
 		protected RefProperty(String path) {super(path);}
 		@SuppressWarnings("unchecked")
-		public T getRef() { return (T) getSystem().getObject("ldap:"+get()); }
+		public T getRef() { return (T) getSystem().getLdap(get()); }
 		public void set(T value) { set(value.getDn()); }
 	}
 	protected class StringList extends AbstractProperty {
@@ -300,7 +300,7 @@ public abstract class CordysLdapObject extends CordysObject {
 		do {
 			int pos=dn.indexOf(",");
 			dn=dn.substring(pos+1);
-			CordysObject parent=system.getObject("ldap:"+dn);
+			CordysObject parent=system.getLdap(dn);
 			if (parent!=null)
 				return parent;
 		} while (dn.length()>0);
