@@ -20,6 +20,12 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public String getName() { return null; } 
 	public String getKey()  { return null; } 
 
+	public int compareTo(CordysObject other) {
+		if (other==null)
+			return -1;
+		return getKey().compareTo(other.getKey());
+	}
+
 	public boolean useCache() { return getSystem().useCache();}
 
 	public Map<String, Object> getProps() {
@@ -76,23 +82,6 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 			}
 		}
 		return result;
-	}
-
-	public int compareTo(CordysObject o) {
-		if (o==this)
-			return 0;
-		if (o==null)
-			return -1;
-		String[] d1=getKey().split(",");
-		String[] d2=o.getKey().split(",");
-		int p1=d1.length-1;
-		int p2=d2.length-1;
-		while (p1>=0 && p2>=0 ) {
-			int comp=d1[p1--].compareTo(d2[p2--]);
-			if (comp!=0)
-				return comp;
-		}
-		return 0;
 	}
 
 	public void deepdiff(CordysObject other) { diff(other,100); }

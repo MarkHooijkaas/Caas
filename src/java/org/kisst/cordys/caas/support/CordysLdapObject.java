@@ -185,6 +185,23 @@ public abstract class CordysLdapObject extends CordysObject {
 			return dn.equals(((CordysLdapObject)o).getDn());
 		return false;
 	}
+	public int compareTo(CordysObject o) {
+		if (o==this)
+			return 0;
+		if (o==null)
+			return -1;
+		String[] d1=getKey().split(",");
+		String[] d2=o.getKey().split(",");
+		int p1=d1.length-1;
+		int p2=d2.length-1;
+		while (p1>=0 && p2>=0 ) {
+			int comp=d1[p1--].compareTo(d2[p2--]);
+			if (comp!=0)
+				return comp;
+		}
+		return 0;
+	}
+
 
 	void setEntry(XmlNode entry) {
 		this.entry=entry;

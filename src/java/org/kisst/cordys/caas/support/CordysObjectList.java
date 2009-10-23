@@ -129,7 +129,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 			protected void retrieveList() {
 				ArrayList<T> tmp=new ArrayList<T>();
 				for (T obj : CordysObjectList.this)
-					if (obj==null)
+					if (obj!=null)
 						tmp.add(obj);
 				Collections.sort(tmp);
 				for (T obj : tmp)
