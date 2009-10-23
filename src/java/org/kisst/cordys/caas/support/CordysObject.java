@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 

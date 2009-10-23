@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.kisst.cordys.caas.AuthenticatedUser;
 import org.kisst.cordys.caas.ConnectionPoint;
+import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.Method;
 import org.kisst.cordys.caas.MethodSet;
@@ -293,7 +294,7 @@ public abstract class CordysLdapObject extends CordysObject {
 		return CordysLdapObject.createObject(system, entry);
 	}
 
-	static CordysObject createObject(CordysSystem system, XmlNode entry) {
+	public static CordysObject createObject(CordysSystem system, XmlNode entry) {
 		if (entry==null)
 			return null;
 		String newdn=entry.getAttribute("dn");

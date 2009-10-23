@@ -19,6 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.support;
 
+import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class ChildList<T extends CordysLdapObject> extends CordysObjectList<T>  {

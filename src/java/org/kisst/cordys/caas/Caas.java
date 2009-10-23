@@ -6,7 +6,6 @@ import java.net.ConnectException;
 import java.util.Properties;
 
 import org.kisst.cordys.caas.soap.HttpClientCaller;
-import org.kisst.cordys.caas.support.CordysSystem;
 
 public class Caas {
 	public static CordysSystem connect(String filename) {

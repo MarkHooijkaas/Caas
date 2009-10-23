@@ -21,12 +21,14 @@ package org.kisst.cordys.caas.support;
 
 import java.util.HashMap;
 
+import org.kisst.cordys.caas.CordysSystem;
+
 
 public class CordysObjectCache {
 	private final HashMap<String, CordysObject> cache=new HashMap<String, CordysObject>();
 	private final CordysSystem system;
 	
-	CordysObjectCache(CordysSystem system) {
+	public CordysObjectCache(CordysSystem system) {
 		this.system=system;
 		remember(system);
 	}
@@ -48,7 +50,7 @@ public class CordysObjectCache {
 		return result;
 	}
 	public void remove(String key) { cache.put(key, null);	}
-	void remember(CordysObject obj) {
+	public void remember(CordysObject obj) {
 		if (obj==null)
 			return;
 		//System.out.println("remembering ["+obj.getKey()+"]");

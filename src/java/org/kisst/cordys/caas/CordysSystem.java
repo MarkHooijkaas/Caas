@@ -17,14 +17,15 @@ You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.kisst.cordys.caas.support;
+package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.AuthenticatedUser;
-import org.kisst.cordys.caas.Connector;
-import org.kisst.cordys.caas.Isvp;
-import org.kisst.cordys.caas.Organization;
-import org.kisst.cordys.caas.SoapProcessor;
 import org.kisst.cordys.caas.soap.SoapCaller;
+import org.kisst.cordys.caas.support.ChildList;
+import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.CordysObjectCache;
+import org.kisst.cordys.caas.support.CordysObjectList;
+import org.kisst.cordys.caas.support.XmlObjectList;
 import org.kisst.cordys.caas.util.XmlNode;
 
 

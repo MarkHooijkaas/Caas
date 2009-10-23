@@ -1,5 +1,6 @@
 package org.kisst.cordys.caas.support;
 
+import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class CordysXmlObject extends CordysObject {
