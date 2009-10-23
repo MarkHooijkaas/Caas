@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.CordysObject;
+
 public class Method extends CordysLdapObject {
 	public final XmlProperty implementation = new XmlProperty("busmethodimplementation");
 	public final XmlProperty signature      = new XmlProperty("busmethodsignature");

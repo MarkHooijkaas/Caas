@@ -1,4 +1,4 @@
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.support;
 
 import org.kisst.cordys.caas.util.XmlNode;
 

@@ -21,6 +21,10 @@ package org.kisst.cordys.caas;
 
 import java.util.LinkedHashMap;
 
+import org.kisst.cordys.caas.support.ChildList;
+import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.EntryObjectList;
 import org.kisst.cordys.caas.util.XmlNode;
 
 

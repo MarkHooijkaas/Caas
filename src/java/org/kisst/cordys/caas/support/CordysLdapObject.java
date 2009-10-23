@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.support;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,19 +25,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.kisst.cordys.caas.AuthenticatedUser;
+import org.kisst.cordys.caas.ConnectionPoint;
+import org.kisst.cordys.caas.Isvp;
+import org.kisst.cordys.caas.Method;
+import org.kisst.cordys.caas.MethodSet;
+import org.kisst.cordys.caas.Organization;
+import org.kisst.cordys.caas.Role;
+import org.kisst.cordys.caas.SoapNode;
+import org.kisst.cordys.caas.SoapProcessor;
+import org.kisst.cordys.caas.User;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysLdapObject extends CordysObject {
-	protected abstract class AbstractProperty {
+	public abstract class AbstractProperty {
 		abstract public Object get();
 		public String toString() { return ""+get(); }
 	}
-	protected class StringProperty extends AbstractProperty {
+	public class StringProperty extends AbstractProperty {
 		private final String path;
 		private final int startPos;
-		protected StringProperty(String path) { this(path,0);}
+		public StringProperty(String path) { this(path,0);}
 		public StringProperty(String path, int startPos) {
 			this.startPos=startPos;
 			this.path=path+"/string";
@@ -55,15 +65,15 @@ public abstract class CordysLdapObject extends CordysObject {
 			updateLdap(newEntry);
 		}
 	}
-	protected class XmlProperty extends StringProperty {
-		protected XmlProperty(String path) {super(path);}
+	public class XmlProperty extends StringProperty {
+		public XmlProperty(String path) {super(path);}
 		public XmlNode getXml() { return new XmlNode(get()); }
 		public void set(XmlNode value) { set(value.toString()); }
 	}
-	protected class XmlSubProperty extends AbstractProperty {
+	public class XmlSubProperty extends AbstractProperty {
 		private final XmlProperty xml;
 		private final String path;
-		protected XmlSubProperty(XmlProperty xml, String path) {
+		public XmlSubProperty(XmlProperty xml, String path) {
 			this.xml=xml;
 			this.path=path;
 		}
@@ -75,21 +85,21 @@ public abstract class CordysLdapObject extends CordysObject {
 		}
 	}
 
-	protected class BooleanProperty extends StringProperty {
-		protected BooleanProperty(String path) {super(path);}
+	public class BooleanProperty extends StringProperty {
+		public BooleanProperty(String path) {super(path);}
 		public Boolean getBool() { return "true".equals(get()); }
 		public void set(boolean value) { set(""+value);}
 	}
-	protected class RefProperty<T extends CordysLdapObject> extends StringProperty {
-		protected RefProperty(String path) {super(path);}
+	public class RefProperty<T extends CordysLdapObject> extends StringProperty {
+		public RefProperty(String path) {super(path);}
 		@SuppressWarnings("unchecked")
 		public T getRef() { return (T) getSystem().getLdap(get()); }
 		public void set(T value) { set(value.getDn()); }
 	}
-	protected class StringList extends AbstractProperty {
+	public class StringList extends AbstractProperty {
 		// TODO: cache this?
 		private final String path;
-		protected StringList(String path) {this.path=path;}
+		public StringList(String path) {this.path=path;}
 		public List<String> get() { 
 			ArrayList<String> result=new ArrayList<String>();
 			XmlNode start=getEntry().getChild(path);

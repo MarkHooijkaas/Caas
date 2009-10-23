@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.support;
 
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -31,7 +31,7 @@ public class EntryObjectList<T extends CordysLdapObject> extends CordysObjectLis
 	private final CordysLdapObject parent;
 	private final String group;
 
-	protected EntryObjectList(CordysLdapObject parent, String group) {
+	public EntryObjectList(CordysLdapObject parent, String group) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.group=group;

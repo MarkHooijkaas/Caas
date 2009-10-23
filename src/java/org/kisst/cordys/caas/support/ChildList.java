@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.support;
 
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -27,10 +27,10 @@ public class ChildList<T extends CordysLdapObject> extends CordysObjectList<T>  
 	private final String prefix;
 	private final Class<? extends CordysLdapObject> clz;
 
-	protected ChildList(CordysObject parent, Class<? extends CordysLdapObject> clz) {
+	public ChildList(CordysObject parent, Class<? extends CordysLdapObject> clz) {
 		this(parent,"",clz);
 	}
-	protected ChildList(CordysObject parent, String prefix, Class<? extends CordysLdapObject> clz) {
+	public ChildList(CordysObject parent, String prefix, Class<? extends CordysLdapObject> clz) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.prefix=prefix;

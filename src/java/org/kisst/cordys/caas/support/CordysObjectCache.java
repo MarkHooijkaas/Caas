@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.kisst.cordys.caas;
+package org.kisst.cordys.caas.support;
 
 import java.util.HashMap;
+
 
 public class CordysObjectCache {
 	private final HashMap<String, CordysObject> cache=new HashMap<String, CordysObject>();
