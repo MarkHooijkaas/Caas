@@ -24,9 +24,9 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T>  {
 	private final String key;
-	private final Class<? extends CordysLdapObject> clz;
+	private final Class<? extends LdapObject> clz;
 
-	public XmlObjectList(CordysObject parent, String key, Class<? extends CordysLdapObject> clz) {
+	public XmlObjectList(CordysObject parent, String key, Class<? extends LdapObject> clz) {
 		super(parent.getSystem());
 		this.key=key;
 		this.clz=clz;

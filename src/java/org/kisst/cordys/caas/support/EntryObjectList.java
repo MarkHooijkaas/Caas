@@ -27,11 +27,11 @@ import org.kisst.cordys.caas.util.XmlNode;
  * on objects that inherit from a List.
  * 
  */
-public class EntryObjectList<T extends CordysLdapObject> extends CordysObjectList<T>  {
-	private final CordysLdapObject parent;
+public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  {
+	private final LdapObject parent;
 	private final String group;
 
-	public EntryObjectList(CordysLdapObject parent, String group) {
+	public EntryObjectList(LdapObject parent, String group) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.group=group;

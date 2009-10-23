@@ -19,19 +19,20 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.HashMap;
+
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.CordysObject;
-import org.kisst.cordys.caas.support.CordysObjectCache;
 import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.XmlObjectList;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-public class CordysSystem extends CordysObject {
+public class CordysSystem extends LdapObject {
 	private final SoapCaller caller;
-	private final CordysObjectCache cache;
+	private final HashMap<String, LdapObject> ldapcache=new HashMap<String, LdapObject>();
 	private final String name;
 	private final String dn; 
 
@@ -69,6 +70,7 @@ public class CordysSystem extends CordysObject {
 	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
 	
 	public CordysSystem(String name, SoapCaller caller) {
+		super();
 		this.name=name;
 		this.caller=caller;
 		XmlNode response=call(new XmlNode("GetVersion",xmlns_monitor));
@@ -78,31 +80,44 @@ public class CordysSystem extends CordysObject {
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
 		this.version=response.getChildText("version");
 		this.build=response.getChildText("build");
-		this.cache=new CordysObjectCache(this);
+		rememberLdap(this);
 	}
 	public String toString() { return "CordysSystem("+name+")"; }
 	public CordysSystem getSystem() { return this; }
 	public String getDn()   { return dn; }
 	public String getKey()  { return "ldap:"+dn; }
 	public String getName() { return name; }
-	public void refresh() {cache.clear(); }
+	public void refresh() {ldapcache.clear(); rememberLdap(this); }
 	public boolean useCache() { return useCache; }
 
-	public CordysObject getObject(XmlNode entry) { 
-		String newdn=entry.getAttribute("dn");
-		String key="ldap:"+newdn;
-		//System.out.println("get ["+newdn+"]");
-		CordysObject result=cache.findObject(key);
+	public synchronized LdapObject getLdap(String dn) {
+		//System.out.println("get key ["+key+"]");
+		LdapObject result=ldapcache.get(dn);
 		if (result==null) {
-			result=CordysLdapObject.createObject(this, entry);
-			cache.remember(result);
+			result=LdapObject.createObject(this, dn);
+			if (result!=null)
+				rememberLdap(result);
 		}
 		return result;
 	}
-	public CordysObject getLdap(String dn)   { return cache.getObject("ldap:"+dn); }
-	public CordysObject getObject(String key) { return cache.getObject(key); }
 
-	public void remove(String dn)   { cache.remove(dn); }
+	public CordysObject getObject(XmlNode entry) { 
+		String dn=entry.getAttribute("dn");
+		//System.out.println("get ["+newdn+"]");
+		LdapObject result=ldapcache.get(dn);
+		if (result==null) {
+			result=LdapObject.createObject(this, entry);
+			rememberLdap(result);
+		}
+		return result;
+	}
+	public void rememberLdap(LdapObject obj) {
+		if (obj==null)
+			return;
+		//System.out.println("remembering ["+obj.getKey()+"]");
+		ldapcache.put(obj.getDn(), obj);
+	}
+	public void removeLdap(String dn)   { ldapcache.remove(dn); }
 
 	public String call(String input, String org, String processor) {
 		return caller.call(input, debug, org, processor); 

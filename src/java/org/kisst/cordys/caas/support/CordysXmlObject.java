@@ -24,7 +24,7 @@ public class CordysXmlObject extends CordysObject {
 	}
 	public String toString() {
 		String c=this.getClass().getSimpleName()+"("+getName()+")";
-		if (parent!=null && (parent instanceof CordysLdapObject))
+		if (parent!=null && (parent instanceof LdapObject))
 			c=parent.toString()+"."+c;
 		return c; 
 	}

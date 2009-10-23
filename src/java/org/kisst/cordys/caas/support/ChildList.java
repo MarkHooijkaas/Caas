@@ -22,16 +22,16 @@ package org.kisst.cordys.caas.support;
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class ChildList<T extends CordysLdapObject> extends CordysObjectList<T>  {
+public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 	private static final long serialVersionUID = 1L;
 	private final CordysObject parent;
 	private final String prefix;
-	private final Class<? extends CordysLdapObject> clz;
+	private final Class<? extends LdapObject> clz;
 
-	public ChildList(CordysObject parent, Class<? extends CordysLdapObject> clz) {
+	public ChildList(CordysObject parent, Class<? extends LdapObject> clz) {
 		this(parent,"",clz);
 	}
-	public ChildList(CordysObject parent, String prefix, Class<? extends CordysLdapObject> clz) {
+	public ChildList(CordysObject parent, String prefix, Class<? extends LdapObject> clz) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.prefix=prefix;
@@ -47,8 +47,8 @@ public class ChildList<T extends CordysLdapObject> extends CordysObjectList<T>  
 		String dn;
 		if (parent instanceof CordysSystem)
 			dn=((CordysSystem) parent).getDn();
-		else if (parent instanceof CordysLdapObject)
-			dn=((CordysLdapObject) parent).getDn();
+		else if (parent instanceof LdapObject)
+			dn=((LdapObject) parent).getDn();
 		else 
 			throw new RuntimeException("parent "+parent+"of wrong type");
 		method.add("dn").setText(prefix+dn); 

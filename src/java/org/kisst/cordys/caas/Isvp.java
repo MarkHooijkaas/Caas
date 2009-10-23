@@ -61,7 +61,7 @@ public class Isvp extends CordysLdapObject {
 		else
 			file.setAttribute("deletereference", "false");
 		call(method);
-		getSystem().remove(getDn());
+		getSystem().removeLdap(getDn());
 	}
 	
 	public String getFilename() {

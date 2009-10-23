@@ -51,8 +51,8 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 						previous=entry; 
 						if (entry.getValue() instanceof XmlNode) 
 							result.append(((XmlNode)entry.getValue()).shortString(40));
-						else if (entry.getValue() instanceof CordysLdapObject.XmlProperty) 
-							result.append(((CordysLdapObject.XmlProperty)entry.getValue()).getXml().shortString(40));
+						else if (entry.getValue() instanceof LdapObject.XmlProperty) 
+							result.append(((LdapObject.XmlProperty)entry.getValue()).getXml().shortString(40));
 						else
 							result.append(entry.getValue());
 					}
