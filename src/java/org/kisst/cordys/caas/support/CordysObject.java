@@ -81,6 +81,8 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public int compareTo(CordysObject o) {
 		if (o==this)
 			return 0;
+		if (o==null)
+			return -1;
 		String[] d1=getKey().split(",");
 		String[] d2=o.getKey().split(",");
 		int p1=d1.length-1;
