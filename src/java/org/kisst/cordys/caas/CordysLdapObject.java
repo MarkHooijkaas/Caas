@@ -31,8 +31,6 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public abstract class CordysLdapObject extends CordysObject {
 	protected abstract class AbstractProperty {
-		public void refresh() {}
-		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
 		abstract public Object get();
 		public String toString() { return ""+get(); }
 	}
@@ -62,7 +60,7 @@ public abstract class CordysLdapObject extends CordysObject {
 		public XmlNode getXml() { return new XmlNode(get()); }
 		public void set(XmlNode value) { set(value.toString()); }
 	}
-	protected class XmlSubProperty {
+	protected class XmlSubProperty extends AbstractProperty {
 		private final XmlProperty xml;
 		private final String path;
 		protected XmlSubProperty(XmlProperty xml, String path) {
@@ -75,7 +73,6 @@ public abstract class CordysLdapObject extends CordysObject {
 			newnode.setChildText(path, value);
 			xml.set(newnode);
 		}
-		public String toString() { return ""+get(); }
 	}
 
 	protected class BooleanProperty extends StringProperty {
