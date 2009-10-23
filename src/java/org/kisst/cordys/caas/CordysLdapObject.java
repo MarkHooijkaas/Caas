@@ -218,10 +218,10 @@ public abstract class CordysLdapObject extends CordysObject {
 	protected void preDeleteHook() {}
 	public void checkIfMayBeModified() {
 		CordysObject obj=this;
-		while (obj!=null && ! (obj instanceof CordysSystem)) {
+		while (obj!=null && (obj instanceof CordysLdapObject)) {
 			if (obj instanceof Isvp)
 				throw new RuntimeException("It is not allowed to delete any part of an ISVP");
-			obj=obj.getParent();
+			obj=((CordysLdapObject)obj).getParent();
 		}
 	}
 	public void delete() {
