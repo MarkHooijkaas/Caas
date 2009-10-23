@@ -20,10 +20,11 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.LdapObject;
 
-public class MethodSet extends CordysLdapObject {
+public class MethodSet extends LdapObjectBase {
 	public final ChildList<Method> methods= new ChildList<Method>(this, Method.class);
 	public final ChildList<Method> method = methods;
 	public final ChildList<Method> m      = methods;
@@ -33,7 +34,7 @@ public class MethodSet extends CordysLdapObject {
 
 	public final StringProperty implementationclass=new StringProperty("implementationclass");
 	
-	protected MethodSet(CordysObject parent, String dn) {
+	protected MethodSet(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

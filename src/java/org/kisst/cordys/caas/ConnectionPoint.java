@@ -19,14 +19,14 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.support.CordysLdapObject;
-import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
+import org.kisst.cordys.caas.support.LdapObject;
 
-public class ConnectionPoint extends CordysLdapObject {
+public class ConnectionPoint extends LdapObjectBase {
 	public final StringProperty uri = new StringProperty("labeleduri");
 	public final BooleanProperty privatePoint = new BooleanProperty("busprivatepoint");
 	
-	protected ConnectionPoint(CordysObject parent, String dn) {
+	protected ConnectionPoint(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 }

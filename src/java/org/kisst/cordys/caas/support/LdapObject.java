@@ -135,14 +135,13 @@ public abstract class LdapObject extends CordysObject {
 	private final LdapObject parent; 
 	private XmlNode entry;
 
-	// This constructor is meant to be used by CordysSystem, which has no parent,
-	// and is still in the process of being constructed, and doesn't knowt it's dn yet
+	// This constructor is meant to be used by CordysSystem, which has no parent
 	protected LdapObject() {
 		this.parent=null;
 	}
 	
-	protected LdapObject(CordysObject parent) {
-		this.parent=(LdapObject) parent; 
+	protected LdapObject(LdapObject parent) {
+		this.parent=parent; 
 	}
 	abstract public String getDn();
 
@@ -299,7 +298,7 @@ public abstract class LdapObject extends CordysObject {
 		Class resultClass = determineClass(system, entry);
 		if (resultClass==null)
 			return null;
-		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {CordysObject.class, String.class});
+		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {LdapObject.class, String.class});
 		cons.setAccessible(true);
 		//System.out.println("createObject ["+newdn+"]");
 		try {

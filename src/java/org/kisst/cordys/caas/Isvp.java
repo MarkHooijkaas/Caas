@@ -20,11 +20,12 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class Isvp extends CordysLdapObject {
+public class Isvp extends LdapObjectBase {
 	public final ChildList<User> users= new ChildList<User>(this, User.class);
 	public final ChildList<User> user = users;
 	public final ChildList<User> u    = users;
@@ -40,7 +41,7 @@ public class Isvp extends CordysLdapObject {
 
 
 	
-	protected Isvp(CordysObject parent, String dn) {
+	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 	@Override

@@ -20,11 +20,12 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class SoapProcessor extends CordysLdapObject {
+public class SoapProcessor extends LdapObjectBase {
 	public final ChildList<ConnectionPoint> connectionPoints = new ChildList<ConnectionPoint>(this, ConnectionPoint.class);
 	public final ChildList<ConnectionPoint> cp = connectionPoints;
 
@@ -44,7 +45,7 @@ public class SoapProcessor extends CordysLdapObject {
 	public final XmlSubProperty UseSystemLogPolicy = new XmlSubProperty(config, "loggerconfiguration/systempolicy");  
 	
 	private XmlNode workerprocess;
-	protected SoapProcessor(CordysObject parent, String dn) {
+	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

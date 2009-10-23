@@ -19,13 +19,14 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.EntryObjectList;
+import org.kisst.cordys.caas.support.LdapObject;
 
 
 
-public class User extends CordysLdapObject {
+public class User extends LdapObjectBase {
 	public final RefProperty<AuthenticatedUser> authenticatedUser = new RefProperty<AuthenticatedUser>("authenticationuser");
 	public final RefProperty<AuthenticatedUser> au = authenticatedUser;
 
@@ -36,7 +37,7 @@ public class User extends CordysLdapObject {
 	public final StringList toolbars= new StringList("toolbar"); 
 	public final StringList menus = new StringList("menu"); 
 
-	protected User(CordysObject parent, String dn) {
+	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 

@@ -22,12 +22,18 @@ package org.kisst.cordys.caas.support;
 import org.kisst.cordys.caas.CordysSystem;
 
 
-
-public abstract class CordysLdapObject extends LdapObject {
+/**
+ * This is the base class for all kinds of Ldap Objects, except for CordysSystem, which is special
+ * This basically is just a convenience class provding the getDn() and getSystem() method
+ * so that not all sublcasses need to implement these again.
+ * It is separate from the LdapObject class, because CordysSystem also is a LdapObject, but does
+ * can't use the dn and system (itself) at construction time.
+ */
+public abstract class LdapObjectBase extends LdapObject {
 	private final CordysSystem system;
 	private final String dn;
 
-	protected CordysLdapObject(CordysObject parent, String dn) {
+	protected LdapObjectBase(LdapObject parent, String dn) {
 		super(parent);
 		this.system=parent.getSystem();
 		this.dn=dn;

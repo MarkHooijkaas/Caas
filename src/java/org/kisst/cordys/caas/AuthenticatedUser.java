@@ -19,15 +19,16 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.support.LdapObject;
 
 
-public class AuthenticatedUser extends CordysLdapObject {
+public class AuthenticatedUser extends LdapObjectBase {
 	public final RefProperty<Organization> defaultOrg = new RefProperty<Organization>("defaultcontext");
 	public final StringList osidentity= new StringList("osidentity"); 
 
-	protected AuthenticatedUser(CordysObject parent, String dn) {
+	protected AuthenticatedUser(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 	public void diff(CordysObject other, int depth) {}

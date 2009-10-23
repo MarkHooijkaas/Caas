@@ -22,15 +22,16 @@ package org.kisst.cordys.caas;
 import java.util.LinkedHashMap;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.CordysLdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.EntryObjectList;
+import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
 
 
-public class SoapNode extends CordysLdapObject {
+public class SoapNode extends LdapObjectBase {
 	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
 
@@ -48,7 +49,7 @@ public class SoapNode extends CordysLdapObject {
 	public final XmlSubProperty algorithm= new XmlSubProperty(config, "routing/algorithm");  
 
 	
-	protected SoapNode(CordysObject parent, String dn) {
+	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
 	
