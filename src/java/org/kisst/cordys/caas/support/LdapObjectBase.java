@@ -19,7 +19,22 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.support;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+
+import org.kisst.cordys.caas.AuthenticatedUser;
+import org.kisst.cordys.caas.ConnectionPoint;
 import org.kisst.cordys.caas.CordysSystem;
+import org.kisst.cordys.caas.Isvp;
+import org.kisst.cordys.caas.Method;
+import org.kisst.cordys.caas.MethodSet;
+import org.kisst.cordys.caas.Organization;
+import org.kisst.cordys.caas.Role;
+import org.kisst.cordys.caas.SoapNode;
+import org.kisst.cordys.caas.SoapProcessor;
+import org.kisst.cordys.caas.User;
+import org.kisst.cordys.caas.util.ReflectionUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 /**
@@ -41,4 +56,72 @@ public abstract class LdapObjectBase extends LdapObject {
 
 	public CordysSystem getSystem() { return system; }
 	public String getDn() { return dn; }
+	
+
+
+	public static LdapObject createObject(CordysSystem system, String dn) {
+		XmlNode method=new XmlNode("GetLDAPObject", CordysObject.xmlns_ldap);
+		method.add("dn").setText(dn);
+		XmlNode response = system.call(method);
+		XmlNode entry=response.getChild("tuple/old/entry");
+		return createObject(system, entry);
+	}
+
+	public static LdapObject createObject(CordysSystem system, XmlNode entry) {
+		if (entry==null)
+			throw new RuntimeException("could not create LdapObject with null entry");
+		String newdn=entry.getAttribute("dn");
+		//System.out.println("createObject ["+newdn+"]");
+		LdapObject parent = calcParent(system, entry.getAttribute("dn"));
+		Class resultClass = determineClass(system, entry);
+		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[]{LdapObject.class, String.class} );
+		LdapObject result = (LdapObject) ReflectionUtil.createObject(cons, new Object[]{parent, newdn});
+		result.setEntry(entry);
+		return result;
+	}
+	
+	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
+	static {
+		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
+		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
+		ldapObjectTypes.put("busmethod", Method.class);
+		ldapObjectTypes.put("busmethodset", MethodSet.class);
+		ldapObjectTypes.put("organization", Organization.class);
+		ldapObjectTypes.put("busorganizationalrole", Role.class);
+		ldapObjectTypes.put("bussoapnode", SoapNode.class);
+		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
+		ldapObjectTypes.put("busorganizationaluser", User.class);
+		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
+	}
+	static private Class determineClass(CordysSystem system, XmlNode entry) {
+		if (entry==null)
+			return null;
+		XmlNode objectclass=entry.getChild("objectclass");
+		for(XmlNode o:objectclass.getChildren("string")) {
+			Class c=ldapObjectTypes.get(o.getText());
+			if (c!=null)
+				return c;
+		}
+		String dn=entry.getAttribute("dn");
+		if (dn.substring(dn.indexOf(",")+1).equals(system.getDn()) && dn.startsWith("cn="))
+			return Isvp.class;
+		return null;
+	}
+	static private LdapObject calcParent(CordysSystem system, String dn) {
+		//System.out.println("calcParent ["+dn+"]");
+		String origdn=dn;
+		int pos;
+		while ((pos=dn.indexOf(","))>=0) {
+			dn=dn.substring(pos+1);
+			LdapObject parent=system.seekLdap(dn);
+			if (parent!=null)
+				return parent;
+			XmlNode entry=retrieveEntry(system, dn);
+			Class resultClass = determineClass(system, entry);
+			if (resultClass!=null)
+				return createObject(system, entry);
+		}
+		throw new RuntimeException("Could not find a parent for "+origdn);
+	}
+
 }

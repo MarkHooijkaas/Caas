@@ -74,12 +74,18 @@ public class ReflectionUtil {
 	public static Object createObject(Class<?> c, Object[] args) {
 		try {
 			Constructor cons= c.getConstructor(getSignature(args));
+			return createObject(cons,args);
+		}
+		catch (NoSuchMethodException e) { throw new RuntimeException(e); } 
+	}
+			
+	public static Object createObject(Constructor cons, Object[] args) {
+		try {
+			cons.setAccessible(true);
 			return cons.newInstance(args);
 		}
-		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
 		catch (IllegalAccessException e) { throw new RuntimeException(e); } 
 		catch (InstantiationException e) { throw new RuntimeException(e); }
-		catch (NoSuchMethodException e) { throw new RuntimeException(e); } 
 		catch (InvocationTargetException e) { throw new RuntimeException(e); }
 	}
 

@@ -19,24 +19,11 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.support;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.kisst.cordys.caas.AuthenticatedUser;
-import org.kisst.cordys.caas.ConnectionPoint;
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Isvp;
-import org.kisst.cordys.caas.Method;
-import org.kisst.cordys.caas.MethodSet;
-import org.kisst.cordys.caas.Organization;
-import org.kisst.cordys.caas.Role;
-import org.kisst.cordys.caas.SoapNode;
-import org.kisst.cordys.caas.SoapProcessor;
-import org.kisst.cordys.caas.User;
-import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -205,13 +192,16 @@ public abstract class LdapObject extends CordysObject {
 		entry.detach();
 	}
 	public XmlNode getEntry() {
-		if (entry!=null && useCache())
-			return entry;
-		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
-		method.add("dn").setText(getDn());
-		XmlNode response = call(method);
-		setEntry(response.getChild("tuple/old/entry"));
+		if (entry==null || ! useCache())
+			setEntry(retrieveEntry(getSystem(),getDn()));
 		return entry;
+	}
+	
+	static public XmlNode retrieveEntry(CordysSystem system, String dn) {
+		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
+		method.add("dn").setText(dn);
+		XmlNode response = system.call(method);
+		return response.getChild("tuple/old/entry");
 	}
 
 	protected XmlNode newEntryXml(String prefix, String name, String ... types) {
@@ -254,77 +244,5 @@ public abstract class LdapObject extends CordysObject {
 		call(method);
 		getParent().refresh();
 		getSystem().removeLdap(getDn());
-	}
-	
-	
-	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
-	static {
-		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
-		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
-		ldapObjectTypes.put("busmethod", Method.class);
-		ldapObjectTypes.put("busmethodset", MethodSet.class);
-		ldapObjectTypes.put("organization", Organization.class);
-		ldapObjectTypes.put("busorganizationalrole", Role.class);
-		ldapObjectTypes.put("bussoapnode", SoapNode.class);
-		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
-		ldapObjectTypes.put("busorganizationaluser", User.class);
-		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
-	}
-	static private Class determineClass(CordysSystem system, XmlNode entry) {
-		XmlNode objectclass=entry.getChild("objectclass");
-		for(XmlNode o:objectclass.getChildren("string")) {
-			Class c=ldapObjectTypes.get(o.getText());
-			if (c!=null)
-				return c;
-		}
-		String dn=entry.getAttribute("dn");
-		if (dn.substring(dn.indexOf(",")+1).equals(system.getDn()) && dn.startsWith("cn="))
-			return Isvp.class;
-		return null;
-	}
-	public static LdapObject createObject(CordysSystem system, String dn) {
-		XmlNode method=new XmlNode("GetLDAPObject", CordysObject.xmlns_ldap);
-		method.add("dn").setText(dn);
-		XmlNode response = system.call(method);
-		XmlNode entry=response.getChild("tuple/old/entry");
-		return LdapObject.createObject(system, entry);
-	}
-
-	public static LdapObject createObject(CordysSystem system, XmlNode entry) {
-		if (entry==null)
-			return null;
-		String newdn=entry.getAttribute("dn");
-		CordysObject parent = calcParent(system, entry);
-		Class resultClass = determineClass(system, entry);
-		if (resultClass==null)
-			return null;
-		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[] {LdapObject.class, String.class});
-		cons.setAccessible(true);
-		//System.out.println("createObject ["+newdn+"]");
-		try {
-			LdapObject result = (LdapObject) cons.newInstance(new Object[]{parent, newdn});
-			result.setEntry(entry);
-			return result;
-		}
-		catch (IllegalArgumentException e) { throw new RuntimeException(e); }
-		catch (InstantiationException e) { throw new RuntimeException(e); }
-		catch (IllegalAccessException e) { throw new RuntimeException(e); }
-		catch (InvocationTargetException e) { throw new RuntimeException(e); }
-	}
-	static private CordysObject calcParent(CordysSystem system, XmlNode entry) {
-		String dn=entry.getAttribute("dn");
-		//System.out.println("calcParent ["+dn+"]");
-		if (dn.equals(system.getDn())) // Safeguard
-			return system;
-		if (dn.length()<=system.getDn().length()) // Safeguard
-			return null;
-		do {
-			int pos=dn.indexOf(",");
-			dn=dn.substring(pos+1);
-			CordysObject parent=system.getLdap(dn);
-			if (parent!=null)
-				return parent;
-		} while (dn.length()>0);
-		throw new RuntimeException("Could not find a parent for "+dn);
 	}
 }

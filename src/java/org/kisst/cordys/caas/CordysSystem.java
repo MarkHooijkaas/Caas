@@ -26,6 +26,7 @@ import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.CordysObjectList;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.XmlObjectList;
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -90,28 +91,29 @@ public class CordysSystem extends LdapObject {
 	public void refresh() {ldapcache.clear(); rememberLdap(this); }
 	public boolean useCache() { return useCache; }
 
+	public LdapObject seekLdap(String dn) { return ldapcache.get(dn); }
 	public synchronized LdapObject getLdap(String dn) {
 		//System.out.println("get key ["+key+"]");
 		LdapObject result=ldapcache.get(dn);
-		if (result==null) {
-			result=LdapObject.createObject(this, dn);
-			if (result!=null)
-				rememberLdap(result);
-		}
+		if (result!=null)
+			return result;
+		result=LdapObjectBase.createObject(this, dn);
+		rememberLdap(result);
 		return result;
+		
 	}
 
-	public CordysObject getObject(XmlNode entry) { 
+	public LdapObject getLdap(XmlNode entry) { 
 		String dn=entry.getAttribute("dn");
 		//System.out.println("get ["+newdn+"]");
 		LdapObject result=ldapcache.get(dn);
-		if (result==null) {
-			result=LdapObject.createObject(this, entry);
-			rememberLdap(result);
-		}
+		if (result!=null)
+			return result;
+		result=LdapObjectBase.createObject(this, entry);
+		rememberLdap(result);
 		return result;
 	}
-	public void rememberLdap(LdapObject obj) {
+	private void rememberLdap(LdapObject obj) {
 		if (obj==null)
 			return;
 		//System.out.println("remembering ["+obj.getKey()+"]");

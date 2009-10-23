@@ -57,7 +57,7 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 			response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {
 			XmlNode elm=tuple.getChild("old/entry");
-			CordysObject obj=system.getObject(elm);
+			CordysObject obj=system.getLdap(elm);
 			if (clz==null || obj.getClass()==clz)
 				this.grow((T) obj);
 			//System.out.println(dn);
