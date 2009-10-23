@@ -24,14 +24,14 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 	private static final long serialVersionUID = 1L;
-	private final CordysObject parent;
+	private final LdapObject parent;
 	private final String prefix;
 	private final Class<? extends LdapObject> clz;
 
-	public ChildList(CordysObject parent, Class<? extends LdapObject> clz) {
+	public ChildList(LdapObject parent, Class<? extends LdapObject> clz) {
 		this(parent,"",clz);
 	}
-	public ChildList(CordysObject parent, String prefix, Class<? extends LdapObject> clz) {
+	public ChildList(LdapObject parent, String prefix, Class<? extends LdapObject> clz) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.prefix=prefix;
@@ -39,7 +39,14 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 		// We have to delay the use of the dn, because the dn is not known in CordysSystem
 		// at construction time
 	}
-	
+
+	public String getKey() { return clz.getSimpleName()+"s:"+parent.getDn(); }
+	public void myclear() {
+		if (isListAvailable())
+			for (LdapObject o: this)
+				o.clear();
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
 		XmlNode method = new XmlNode("GetChildren", xmlns_ldap);

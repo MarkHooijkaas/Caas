@@ -2,12 +2,10 @@ package org.kisst.cordys.caas.support;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.util.ReflectionUtil;
-import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysObject implements Comparable<CordysObject> {
@@ -29,43 +27,13 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	public boolean useCache() { return getSystem().useCache();}
 
-	public Map<String, Object> getProps() {
-		Map<String, Object> result= new LinkedHashMap<String, Object>() {
-			private static final long serialVersionUID = 1L;
-			public String toString() {
-				if (size()==0)
-					return "{}";
-				StringBuilder result=new StringBuilder();
-				result.append("{\n");
-				boolean first=true;
-				Map.Entry<String, Object> previous=null;
-				for (Map.Entry<String, Object> entry : this.entrySet()) {
-					if (first)
-						first=false;
-					else
-						result.append(",\n");
-					result.append(entry.getKey()+"=");
-					if (previous!=null && previous.getValue()==entry.getValue() && entry.getValue()!=null)
-						result.append("alias("+previous.getKey()+")");
-					else {
-						previous=entry; 
-						if (entry.getValue() instanceof XmlNode) 
-							result.append(((XmlNode)entry.getValue()).shortString(40));
-						else if (entry.getValue() instanceof LdapObject.XmlProperty) 
-							result.append(((LdapObject.XmlProperty)entry.getValue()).getXml().shortString(40));
-						else
-							result.append(entry.getValue());
-					}
-				}
-				result.append("\n}");
-				return result.toString();
-			}
-		};
-
+	public Props getProps() {
+		//System.out.println("getting props for "+this.getClass().getName());
+		Props result=new Props();
 		for (Field f: this.getClass().getFields()) {
 			if (! Modifier.isStatic(f.getModifiers())) {
 				try {
-					result.put(f.getName(),  f.get(this));
+					result.add(f.getName(),  f.get(this));
 				} 
 				catch (IllegalAccessException e) { throw new RuntimeException(e);}
 			}
@@ -73,18 +41,38 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		for (java.lang.reflect.Method m: this.getClass().getMethods()) {
 			if (m.getName().startsWith("get") 
 					&& m.getParameterTypes().length==0 
-					&& ! java.lang.reflect.Modifier.isStatic(m.getModifiers())) 
+					&& ! Modifier.isStatic(m.getModifiers())) 
 			{
 				String name=m.getName().substring(3);
 				name=name.substring(0,1).toLowerCase()+name.substring(1);
 				if (name.equals("props"))
 					continue;
-				result.put(name, ReflectionUtil.invoke(this, m, null));
+				result.add(name, ReflectionUtil.invoke(this, m, null));
 			}
 		}
 		return result;
 	}
 
+	public void myclear() {}
+	public void clear() {
+		int mykeylen=0;
+		if (getKey()!=null)
+			mykeylen=getKey().length();
+		for (Map.Entry e: getProps().entrySet()) {
+			if (e.getValue() instanceof CordysObject) {
+				//System.out.println(e.getKey()+" ");
+				CordysObject o= (CordysObject) e.getValue();
+				String childkey=o.getKey();
+				if (childkey!=null && childkey.length()>mykeylen) {
+					// Only clear properties with longer keys, to prevent loops
+					System.out.println("clearing "+childkey);
+					o.clear();
+				}
+			}
+		}
+		myclear();
+	}
+	
 	public void deepdiff(CordysObject other) { diff(other,100); }
 	public void diff(CordysObject other) { diff(other,0); }
 	public void diff(CordysObject other, int depth) { diff("", other, depth); }

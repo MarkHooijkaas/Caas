@@ -67,6 +67,8 @@ public class Isvp extends LdapObjectBase {
 	
 	public String getFilename() {
 		String result=getEntry().getChildText("member/string");
+		if (result==null)
+			return null;
 		if (result.startsWith("cn="))
 			return result.substring(3);
 		else

@@ -41,7 +41,7 @@ public class ReflectionUtil {
 			return m.invoke(o, args);
 		}
 		catch (IllegalAccessException e) { throw new RuntimeException(e); }
-		catch (InvocationTargetException e) {throw new RuntimeException(e); }
+		catch (InvocationTargetException e) {e.getCause().printStackTrace(); throw new RuntimeException(e.getCause()); }
 	}
 	public static Object invoke(Object o, String name, Object[] args) {
 		return invoke(o.getClass(),o, name, args);

@@ -56,7 +56,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		return list;
 	}
 	protected abstract void retrieveList();
-
+	protected boolean isListAvailable() { return listAvailable; }
 	public void refresh() { list.clear(); listAvailable=false; }
 	public CordysSystem getSystem() {return system; }
 

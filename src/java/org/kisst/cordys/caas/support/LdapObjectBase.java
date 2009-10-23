@@ -29,6 +29,7 @@ import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.Method;
 import org.kisst.cordys.caas.MethodSet;
 import org.kisst.cordys.caas.Organization;
+import org.kisst.cordys.caas.OsProcess;
 import org.kisst.cordys.caas.Role;
 import org.kisst.cordys.caas.SoapNode;
 import org.kisst.cordys.caas.SoapProcessor;
@@ -74,6 +75,8 @@ public abstract class LdapObjectBase extends LdapObject {
 		//System.out.println("createObject ["+newdn+"]");
 		LdapObject parent = calcParent(system, entry.getAttribute("dn"));
 		Class resultClass = determineClass(system, entry);
+		if (resultClass==null)
+			throw new RuntimeException("could not determine class for entry "+entry);
 		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[]{LdapObject.class, String.class} );
 		LdapObject result = (LdapObject) ReflectionUtil.createObject(cons, new Object[]{parent, newdn});
 		result.setEntry(entry);
@@ -92,6 +95,7 @@ public abstract class LdapObjectBase extends LdapObject {
 		ldapObjectTypes.put("bussoapprocessor", SoapProcessor.class);
 		ldapObjectTypes.put("busorganizationaluser", User.class);
 		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
+		ldapObjectTypes.put("busosprocess", OsProcess.class);
 	}
 	static private Class determineClass(CordysSystem system, XmlNode entry) {
 		if (entry==null)

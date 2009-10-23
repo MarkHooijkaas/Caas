@@ -134,7 +134,7 @@ public abstract class LdapObject extends CordysObject {
 
 	public void refresh() { 
 		entry=null;
-		for (Object o: getProps().values()) {
+		for (Object o: getProps()) {
 			if (o instanceof CordysObject)
 				((CordysObject) o).refresh();
 		}
