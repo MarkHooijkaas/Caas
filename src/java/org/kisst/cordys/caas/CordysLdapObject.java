@@ -30,7 +30,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysLdapObject extends CordysObject {
-	protected abstract class AbstractProperty extends CordysObject {
+	protected abstract class AbstractProperty {
 		public void refresh() {}
 		public CordysSystem getSystem() { return CordysLdapObject.this.getSystem();	}
 		abstract public Object get();
