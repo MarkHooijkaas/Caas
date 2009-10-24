@@ -14,7 +14,7 @@ public class CordysXmlObject extends CordysObject {
 		this.parent=parent;
 		this.path=key;
 	}
-	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":"+path; }
+	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":entry:"+path; }
 	@Override public CordysSystem getSystem() { return system; }
 	public String getPath() { return path; }
 	public XmlNode getData() {

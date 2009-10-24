@@ -136,7 +136,7 @@ public abstract class LdapObject extends CordysObject {
 	public CordysObject getParent() { return parent; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
-	public String getKey() { return "ldap:"+getDn(); }
+	@Override public String getKey() { return "ldap:"+getDn(); }
 	public String getName() {
 		String dn=getDn();
 		int pos=dn.indexOf("=");

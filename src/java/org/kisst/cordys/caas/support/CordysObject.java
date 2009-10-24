@@ -11,7 +11,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	abstract public CordysSystem getSystem();
 	public String getName() { return null; } 
-	public String getKey()  { return null; } 
+	abstract public String getKey(); 
 
 	public int compareTo(CordysObject other) {
 		if (other==null)

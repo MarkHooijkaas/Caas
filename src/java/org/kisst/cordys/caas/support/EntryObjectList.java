@@ -37,6 +37,7 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 		this.group=group;
 	}
 	
+	@Override public String getKey() { return parent.getKey()+":Entries:"+group;}
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
 		XmlNode method=new XmlNode("GetLDAPObject", xmlns_ldap);

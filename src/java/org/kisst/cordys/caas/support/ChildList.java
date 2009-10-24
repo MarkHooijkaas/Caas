@@ -40,7 +40,7 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 		// at construction time
 	}
 
-	public String getKey() { return clz.getSimpleName()+"s:"+parent.getDn(); }
+	@Override public String getKey() { return parent.getKey()+":"+clz.getSimpleName()+"s"; }
 
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {

@@ -133,6 +133,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 						grow(obj);
 				}
 			}
+			@Override public String getKey() { return CordysObjectList.this.getKey()+":like("+filter+")";}
 		};
 	}
 	
@@ -149,6 +150,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 					grow(obj);
 				
 			}
+			@Override public String getKey() { return CordysObjectList.this.getKey()+":sorted";}
 		};
 	}
 	@SuppressWarnings("unchecked")

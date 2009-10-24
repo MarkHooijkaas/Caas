@@ -23,19 +23,19 @@ import org.kisst.cordys.caas.Connector;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T>  {
-	private final String key;
+	private final String path;
 	private final Class<? extends LdapObject> clz;
 
-	public XmlObjectList(CordysObject parent, String key, Class<? extends LdapObject> clz) {
+	public XmlObjectList(CordysObject parent, String path, Class<? extends LdapObject> clz) {
 		super(parent.getSystem());
-		this.key=key;
+		this.path=path;
 		this.clz=clz;
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
 		XmlNode method = new XmlNode("GetCollection", xmlns_xmlstore);
-		method.add("folder").setText(key); // TODO: attribute version=isv, organization, user 
+		method.add("folder").setText(path); // TODO: attribute version=isv, organization, user 
 		XmlNode response=system.call(method);
 		//if (response.getName().equals("Envelope"))
 		//	response=response.getChild("Body").getChildren().get(0);
@@ -46,5 +46,5 @@ public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T
 			//System.out.println(dn);
 		}
 	}
-	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":"+key; }
+	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":children:"+path; }
 }

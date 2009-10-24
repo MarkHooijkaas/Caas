@@ -67,7 +67,7 @@ public class CordysSystem extends LdapObject {
 					grow(sp);
 			}
 		}
-		@Override public String getKey() { return "SoapProcessors:"+getDn(); }
+		@Override public String getKey() { return getKey()+":SoapProcessors"; }
 	}; 
 	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
 	
@@ -85,9 +85,9 @@ public class CordysSystem extends LdapObject {
 		rememberLdap(this);
 	}
 	public String toString() { return "CordysSystem("+name+")"; }
-	public CordysSystem getSystem() { return this; }
+	@Override public CordysSystem getSystem() { return this; }
 	public String getDn()   { return dn; }
-	public String getKey()  { return "ldap:"+dn; }
+	@Override public String getKey()  { return "ldap:"+dn; }
 	public String getName() { return name; }
 	@Override public void myclear() {
 		// It is not necessary to clear the cache, because that is just an index,
