@@ -89,6 +89,8 @@ public class CordysSystem extends LdapObject {
 	public String getKey()  { return "ldap:"+dn; }
 	public String getName() { return name; }
 	public void refresh() {ldapcache.clear(); rememberLdap(this); }
+	public void myclear() {ldapcache.clear(); rememberLdap(this); }
+
 	public boolean useCache() { return useCache; }
 
 	public LdapObject seekLdap(String dn) { return ldapcache.get(dn); }

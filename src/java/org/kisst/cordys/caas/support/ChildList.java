@@ -45,6 +45,7 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 		if (isListAvailable())
 			for (LdapObject o: this)
 				o.clear();
+		super.myclear();
 	}
 
 	@SuppressWarnings("unchecked")

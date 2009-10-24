@@ -45,7 +45,9 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 			{
 				String name=m.getName().substring(3);
 				name=name.substring(0,1).toLowerCase()+name.substring(1);
-				if (name.equals("props"))
+				if (name.equals("props")) // causes stack overflow if one let props call props
+					continue;
+				if (name.equals("size")) // causes the list to be fetched, which is not always desirable
 					continue;
 				result.add(name, ReflectionUtil.invoke(this, m, null));
 			}
@@ -65,7 +67,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				String childkey=o.getKey();
 				if (childkey!=null && childkey.length()>mykeylen) {
 					// Only clear properties with longer keys, to prevent loops
-					System.out.println("clearing "+childkey);
+					//System.out.println("clearing "+childkey);
 					o.clear();
 				}
 			}
