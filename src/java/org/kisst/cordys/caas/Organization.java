@@ -75,7 +75,7 @@ public class Organization extends LdapObjectBase {
 		newEntry.add("labeleduri").add("string").setText(namespace);
 		newEntry.add("implementationclass").add("string").setText(implementationclass);
 		createInLdap(newEntry);
-		methodSets.refresh();
+		methodSets.clear();
 	}
 
 	public void createUser(String name, AuthenticatedUser au) {
@@ -85,7 +85,7 @@ public class Organization extends LdapObjectBase {
 		newEntry.add("toolbar");
 		newEntry.add("role").add("string").setText("cn=everyoneIn"+getName()+",cn=organizational roles,"+getDn());
 		createInLdap(newEntry);
-		users.refresh();
+		users.clear();
 	}
 
 	public void createRole(String name) {
@@ -95,7 +95,7 @@ public class Organization extends LdapObjectBase {
 		newEntry.add("toolbar");
 		newEntry.add("role").add("string").setText("cn=everyoneIn"+getName()+",cn=organizational roles,"+getDn());
 		createInLdap(newEntry);
-		roles.refresh();
+		roles.clear();
 	}
 
 	

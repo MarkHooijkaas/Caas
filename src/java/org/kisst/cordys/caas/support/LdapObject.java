@@ -132,13 +132,6 @@ public abstract class LdapObject extends CordysObject {
 	}
 	abstract public String getDn();
 
-	public void refresh() { 
-		entry=null;
-		for (Object o: getProps()) {
-			if (o instanceof CordysObject)
-				((CordysObject) o).refresh();
-		}
-	}
 	public CordysObject getParent() { return parent; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
@@ -242,7 +235,7 @@ public abstract class LdapObject extends CordysObject {
 		XmlNode tuple=method.add("tuple");
 		tuple.add("old").add(entry.clone());
 		call(method);
-		getParent().refresh();
+		getParent().clear();
 		getSystem().removeLdap(getDn());
 	}
 }

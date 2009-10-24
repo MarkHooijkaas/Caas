@@ -49,12 +49,6 @@ public class SoapProcessor extends LdapObjectBase {
 		super(parent, dn);
 	}
 
-	@Override
-	public void refresh() {
-		super.refresh();
-		this.workerprocess=null;
-	}
-
 	public String call(String input) { return getSystem().call(input, null, getDn()); }
 	
 	public void setWorkerprocess(XmlNode workerprocess) {

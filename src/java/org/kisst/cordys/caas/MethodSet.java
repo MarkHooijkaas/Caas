@@ -40,7 +40,7 @@ public class MethodSet extends LdapObjectBase {
 
 	public void createMethod(String name) {
 		createInLdap(newEntryXml("", name,"busmethod"));
-		methods.refresh();
+		methods.clear();
 	}
 
 	public void diff(CordysObject other, int depth) {

@@ -16,7 +16,6 @@ public class CordysXmlObject extends CordysObject {
 	}
 	@Override public String getKey() { return key; }
 	@Override public CordysSystem getSystem() { return system; }
-	@Override public void refresh() { data=null;}
 	public XmlNode getData() {
 		if (data==null)
 			data=system.getXml(key).getChildren().get(0);

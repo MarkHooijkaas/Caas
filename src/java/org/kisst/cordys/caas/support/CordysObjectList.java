@@ -55,10 +55,9 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		listAvailable=true;
 		return list;
 	}
-	public void myclear() { list.clear(); listAvailable=false; }
+	@Override public void myclear() { list.clear(); listAvailable=false; }
 	protected abstract void retrieveList();
 	protected boolean isListAvailable() { return listAvailable; }
-	public void refresh() { list.clear(); listAvailable=false; }
 	public CordysSystem getSystem() {return system; }
 
 	protected void grow(T obj) {
