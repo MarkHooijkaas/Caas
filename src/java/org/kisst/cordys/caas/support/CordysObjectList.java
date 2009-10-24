@@ -180,9 +180,10 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		}
 	}
 
-	
+	// Groovy specific methods
 	public T propertyMissing(String name) {	return get(name); }
 
+	// Jython specific methods
 	public Object __getattr__(String name) { return get(name); }
 	public Object __getitem__(String key)  { return get(key); }
 	public Object __getitem__(int index)   { return get(index); }

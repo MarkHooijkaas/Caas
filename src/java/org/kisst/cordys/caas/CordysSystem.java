@@ -84,11 +84,11 @@ public class CordysSystem extends LdapObject {
 		this.build=response.getChildText("build");
 		rememberLdap(this);
 	}
-	public String toString() { return "CordysSystem("+name+")"; }
+	@Override public String toString() { return "CordysSystem("+name+")"; }
 	@Override public CordysSystem getSystem() { return this; }
-	public String getDn()   { return dn; }
+	@Override public String getDn()   { return dn; }
 	@Override public String getKey()  { return "ldap:"+dn; }
-	public String getName() { return name; }
+	@Override public String getName() { return name; }
 	@Override public void myclear() {
 		// It is not necessary to clear the cache, because that is just an index,
 		// and guarantees that objects are never created twice.

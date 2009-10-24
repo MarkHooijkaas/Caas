@@ -113,7 +113,7 @@ public class SoapProcessor extends LdapObjectBase {
 		call(method);
 	}
 
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		// TODO: which attributes to compare

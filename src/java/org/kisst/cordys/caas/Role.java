@@ -36,5 +36,5 @@ public class Role extends LdapObjectBase {
 	protected Role(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	public void diff(CordysObject other, int depth) {}
+	@Override public void diff(CordysObject other, int depth) {}
 }

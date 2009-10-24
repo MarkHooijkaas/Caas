@@ -69,7 +69,7 @@ public class SoapNode extends LdapObjectBase {
 			msNode.add("string").setText(s);
 		updateLdap(newEntry);
 	}
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		SoapNode otherSn = (SoapNode) other;

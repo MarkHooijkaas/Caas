@@ -33,7 +33,7 @@ public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void retrieveList() {
+	@Override protected void retrieveList() {
 		XmlNode method = new XmlNode("GetCollection", xmlns_xmlstore);
 		method.add("folder").setText(path); // TODO: attribute version=isv, organization, user 
 		XmlNode response=system.call(method);

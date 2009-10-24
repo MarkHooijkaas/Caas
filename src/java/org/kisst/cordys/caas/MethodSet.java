@@ -43,7 +43,7 @@ public class MethodSet extends LdapObjectBase {
 		methods.clear();
 	}
 
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		MethodSet otherMs=(MethodSet) other;

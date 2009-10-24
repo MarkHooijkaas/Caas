@@ -41,7 +41,7 @@ public class User extends LdapObjectBase {
 		super(parent, dn);
 	}
 
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		User otherUser = (User) other;

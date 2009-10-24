@@ -43,7 +43,7 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 	@Override public String getKey() { return parent.getKey()+":"+clz.getSimpleName()+"s"; }
 
 	@SuppressWarnings("unchecked")
-	protected void retrieveList() {
+	@Override protected void retrieveList() {
 		XmlNode method = new XmlNode("GetChildren", xmlns_ldap);
 		//method.add("dn").setText(prefix+((CordysLdapObject) parent).getDn());
 		String dn;

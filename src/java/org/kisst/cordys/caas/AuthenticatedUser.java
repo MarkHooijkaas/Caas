@@ -31,5 +31,5 @@ public class AuthenticatedUser extends LdapObjectBase {
 	protected AuthenticatedUser(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	public void diff(CordysObject other, int depth) {}
+	@Override public void diff(CordysObject other, int depth) {}
 }

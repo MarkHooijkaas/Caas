@@ -137,13 +137,13 @@ public abstract class LdapObject extends CordysObject {
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
 	@Override public String getKey() { return "ldap:"+getDn(); }
-	public String getName() {
+	@Override public String getName() {
 		String dn=getDn();
 		int pos=dn.indexOf("=");
 		int pos2=dn.indexOf(",",pos);
 		return dn.substring(pos+1,pos2);
 	}
-	public String toString() {
+	@Override public String toString() {
 		//if (getSystem().displayFormat==0) {
 		if (true) {
 			String c=this.getClass().getSimpleName()+"("+getName()+")";
@@ -158,12 +158,12 @@ public abstract class LdapObject extends CordysObject {
 				return getName();
 		}
 	}
-	public boolean equals(Object o) {
+	@Override public boolean equals(Object o) {
 		if (o instanceof LdapObject)
 			return getDn().equals(((LdapObject)o).getDn());
 		return false;
 	}
-	public int compareTo(CordysObject o) {
+	@Override public int compareTo(CordysObject o) {
 		if (o==this)
 			return 0;
 		if (o==null)

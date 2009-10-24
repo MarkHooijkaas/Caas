@@ -74,7 +74,7 @@ public class Isvp extends LdapObjectBase {
 		else
 			return result;
 	}
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		Isvp otherIsvp=(Isvp) other;

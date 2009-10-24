@@ -65,8 +65,7 @@ public class Organization extends LdapObjectBase {
 
 	public String call(String input) { return getSystem().call(input, getDn(), null); }
 
-	@Override
-	protected void preDeleteHook() {
+	@Override protected void preDeleteHook() {
 		for (SoapProcessor sp: soapProcessors)
 			sp.stop();
 	}
@@ -100,7 +99,7 @@ public class Organization extends LdapObjectBase {
 	}
 
 	
-	public void diff(CordysObject other, int depth) {
+	@Override public void diff(CordysObject other, int depth) {
 		if (this==other)
 			return;
 		Organization otherOrg = (Organization) other;
