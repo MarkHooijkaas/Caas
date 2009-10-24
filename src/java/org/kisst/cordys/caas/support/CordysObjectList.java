@@ -38,7 +38,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	protected final CordysSystem system;
 	private final ArrayList<T> list=new ArrayList<T>();
 	private boolean listAvailable=false;
-	private final HashMap<String,T> dnIndex=new HashMap<String,T>(); 
+	private final HashMap<String,T> keyIndex=new HashMap<String,T>(); 
 	private final HashMap<String,T> nameIndex=new HashMap<String,T>(); 
 
 
@@ -55,7 +55,19 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		listAvailable=true;
 		return list;
 	}
-	@Override public void myclear() { list.clear(); listAvailable=false; }
+	@Override public void myclear() { 
+		super.myclear();
+		//log("clearing list "+getKey()+" content "+list);
+		if (isListAvailable())
+			for (CordysObject o: this)
+				o.clear();
+		listAvailable=false;
+		list.clear(); 
+		keyIndex.clear();
+		nameIndex.clear();
+		super.myclear();
+	}
+	
 	protected abstract void retrieveList();
 	protected boolean isListAvailable() { return listAvailable; }
 	public CordysSystem getSystem() {return system; }
@@ -63,7 +75,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	protected void grow(T obj) {
 		list.add(obj);
 		if (obj!=null) {
-			dnIndex.put(obj.getKey(), obj);
+			keyIndex.put(obj.getKey(), obj);
 			nameIndex.put(obj.getName(), obj);
 		}
 	}
@@ -71,7 +83,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 
 	public T get(String key) {
 		fetchList();
-		T result=dnIndex.get(key);
+		T result=keyIndex.get(key);
 		if (result!=null)
 			return result;
 		result=nameIndex.get(key);
@@ -141,8 +153,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		};
 	}
 	@SuppressWarnings("unchecked")
-	@Override
-	protected void mydiff(String prefix, CordysObject other, int depth) {
+	@Override protected void mydiff(String prefix, CordysObject other, int depth) {
 		CordysObjectList<T> l1=this.sort();
 		CordysObjectList<T> l2=((CordysObjectList<T> )other).sort();
 		int pos1=0;

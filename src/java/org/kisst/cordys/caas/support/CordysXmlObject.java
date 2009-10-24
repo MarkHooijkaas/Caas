@@ -6,19 +6,20 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class CordysXmlObject extends CordysObject {
 	private final CordysSystem system;
 	private final CordysObject parent; 
-	private final String key;
+	private final String path;
 	private XmlNode data=null;
 
 	protected CordysXmlObject(CordysObject parent, String key) {
 		this.system=parent.getSystem();
 		this.parent=parent;
-		this.key=key;
+		this.path=key;
 	}
-	@Override public String getKey() { return key; }
+	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":"+path; }
 	@Override public CordysSystem getSystem() { return system; }
+	public String getPath() { return path; }
 	public XmlNode getData() {
 		if (data==null)
-			data=system.getXml(key).getChildren().get(0);
+			data=system.getXml(path).getChildren().get(0);
 		return data;
 	}
 	public String toString() {

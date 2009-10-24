@@ -58,6 +58,7 @@ public class Organization extends LdapObjectBase {
 						grow(sp);
 				}
 			}
+			@Override public String getKey() { return "SoapProcessors:"+getDn(); }
 		}; 
 		sp = soapProcessors;
 	}

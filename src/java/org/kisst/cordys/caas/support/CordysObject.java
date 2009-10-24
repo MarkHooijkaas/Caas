@@ -54,6 +54,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		return result;
 	}
 
+	public void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
 	public void clear() {
 		int mykeylen=0;

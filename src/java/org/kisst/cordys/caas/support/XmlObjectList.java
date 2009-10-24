@@ -46,4 +46,5 @@ public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T
 			//System.out.println(dn);
 		}
 	}
+	@Override public String getKey() { return "xmlstore:"+getSystem().getDn()+":"+key; }
 }

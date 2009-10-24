@@ -131,7 +131,8 @@ public abstract class LdapObject extends CordysObject {
 		this.parent=parent; 
 	}
 	abstract public String getDn();
-
+	@Override public void myclear() { super.myclear(); entry=null; }
+	
 	public CordysObject getParent() { return parent; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
@@ -182,7 +183,8 @@ public abstract class LdapObject extends CordysObject {
 
 	void setEntry(XmlNode entry) {
 		this.entry=entry;
-		entry.detach();
+		if (entry!=null)
+			entry.detach();
 	}
 	public XmlNode getEntry() {
 		if (entry==null || ! useCache())

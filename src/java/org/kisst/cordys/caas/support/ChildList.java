@@ -41,12 +41,6 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 	}
 
 	public String getKey() { return clz.getSimpleName()+"s:"+parent.getDn(); }
-	@Override public void myclear() {
-		if (isListAvailable())
-			for (LdapObject o: this)
-				o.clear();
-		super.myclear();
-	}
 
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
