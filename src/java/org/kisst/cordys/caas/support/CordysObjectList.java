@@ -56,7 +56,6 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		return list;
 	}
 	@Override public void myclear() { 
-		super.myclear();
 		//log("clearing list "+getKey()+" content "+list);
 		if (isListAvailable())
 			for (CordysObject o: this)

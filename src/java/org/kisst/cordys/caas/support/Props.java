@@ -30,6 +30,8 @@ public class Props implements Iterable<Object> {
 		for (Field f: target.getClass().getFields()) {
 			if (! Modifier.isStatic(f.getModifiers())) {
 				try {
+					if (Props.class.isAssignableFrom(f.getType())) 
+						continue; // prevent endless recursion
 					if (clz==null || clz.isAssignableFrom(f.getType()))
 						add(f.getName(), f.get(target));
 				} 
@@ -42,12 +44,10 @@ public class Props implements Iterable<Object> {
 					&& ! Modifier.isStatic(m.getModifiers())) 
 			{
 				if (clz==null || clz.isAssignableFrom(m.getReturnType())) {
+					if (Props.class.isAssignableFrom(m.getReturnType())) 
+						continue; // prevent endless recursion
 					String name=m.getName().substring(3);
 					name=name.substring(0,1).toLowerCase()+name.substring(1);
-					if (name.equals("props")) // causes stack overflow if one let props call props
-						continue;
-					if (name.equals("size")) // causes the list to be fetched, which is not always desirable
-						continue;
 					add(name, ReflectionUtil.invoke(target, m, null));
 				}
 			}
@@ -57,7 +57,7 @@ public class Props implements Iterable<Object> {
 	public Iterator<Object> iterator() { return list.values().iterator();}
 	public Set<Map.Entry<String,Object>> entrySet() { return list.entrySet(); } 
 
-	public void add(String name, Object value) { 
+	private void add(String name, Object value) { 
 		if (prevValue!=null && prevValue==value)
 			value=new Alias(prevName,prevValue);
 		else {

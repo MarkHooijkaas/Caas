@@ -1,7 +1,5 @@
 package org.kisst.cordys.caas.support;
 
-import java.util.Map;
-
 import org.kisst.cordys.caas.CordysSystem;
 
 
@@ -28,20 +26,10 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
 	public void clear() {
-		int mykeylen=0;
-		if (getKey()!=null)
-			mykeylen=getKey().length();
-		for (Map.Entry e: getProps().entrySet()) {
-			if (e.getValue() instanceof CordysObject) {
-				//System.out.println(e.getKey()+" ");
-				CordysObject o= (CordysObject) e.getValue();
-				String childkey=o.getKey();
-				if (childkey!=null && childkey.length()>mykeylen) {
-					// Only clear properties with longer keys, to prevent loops
-					//System.out.println("clearing "+childkey);
-					o.clear();
-				}
-			}
+		for (Object o: new Props(this, CordysObjectList.class)) {
+			if (o instanceof Props.Alias)
+				continue;
+			((CordysObject) o).clear();
 		}
 		myclear();
 	}
