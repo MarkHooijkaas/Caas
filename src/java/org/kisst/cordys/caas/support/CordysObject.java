@@ -1,11 +1,8 @@
 package org.kisst.cordys.caas.support;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import org.kisst.cordys.caas.CordysSystem;
-import org.kisst.cordys.caas.util.ReflectionUtil;
 
 
 public abstract class CordysObject implements Comparable<CordysObject> {
@@ -26,33 +23,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	public boolean useCache() { return getSystem().useCache();}
 
-	public Props getProps() {
-		//System.out.println("getting props for "+this.getClass().getName());
-		Props result=new Props();
-		for (Field f: this.getClass().getFields()) {
-			if (! Modifier.isStatic(f.getModifiers())) {
-				try {
-					result.add(f.getName(),  f.get(this));
-				} 
-				catch (IllegalAccessException e) { throw new RuntimeException(e);}
-			}
-		}
-		for (java.lang.reflect.Method m: this.getClass().getMethods()) {
-			if (m.getName().startsWith("get") 
-					&& m.getParameterTypes().length==0 
-					&& ! Modifier.isStatic(m.getModifiers())) 
-			{
-				String name=m.getName().substring(3);
-				name=name.substring(0,1).toLowerCase()+name.substring(1);
-				if (name.equals("props")) // causes stack overflow if one let props call props
-					continue;
-				if (name.equals("size")) // causes the list to be fetched, which is not always desirable
-					continue;
-				result.add(name, ReflectionUtil.invoke(this, m, null));
-			}
-		}
-		return result;
-	}
+	public Props getProps() { return new Props(this,null);}
 
 	public void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
