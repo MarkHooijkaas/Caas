@@ -2,6 +2,7 @@ package org.kisst.cordys.caas.support;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,10 +11,11 @@ import java.util.Set;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
-public class Props implements Iterable<Object> {
-	private final Map<String, Object> list= new LinkedHashMap<String, Object>();
+public class Props<T> implements Iterable<T> {
+	private final Map<String, T> list= new LinkedHashMap<String, T>();
 	private String prevName=null;
 	private Object prevValue=null;
+	private final Class<?> clz;
 
 	public static class Alias {
 		public final String origName;  
@@ -25,7 +27,9 @@ public class Props implements Iterable<Object> {
 		public String toString() { return value.toString(); }
 	}
 
+	public Props(Object target) { this(target, null); }
 	public Props(Object target, Class<?> clz) {
+		this.clz=clz;
 		//System.out.println("getting props for "+this.getClass().getName());
 		for (Field f: target.getClass().getFields()) {
 			if (! Modifier.isStatic(f.getModifiers())) {
@@ -54,17 +58,24 @@ public class Props implements Iterable<Object> {
 		}
 	}
 
-	public Iterator<Object> iterator() { return list.values().iterator();}
-	public Set<Map.Entry<String,Object>> entrySet() { return list.entrySet(); } 
+	public Iterator<T> iterator() { return list.values().iterator();}
+	public Set<Map.Entry<String,T>> entrySet() { return list.entrySet(); } 
+	public Set<String> keys() { return list.keySet(); }
+	public Collection<T> values() { return list.values(); }
+	public T get(String key) { return list.get(key);}
 
+	@SuppressWarnings("unchecked")
 	private void add(String name, Object value) { 
-		if (prevValue!=null && prevValue==value)
+		if (prevValue!=null && prevValue==value) {
+			if (clz!=null)
+				return; // ignore aliases if a specific class is asked for
 			value=new Alias(prevName,prevValue);
+		}
 		else {
 			prevValue=value;
 			prevName=name;
 		}
-		list.put(name, value);
+		list.put(name, (T) value);
 	} 
 
 	public String toString() {
@@ -73,7 +84,7 @@ public class Props implements Iterable<Object> {
 		StringBuilder result=new StringBuilder();
 		result.append("{\n");
 		boolean first=true;
-		for (Map.Entry<String, Object> entry : list.entrySet()) {
+		for (Map.Entry<String, T> entry : list.entrySet()) {
 			if (first)
 				first=false;
 			else

@@ -1,6 +1,9 @@
 package org.kisst.cordys.caas.support;
 
 import org.kisst.cordys.caas.CordysSystem;
+import org.kisst.cordys.caas.support.LdapObject.AbstractProperty;
+import org.kisst.cordys.caas.support.LdapObject.XmlProperty;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 public abstract class CordysObject implements Comparable<CordysObject> {
@@ -21,28 +24,58 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	public boolean useCache() { return getSystem().useCache();}
 
-	public Props getProps() { return new Props(this,null);}
+	public Props<Object> getProps() { return new Props<Object>(this,null);}
 
 	public void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
 	public void clear() {
-		for (Object o: new Props(this, CordysObjectList.class)) {
-			if (o instanceof Props.Alias)
-				continue;
-			((CordysObject) o).clear();
+		for (CordysObjectList o: new Props<CordysObjectList>(this, CordysObjectList.class)) {
+			o.clear();
 		}
 		myclear();
 	}
 	
-	public void deepdiff(CordysObject other) { diff(other,100); }
-	public void diff(CordysObject other) { diff(other,0); }
-	public void diff(CordysObject other, int depth) { diff("", other, depth); }
-	public void diff(String prefix,CordysObject other, int depth) {
+	public void deepdiff(CordysObject other) { mydiff(other,100); }
+	public void diff(CordysObject other) { mydiff(other,0); }
+	public void diff(CordysObject other, int depth) {
 		if (this.getClass()!=other.getClass())
 			throw new RuntimeException("Cannot diff two different classes "
 					+this.getClass().getName()+" and "+other.getClass().getName());
-		mydiff(prefix, other, depth);
+		mydiff(null, other, depth);
 	}
-	protected void mydiff(String prefix, CordysObject other, int depth) {}
+	public Differences mydiff(CordysObject other, int depth) { return mydiff(null,other,depth);}
+	public Differences mydiff(Differences parent, CordysObject other, int depth) {
+		if (this.getClass()!=other.getClass())
+			throw new RuntimeException("Cannot diff two different classes "
+					+this.getClass().getName()+" and "+other.getClass().getName());
+		Differences diffs=new Differences(parent, "[\""+getName()+"\"]", this, other);
+		Props<Object> p1=new Props<Object>(this, Object.class);
+		Props<Object> p2=new Props<Object>(other, Object.class);
+		for (String key : p1.keys()) {
+			if (key.equals("dn") || key.equals("key") || key.equals("parent") || key.equals("system"))
+				continue;
+			Object v1=p1.get(key);
+			Object v2=p2.get(key);
+			if (v1 instanceof XmlProperty)
+				continue;
+			if (v1 instanceof AbstractProperty) {
+				v1=((AbstractProperty)v1).get();
+				v2=((AbstractProperty)v2).get();
+			}
+			if (v1==v2) 
+				continue;
+			else if (v1 instanceof XmlNode) 
+				continue;
+			else if (v1 instanceof ChildList) {
+				if (depth>0)
+					diffs.addChildDiffs(((CordysObjectList)v1).mydiff(diffs, (CordysObjectList)v2, depth-1));
+			}
+			else if (v1 instanceof CordysObjectList)
+				continue;
+			else if (v1==null || ! v1.equals(v2))
+				diffs.attributeDiffers(key, v1, v2);
+		}
+		return diffs;
+	}
 
 }

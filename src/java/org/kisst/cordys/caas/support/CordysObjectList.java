@@ -154,30 +154,32 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		};
 	}
 	@SuppressWarnings("unchecked")
-	@Override protected void mydiff(String prefix, CordysObject other, int depth) {
+	@Override public Differences mydiff(Differences parent, CordysObject other, int depth) {
+		Differences diffs=new Differences(parent, "."+getName(), this, other);
 		CordysObjectList<T> l1=this.sort();
 		CordysObjectList<T> l2=((CordysObjectList<T> )other).sort();
 		int pos1=0;
 		int pos2=0;
 		while (pos1<l1.getSize() || pos2<l2.getSize()) {
 			if (pos1>=l1.getSize())
-				System.out.println("> "+prefix+l2.get(pos2++));
+				diffs.onlyIn2(l2.get(pos2++));
 			else if (pos2>=l2.getSize())
-				System.out.println("< "+prefix+l1.get(pos1++));
+				diffs.onlyIn1(l1.get(pos1++));
 			else {
 				int comp=l1.get(pos1).getName().compareTo(l2.get(pos2).getName());
 				if (comp==0) {
 					if (depth>0)
-						l1.get(pos1).diff(l2.get(pos2), depth-1);
+						diffs.addChildDiffs(l1.get(pos1).mydiff(diffs,l2.get(pos2), depth-1));
 					pos1++;
 					pos2++;
 				}
 				else if (comp<0)
-					System.out.println("< "+prefix+l1.get(pos1++));
+					diffs.onlyIn1(l1.get(pos1++));
 				else
-					System.out.println("> "+prefix+l2.get(pos2++));
+					diffs.onlyIn2(l2.get(pos2++));
 			}
 		}
+		return diffs;
 	}
 
 	// Groovy specific methods
