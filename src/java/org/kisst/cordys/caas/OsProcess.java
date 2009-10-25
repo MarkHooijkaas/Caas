@@ -10,4 +10,5 @@ public class OsProcess extends LdapObjectBase {
 	protected OsProcess(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override protected String prefix() { return "osprocess"; }
 }

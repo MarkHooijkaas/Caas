@@ -132,7 +132,15 @@ public abstract class LdapObject extends CordysObject {
 	}
 	abstract public String getDn();
 	@Override public void myclear() { super.myclear(); entry=null; }
-	
+
+	@Override public String getVarName() {
+		String name= getName();
+		if (name.indexOf(" ")>=0)
+			return getParent().getVarName()+"."+prefix()+"[\""+name+"\"]";
+		else
+			return getParent().getVarName()+"."+prefix()+"."+name;
+	}
+
 	public CordysObject getParent() { return parent; }
 	public XmlNode call(XmlNode method) { return getSystem().call(method); }
 	
@@ -143,21 +151,7 @@ public abstract class LdapObject extends CordysObject {
 		int pos2=dn.indexOf(",",pos);
 		return dn.substring(pos+1,pos2);
 	}
-	@Override public String toString() {
-		//if (getSystem().displayFormat==0) {
-		if (true) {
-			String c=this.getClass().getSimpleName()+"("+getName()+")";
-			if (parent!=null && (parent instanceof LdapObject))
-				c=parent.toString()+"."+c;
-			return c; 
-		}
-		else {
-			if (parent!=null && (parent instanceof LdapObject))
-				return parent.toString()+"."+getName();
-			else
-				return getName();
-		}
-	}
+	@Override public String toString() { return getVarName(); }
 	@Override public boolean equals(Object o) {
 		if (o instanceof LdapObject)
 			return getDn().equals(((LdapObject)o).getDn());

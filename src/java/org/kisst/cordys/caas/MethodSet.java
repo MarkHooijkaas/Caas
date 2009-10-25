@@ -20,9 +20,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 
 public class MethodSet extends LdapObjectBase {
 	public final ChildList<Method> methods= new ChildList<Method>(this, Method.class);
@@ -37,16 +36,10 @@ public class MethodSet extends LdapObjectBase {
 	protected MethodSet(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override protected String prefix() { return "ms"; }
 
 	public void createMethod(String name) {
 		createInLdap(newEntryXml("", name,"busmethod"));
 		methods.clear();
-	}
-
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		MethodSet otherMs=(MethodSet) other;
-		methods.diff(otherMs.methods,depth);
 	}
 }

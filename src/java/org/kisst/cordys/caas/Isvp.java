@@ -20,9 +20,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Isvp extends LdapObjectBase {
@@ -44,8 +43,9 @@ public class Isvp extends LdapObjectBase {
 	protected Isvp(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	@Override
-	protected void preDeleteHook() {
+	@Override protected String prefix() { return "isvp"; }
+
+	@Override protected void preDeleteHook() {
 		throw new RuntimeException("It is not allowed to delete an Isvp, please use unload instead");
 	}
 
@@ -73,12 +73,5 @@ public class Isvp extends LdapObjectBase {
 			return result.substring(3);
 		else
 			return result;
-	}
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		Isvp otherIsvp=(Isvp) other;
-		methodSets.diff(otherIsvp.methodSets, depth);
-		roles.diff(otherIsvp.roles,depth);
 	}
 }

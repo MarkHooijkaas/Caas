@@ -20,9 +20,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class SoapProcessor extends LdapObjectBase {
@@ -48,6 +47,7 @@ public class SoapProcessor extends LdapObjectBase {
 	protected SoapProcessor(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override protected String prefix() { return "sp"; }
 
 	@Override public void myclear() { super.myclear(); workerprocess=null; } 
 
@@ -111,11 +111,5 @@ public class SoapProcessor extends LdapObjectBase {
 		XmlNode method=new XmlNode ("Restart", xmlns_monitor);
 		method.add("dn").setText(getDn());
 		call(method);
-	}
-
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		// TODO: which attributes to compare
 	}
 }

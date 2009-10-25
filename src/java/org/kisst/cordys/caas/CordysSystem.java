@@ -70,7 +70,8 @@ public class CordysSystem extends LdapObject {
 		@Override public String getKey() { return getKey()+":SoapProcessors"; }
 	}; 
 	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
-	
+	@Override public String getVarName() { return name; }
+
 	public CordysSystem(String name, SoapCaller caller) {
 		super();
 		this.name=name;
@@ -165,13 +166,6 @@ public class CordysSystem extends LdapObject {
 	}
 	public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
 	
-	public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		CordysSystem otherSystem = (CordysSystem) other;
-		organizations.diff(otherSystem.organizations, depth);
-		isvps.diff(otherSystem.isvps,depth);
-	}
 	public XmlNode getXml(String key) { return getXml(key, "isv", null); }
 	public XmlNode getXml(String key, String version, String organization) {
 		XmlNode method=new XmlNode("GetXMLObject", xmlns_xmlstore);

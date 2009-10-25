@@ -9,4 +9,5 @@ public class Connector extends CordysXmlObject {
 
 	@Override public String getName() { return getData().getChildText("step/description"); }
 	public String getImplementation() { return getData().getChildText("step/implementation"); }
+	@Override protected String prefix() { return "conn"; }
 }

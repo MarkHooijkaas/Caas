@@ -20,10 +20,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -63,6 +62,8 @@ public class Organization extends LdapObjectBase {
 		sp = soapProcessors;
 	}
 
+	@Override protected String prefix() { return "org"; }
+
 	public String call(String input) { return getSystem().call(input, getDn(), null); }
 
 	@Override protected void preDeleteHook() {
@@ -96,16 +97,6 @@ public class Organization extends LdapObjectBase {
 		newEntry.add("role").add("string").setText("cn=everyoneIn"+getName()+",cn=organizational roles,"+getDn());
 		createInLdap(newEntry);
 		roles.clear();
-	}
-
-	
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		Organization otherOrg = (Organization) other;
-		soapNodes.diff(otherOrg.soapNodes,depth);
-		users.diff(otherOrg.users, depth);
-		roles.diff(otherOrg.roles, depth);
 	}
 	
 	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getDn()); }

@@ -29,4 +29,5 @@ public class ConnectionPoint extends LdapObjectBase {
 	protected ConnectionPoint(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override protected String prefix() { return "cp"; }
 }

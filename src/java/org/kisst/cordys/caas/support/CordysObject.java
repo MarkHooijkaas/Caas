@@ -14,6 +14,9 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	abstract public CordysSystem getSystem();
 	public String getName() { return null; } 
+	abstract public String getVarName();
+	protected String prefix() { return ""; }
+
 	abstract public String getKey(); 
 
 	public int compareTo(CordysObject other) {
@@ -35,16 +38,10 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		myclear();
 	}
 	
-	public void deepdiff(CordysObject other) { mydiff(other,100); }
-	public void diff(CordysObject other) { mydiff(other,0); }
-	public void diff(CordysObject other, int depth) {
-		if (this.getClass()!=other.getClass())
-			throw new RuntimeException("Cannot diff two different classes "
-					+this.getClass().getName()+" and "+other.getClass().getName());
-		mydiff(null, other, depth);
-	}
-	public Differences mydiff(CordysObject other, int depth) { return mydiff(null,other,depth);}
-	public Differences mydiff(Differences parent, CordysObject other, int depth) {
+	public Differences deepdiff(CordysObject other) { return diff(other,100); }
+	public Differences diff(CordysObject other) { return diff(other,0); }
+	public Differences diff(CordysObject other, int depth) { return diff(null,other,depth);}
+	public Differences diff(Differences parent, CordysObject other, int depth) {
 		if (this.getClass()!=other.getClass())
 			throw new RuntimeException("Cannot diff two different classes "
 					+this.getClass().getName()+" and "+other.getClass().getName());
@@ -52,7 +49,11 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 		Props<Object> p1=new Props<Object>(this, Object.class);
 		Props<Object> p2=new Props<Object>(other, Object.class);
 		for (String key : p1.keys()) {
-			if (key.equals("dn") || key.equals("key") || key.equals("parent") || key.equals("system"))
+			if (key.equals("dn") 
+					|| key.equals("key") 
+					|| key.equals("parent") 
+					|| key.equals("system") 
+					|| key.equals("varName"))
 				continue;
 			Object v1=p1.get(key);
 			Object v2=p2.get(key);
@@ -68,7 +69,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				continue;
 			else if (v1 instanceof ChildList) {
 				if (depth>0)
-					diffs.addChildDiffs(((CordysObjectList)v1).mydiff(diffs, (CordysObjectList)v2, depth-1));
+					diffs.addChildDiffs(((CordysObjectList)v1).diff(diffs, (CordysObjectList)v2, depth-1));
 			}
 			else if (v1 instanceof CordysObjectList)
 				continue;

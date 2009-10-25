@@ -19,10 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.EntryObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 
 
 
@@ -40,20 +39,7 @@ public class User extends LdapObjectBase {
 	protected User(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		User otherUser = (User) other;
-		String auser1=authenticatedUser.getRef().getName();
-		String auser2=otherUser.authenticatedUser.getRef().getName();
-		if (! auser1.equals(auser2)) {
-			System.out.println("< "+this+".authenticatedUser="+auser1);
-			System.out.println("> "+this+".authenticatedUser="+auser2);
-		}
-		roles.diff(this+" has role: ",otherUser.roles, depth);
-	}
-
+	@Override protected String prefix() { return "user"; }
 	// It is not yet possible to impersonate another user
 	//public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getParent().getDn()); }
 	//public XmlNode getXml(String key) { return getSystem().getXml(key, "user", getParent().getDn()); }

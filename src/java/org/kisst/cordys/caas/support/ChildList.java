@@ -45,6 +45,7 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 		String name=clz.getSimpleName();
 		return name.substring(0,1).toLowerCase()+name.substring(1)+"s"; 
 	}
+	@Override public String getVarName() { return parent.getVarName()+"."+getName();}
 
 	@SuppressWarnings("unchecked")
 	@Override protected void retrieveList() {

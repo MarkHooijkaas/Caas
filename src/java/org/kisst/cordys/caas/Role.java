@@ -19,10 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.EntryObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 
 
 public class Role extends LdapObjectBase {
@@ -36,5 +35,5 @@ public class Role extends LdapObjectBase {
 	protected Role(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	@Override public void diff(CordysObject other, int depth) {}
+	@Override protected String prefix() { return "role"; }
 }

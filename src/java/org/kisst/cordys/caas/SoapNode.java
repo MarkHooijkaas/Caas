@@ -22,10 +22,9 @@ package org.kisst.cordys.caas;
 import java.util.LinkedHashMap;
 
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObjectBase;
-import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.EntryObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
+import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -52,7 +51,8 @@ public class SoapNode extends LdapObjectBase {
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
-	
+	@Override protected String prefix() { return "sn"; }
+
 	public void recalcNamespaces() {
 		LinkedHashMap<String, String> all=new LinkedHashMap<String, String>();
 		for (MethodSet ms : methodSets) {
@@ -68,13 +68,5 @@ public class SoapNode extends LdapObjectBase {
 		for (String s: all.keySet())
 			msNode.add("string").setText(s);
 		updateLdap(newEntry);
-	}
-	@Override public void diff(CordysObject other, int depth) {
-		if (this==other)
-			return;
-		SoapNode otherSn = (SoapNode) other;
-		soapProcessors.diff(otherSn.soapProcessors, depth);
-		methodSets.diff(otherSn.methodSets, depth);
-		// TODO: diff namespaces
 	}
 }

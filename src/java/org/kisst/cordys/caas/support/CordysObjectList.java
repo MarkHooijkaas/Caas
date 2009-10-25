@@ -45,7 +45,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	protected CordysObjectList(CordysSystem system) {
 		this.system=system;
 	}
-
+	@Override public String getVarName() { return null; }
 
 	private ArrayList<T> fetchList() {
 		if (useCache() && listAvailable)
@@ -154,8 +154,8 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		};
 	}
 	@SuppressWarnings("unchecked")
-	@Override public Differences mydiff(Differences parent, CordysObject other, int depth) {
-		Differences diffs=new Differences(parent, "."+getName(), this, other);
+	@Override public Differences diff(Differences parent, CordysObject other, int depth) {
+		Differences diffs=new Differences(parent, getName(), this, other);
 		CordysObjectList<T> l1=this.sort();
 		CordysObjectList<T> l2=((CordysObjectList<T> )other).sort();
 		int pos1=0;
@@ -169,7 +169,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 				int comp=l1.get(pos1).getName().compareTo(l2.get(pos2).getName());
 				if (comp==0) {
 					if (depth>0)
-						diffs.addChildDiffs(l1.get(pos1).mydiff(diffs,l2.get(pos2), depth-1));
+						diffs.addChildDiffs(l1.get(pos1).diff(diffs,l2.get(pos2), depth-1));
 					pos1++;
 					pos2++;
 				}

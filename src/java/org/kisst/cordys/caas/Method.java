@@ -31,4 +31,5 @@ public class Method extends LdapObjectBase {
 	protected Method(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
+	@Override protected String prefix() { return "methods"; }
 }
