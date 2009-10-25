@@ -121,6 +121,8 @@ public abstract class LdapObjectBase extends LdapObject {
 			if (parent!=null)
 				return parent;
 			XmlNode entry=retrieveEntry(system, dn);
+			if (entry==null) // could happen when restoring from a dump
+				continue;
 			Class resultClass = determineClass(system, entry);
 			if (resultClass!=null)
 				return createObject(system, entry);

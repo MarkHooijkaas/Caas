@@ -125,14 +125,14 @@ public class HttpClientCaller implements SoapCaller {
 	}
 	public XmlNode call(XmlNode method, boolean debug, String org, String processor) {
 		if (debug)
-			System.out.println(method.getIndented());
+			System.out.println(method.getPretty());
 		String xml = method.toString();
 		String response= call(xml, false, org, processor);
 		XmlNode output=new XmlNode(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body").getChildren().get(0);
 		if (debug)
-			System.out.println(output.getIndented());
+			System.out.println(output.getPretty());
 		return output;
 	}
 	

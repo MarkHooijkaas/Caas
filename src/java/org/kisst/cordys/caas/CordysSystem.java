@@ -85,6 +85,7 @@ public class CordysSystem extends LdapObject {
 		this.build=response.getChildText("build");
 		rememberLdap(this);
 	}
+
 	@Override public String toString() { return "CordysSystem("+name+")"; }
 	@Override public CordysSystem getSystem() { return this; }
 	@Override public String getDn()   { return dn; }

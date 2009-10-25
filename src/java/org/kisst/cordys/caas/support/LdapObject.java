@@ -187,6 +187,7 @@ public abstract class LdapObject extends CordysObject {
 	}
 	
 	static public XmlNode retrieveEntry(CordysSystem system, String dn) {
+		log("getting dn "+dn);
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(dn);
 		XmlNode response = system.call(method);
@@ -233,5 +234,23 @@ public abstract class LdapObject extends CordysObject {
 		call(method);
 		getParent().clear();
 		getSystem().removeLdap(getDn());
+	}
+
+	public XmlNode dumpXml(){
+		XmlNode result=new XmlNode("dump");
+		dumpXml(result);
+		return result;
+	}
+
+	private void dumpXml(XmlNode result) {
+		XmlNode my=result.add("ldap");
+		my.setAttribute("name", getName());
+		my.setAttribute("dn", getDn());
+		my.add(getEntry().clone());
+		XmlNode children=my.add("children");
+		for (ChildList<?> clist: new Props<ChildList>(this, ChildList.class)) {
+			for (LdapObject o: clist)
+				o.dumpXml(children);
+		}
 	}
 }

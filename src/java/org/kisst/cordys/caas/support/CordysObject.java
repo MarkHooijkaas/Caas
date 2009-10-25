@@ -29,7 +29,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	public Props<Object> getProps() { return new Props<Object>(this,null);}
 
-	public void log(String msg) { System.out.println(msg); }
+	public static void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
 	public void clear() {
 		for (CordysObjectList o: new Props<CordysObjectList>(this, CordysObjectList.class)) {

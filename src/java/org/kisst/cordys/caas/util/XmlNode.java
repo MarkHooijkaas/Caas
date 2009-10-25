@@ -1,5 +1,6 @@
 package org.kisst.cordys.caas.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -122,11 +123,12 @@ public class XmlNode {
 	public void setText(String text) { element.setText(text); }
 	public void add(XmlNode node) { element.addContent(node.element); }
 	public void remove(XmlNode e) { element.getChildren().remove(e.element); }
-	public String getIndented() {
+	public String getPretty() {
 		XMLOutputter out=new XMLOutputter();
 		out.setFormat(Format.getPrettyFormat());
 		String xml= out.outputString(element);
 		return xml;
 	}
+	public void save(String filename) { FileUtil.saveString(new File(filename), getPretty()); }
 }
 

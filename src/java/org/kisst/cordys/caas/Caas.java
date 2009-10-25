@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.Properties;
 
+import org.kisst.cordys.caas.soap.DummyCaller;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
+import org.kisst.cordys.caas.util.FileUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class Caas {
 	public static CordysSystem connect(String filename) {
@@ -30,6 +33,10 @@ public class Caas {
 			System.out.println("FAILED");
 			return null;
 		}
+	}
+	public static CordysSystem loadFromDump(String filename) {
+		XmlNode xml=new XmlNode(FileUtil.loadString(filename));
+		return new CordysSystem("dummy", new DummyCaller(xml));
 	}
 	public static String getVersion() {
 		InputStream in = Caas.class.getResourceAsStream("/version.properties");
