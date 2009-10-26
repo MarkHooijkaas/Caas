@@ -34,6 +34,7 @@ import org.kisst.cordys.caas.Role;
 import org.kisst.cordys.caas.SoapNode;
 import org.kisst.cordys.caas.SoapProcessor;
 import org.kisst.cordys.caas.User;
+import org.kisst.cordys.caas.Xsd;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -89,6 +90,7 @@ public abstract class LdapObjectBase extends LdapObject {
 		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
 		ldapObjectTypes.put("busmethod", Method.class);
 		ldapObjectTypes.put("busmethodset", MethodSet.class);
+		ldapObjectTypes.put("busmethodtype", Xsd.class);
 		ldapObjectTypes.put("organization", Organization.class);
 		ldapObjectTypes.put("busorganizationalrole", Role.class);
 		ldapObjectTypes.put("bussoapnode", SoapNode.class);
