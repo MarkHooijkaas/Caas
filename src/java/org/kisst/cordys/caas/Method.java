@@ -24,7 +24,9 @@ import org.kisst.cordys.caas.support.LdapObject;
 
 public class Method extends LdapObjectBase {
 	public final XmlProperty implementation = new XmlProperty("busmethodimplementation");
+	public final XmlProperty impl           = implementation;
 	public final XmlProperty signature      = new XmlProperty("busmethodsignature");
+	public final XmlProperty sig            = signature;
 	public final XmlProperty wsdl           = new XmlProperty("busmethodwsdl");
 	public final XmlProperty iface          = new XmlProperty("busmethodinterface");
 	

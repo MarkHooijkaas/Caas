@@ -27,7 +27,10 @@ public class MethodSet extends LdapObjectBase {
 	public final ChildList<Method> methods= new ChildList<Method>(this, Method.class);
 	public final ChildList<Method> method = methods;
 	public final ChildList<Method> m      = methods;
-	
+
+	public final ChildList<Xsd> xsds= new ChildList<Xsd>(this, Xsd.class);
+	public final ChildList<Xsd> xsd = xsds;
+
 	public final StringList namespaces= new StringList("labeleduri"); 
 	public final StringList ns = namespaces;
 

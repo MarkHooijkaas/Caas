@@ -23,6 +23,8 @@ import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
 
 public class Xsd extends LdapObjectBase {
+	public final XmlProperty content = new XmlProperty("busmethodtypexsd");
+
 	protected Xsd(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
