@@ -187,7 +187,7 @@ public abstract class LdapObject extends CordysObject {
 	}
 	
 	static public XmlNode retrieveEntry(CordysSystem system, String dn) {
-		log("getting dn "+dn);
+		//log("getting dn "+dn);
 		XmlNode  method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(dn);
 		XmlNode response = system.call(method);
