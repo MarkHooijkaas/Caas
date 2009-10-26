@@ -103,9 +103,10 @@ public class DummyCaller implements SoapCaller {
 		XmlNode comp=env.add("Header").add("header").add("sender").add("component");
 		comp.setText("cn=LDAP Service,cn=soap nodes,o=system,"+dump.getChildText("ldap/@dn"));
 		XmlNode result=env.add("Body").add("GetVersionResponse");
-		result.add("version").setText("dummy");
-		result.add("build").setText("dummy");
+		result.add("version").setText(dump.getAttribute("version"));
+		result.add("build").setText(dump.getAttribute("build"));
 		//System.out.println(env.getPretty());
 		return result;
 	}
+	public String getName() { return dump.getAttribute("name"); }
 }

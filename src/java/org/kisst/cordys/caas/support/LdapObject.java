@@ -238,6 +238,9 @@ public abstract class LdapObject extends CordysObject {
 
 	public XmlNode dumpXml(){
 		XmlNode result=new XmlNode("dump");
+		result.setAttribute("name", getSystem().getName());
+		result.setAttribute("version", getSystem().version);
+		result.setAttribute("build", getSystem().build);
 		dumpXml(result);
 		return result;
 	}

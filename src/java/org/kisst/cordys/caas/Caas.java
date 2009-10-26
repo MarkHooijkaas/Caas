@@ -35,8 +35,18 @@ public class Caas {
 		}
 	}
 	public static CordysSystem loadFromDump(String filename) {
+		String name=filename.substring(0,filename.indexOf("."));
+		int pos=name.lastIndexOf("/");
+		if (pos>=0)
+			name=name.substring(pos+1);
+		return loadFromDump(filename, name);
+	}
+	public static CordysSystem loadFromDump(String filename, String name) {
 		XmlNode xml=new XmlNode(FileUtil.loadString(filename));
-		return new CordysSystem("dummy", new DummyCaller(xml));
+		DummyCaller caller=new DummyCaller(xml);
+		if (name==null)
+			name=caller.getName();
+		return new CordysSystem(name, caller);
 	}
 	public static String getVersion() {
 		InputStream in = Caas.class.getResourceAsStream("/version.properties");
