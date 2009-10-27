@@ -21,6 +21,7 @@ package org.kisst.cordys.caas;
 
 import java.util.HashMap;
 
+import org.kisst.cordys.caas.pm.PackageManager;
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.LdapObject;
@@ -59,6 +60,7 @@ public class CordysSystem extends LdapObject {
 	public final XmlObjectList<Connector> connector = connectors;
 	public final XmlObjectList<Connector> conn = connectors;
 	
+	public final PackageManager pm;
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
 		protected void retrieveList() {
@@ -83,6 +85,7 @@ public class CordysSystem extends LdapObject {
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
 		this.version=response.getChildText("version");
 		this.build=response.getChildText("build");
+		this.pm=new PackageManager(this);
 		rememberLdap(this);
 	}
 
@@ -94,7 +97,7 @@ public class CordysSystem extends LdapObject {
 	@Override public void myclear() {
 		// It is not necessary to clear the cache, because that is just an index,
 		// and guarantees that objects are never created twice.
-		// The content of the objects is cleared
+		// Instead just the content of the objects is cleared.
 		//ldapcache.clear(); rememberLdap(this);
 	}
 

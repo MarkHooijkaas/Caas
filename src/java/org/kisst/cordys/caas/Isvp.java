@@ -37,6 +37,9 @@ public class Isvp extends LdapObjectBase {
 	public final ChildList<MethodSet> ms = methodSets;
 
 	public final StringProperty filename = new StringProperty("member", 3);
+	public final StringProperty owner = new StringProperty("owner", 3);
+
+	private XmlNode definition=null;
 
 
 	
@@ -44,19 +47,23 @@ public class Isvp extends LdapObjectBase {
 		super(parent, dn);
 	}
 	@Override protected String prefix() { return "isvp"; }
+	@Override public void myclear() { super.myclear(); definition=null; }
 
 	@Override protected void preDeleteHook() {
 		throw new RuntimeException("It is not allowed to delete an Isvp, please use unload instead");
 	}
 
+	public String getBasename() {
+		String result=filename.get();
+		if (result.endsWith(".isvp"))
+			result=result.substring(0,result.length()-5);
+		return result;
+	}
+		
 	public void unload(boolean deletereferences) {
-		String filename=getFilename();
-		if (filename.endsWith(".isvp"))
-			filename=filename.substring(0,filename.length()-5);
-
 		XmlNode method=new XmlNode("UnloadISVPackage", xmlns_isv);
 		XmlNode file=method.add("file");
-		file.setText(filename);
+		file.setText(getBasename());
 		if (deletereferences)
 			file.setAttribute("deletereference", "true");
 		else
@@ -65,13 +72,25 @@ public class Isvp extends LdapObjectBase {
 		getSystem().removeLdap(getDn());
 	}
 	
-	public String getFilename() {
-		String result=getEntry().getChildText("member/string");
-		if (result==null)
-			return null;
-		if (result.startsWith("cn="))
-			return result.substring(3);
-		else
-			return result;
+	public XmlNode getDefinition() {
+		if (definition!=null)
+			return definition;
+		XmlNode method = new XmlNode("GetISVPackageDefinition", xmlns_isv);
+		XmlNode file=method.add("file");
+		file.setText(getBasename());
+		file.setAttribute("type", "isvpackage");
+		file.setAttribute("onlyxml", "true");
+		definition=call(method).getChild("ISVPackage").detach();
+		return definition;
 	}
+	
+	public XmlNode getDescription() { return getDefinition().getChild("description"); }
+	public XmlNode getContent() { return getDefinition().getChild("content"); }
+	public String getOwner2() { return getDescription().getChildText("owner"); }
+	public String getName2() { return getDescription().getChildText("name"); }
+	public String getVersion() { return getDescription().getChildText("version"); }
+	public String getWcpversion() { return getDescription().getChildText("wcpversion"); }
+	public String getEula() { return getDescription().getChildText("eula"); }
+	public String getSidebar() { return getDescription().getChildText("sidebar"); }
+			
 }

@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -42,7 +43,14 @@ public class XmlNode {
 	public String getName() {  return element.getName(); }
 	public String getNamespace() {  return element.getNamespace().getURI(); }
 	public String getText() { return element.getText(); }
-	public String getAttribute(String name) { return element.getAttribute(name).getValue(); }
+	public String getAttribute(String name) { return getAttribute(name,null);}
+	public String getAttribute(String name, String defaultValue) {
+		Attribute attr = element.getAttribute(name);
+		if (attr==null)
+			return defaultValue;
+		else
+			return attr.getValue(); 
+	}
 	public XmlNode getChild(String path) { return (XmlNode) get(path); }
 	public XmlNode getParent() { return new XmlNode(element.getParentElement()); }
 	public Object  propertyMissing(String name) { return get(name); }

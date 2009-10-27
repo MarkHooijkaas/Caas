@@ -80,6 +80,11 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	}
 	public Iterator<T> iterator() { fetchList(); return list.iterator(); }
 
+	public T getByName(String name) {
+		fetchList();
+		return nameIndex.get(name);
+	}
+	
 	public T get(String key) {
 		fetchList();
 		T result=keyIndex.get(key);
@@ -98,6 +103,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		return null;
 	}
 
+	public boolean contains(T obj) { fetchList(); return list.contains(obj); }
 	public T get(int index)  { fetchList(); return list.get(index); }
 	public T getAt(int index) { return get(index); } 
 	
