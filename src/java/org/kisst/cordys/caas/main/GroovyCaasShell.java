@@ -25,11 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.kisst.cordys.caas.Caas;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
-public class GroovyCaasShell {
-	public static void main(String[] args) {
+public class GroovyCaasShell implements Command {
+	public void run(Environment env, String[] args) {
 		if (args.length>0 && args[0].equals("--download")) {
 			downloadAll();
 			return;

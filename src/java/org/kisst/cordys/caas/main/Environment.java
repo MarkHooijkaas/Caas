@@ -19,6 +19,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.kisst.cordys.caas.Caas;
 import org.kisst.cordys.caas.CordysSystem;
 
@@ -26,13 +30,29 @@ public class Environment {
 	public boolean debug=false;
 	public boolean quiet=false;
 	public boolean verbose=false;
-	public final CordysSystem system;
-	public Environment(String copfile) {
+	private CordysSystem system;
+	private CommandLine cmdline;
+	private String copfile;
+	
+	public void setSystem(String copfile) { this.copfile=copfile; }
+	public CordysSystem getSystem() {
+		if (system!=null)
+			return system;
 		if (copfile==null)
 			copfile=System.getProperty("user.home")+"/config/caas/default.cop";
 		log(copfile);
-		this.system=Caas.connect(copfile);
+		system=Caas.connect(copfile);
+		return system;
 	}
 	
 	public void log(String msg){ System.out.println(msg);}
+	public boolean hasOption(String name) { return cmdline.hasOption(name); }
+	public String getOptionValue(String name) { return cmdline.getOptionValue(name); }
+	
+	public String[] parse(Options options, String[] args) {
+		try {
+			cmdline = new PosixParser().parse( options, args, true);
+		} catch (ParseException e) { throw new RuntimeException(e); }
+		return cmdline.getArgs();
+	}
 }

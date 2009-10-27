@@ -19,19 +19,18 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-import org.apache.commons.cli.Options;
-import org.kisst.cordys.caas.pm.PackageManager;
 
-public class PmCommand extends Command {
-	@Override public void run(Environment env, String[] args) {
-		PackageManager pm=new PackageManager(env.system);
-		if ("validate".equals(args[0]))
-			System.out.println(pm.validate(args[1]));
-		else
-			throw new RuntimeException("Unknown pm subcommand "+args[0]);
+public class PmCommand extends CompositeCommand{
+	private Command validate=new Command() {
+		public void run(Environment env, String[] args) {
+			System.out.println(env.getSystem().pm.validate(args[0]));
+		}
+	};
+	
+	public PmCommand() {
+		super("caas [options] pm <cmd> [suboptions]");
+		commands.put("validate", validate);
+		commands.put("install", null);
+		commands.put("purge", null);
 	}
-
-	@Override public Options getOptions() {
-		return null;
-	}	
 }

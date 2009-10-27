@@ -19,6 +19,23 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-public interface Command {
-	public void run(Environment env, String[] args);
+import org.apache.commons.cli.Options;
+
+
+abstract public class CommandBase implements Command {
+	abstract protected void execute(Environment env, String[] args);
+	protected final Options options = new Options();
+
+	public final void run(Environment env, String[] args) {
+		args=env.parse(options, args);
+		execute(env, args);
+	}
+
+	protected static String[] subArgs(String[] args, int pos) {
+		String result[]= new String[args.length-pos];
+		for (int i=pos; i<args.length; i++)
+			result[i-pos]=args[i];
+		return result;
+	}
+
 }
