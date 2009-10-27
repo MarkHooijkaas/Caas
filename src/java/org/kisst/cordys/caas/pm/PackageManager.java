@@ -145,5 +145,5 @@ public class PackageManager {
 				//throw new RuntimeException("Unknown element in user section "+name+":\n"+child.getPretty());
 				warnings.add("Unknown element in soapnode section "+name+":\n"+child.getPretty());
 		}
-	}	
+	}
 }
