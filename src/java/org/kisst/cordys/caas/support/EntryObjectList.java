@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.support;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kisst.cordys.caas.util.XmlNode;
 
 /**
@@ -30,6 +33,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  {
 	private final LdapObject parent;
 	private final String group;
+	private final LinkedList<String> dangling=new LinkedList<String>();
 
 	public EntryObjectList(LdapObject parent, String group) {
 		super(parent.getSystem());
@@ -40,6 +44,7 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 	@Override public String getKey() { return parent.getKey()+":Entries:"+group;}
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {
+		dangling.clear();
 		XmlNode method=new XmlNode("GetLDAPObject", xmlns_ldap);
 		method.add("dn").setText(parent.getDn());
 		XmlNode response=system.call(method);
@@ -54,9 +59,14 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 		for (XmlNode s: start.getChildren("string")) {
 			String dn=s.getText();
 			CordysObject obj=system.getLdap(dn);
-			this.grow((T) obj);
+			if (obj==null)
+				dangling.add(dn);
+			else
+				this.grow((T) obj);
 		}
 	}
+	@SuppressWarnings("unchecked")
+	public List<String> getDangling() { fetchList(); return (List<String>) dangling.clone(); }
 	public void add(T obj) { add(obj.getDn()); }
 	public void remove(T obj) { remove(obj.getDn()); }
 	public void add(String value) {
