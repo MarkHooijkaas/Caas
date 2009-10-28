@@ -25,10 +25,18 @@ import java.util.LinkedList;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Messages implements Iterable<String> {
-	private LinkedList<String> list=new LinkedList<String>();
+	private final LinkedList<String> list;
 	
+	public Messages() {
+		this.list=new LinkedList<String>();
+	}
+	@SuppressWarnings("unchecked")
+	public Messages(LinkedList<String> list) {
+		this.list=(LinkedList<String>) list.clone();
+	}
 	public Iterator<String> iterator() { return list.iterator();}
 	public int size() { return list.size(); }
+	public Messages clone() { return new Messages(list); }
 	public boolean empty() { return list.size()==0; } 
 	public void add(String msg) {list.add(msg); }
 	public void addWarnings(String msg, XmlNode node) {add(msg ,node,"warning"); }
@@ -40,10 +48,10 @@ public class Messages implements Iterable<String> {
 			add(node.getAttribute(type));
 		for (XmlNode child: node.getChildren())
 			if (type.equals(child.getName()))
-				add(child.getAttribute("message"));
+				add("\t"+child.getAttribute("message"));
 	}
 	public String toString() {
-		StringBuilder result=new StringBuilder();
+		StringBuilder result=new StringBuilder("\n");
 		for (String s:list)
 			result.append(s).append("\n");
 		return result.toString();

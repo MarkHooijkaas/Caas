@@ -3,6 +3,7 @@ package org.kisst.cordys.caas.support;
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.support.LdapObject.AbstractProperty;
 import org.kisst.cordys.caas.support.LdapObject.XmlProperty;
+import org.kisst.cordys.caas.support.Props.Alias;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -27,6 +28,13 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 
 	public boolean useCache() { return getSystem().useCache();}
 
+	public Object getProp(String name) { 
+		Object prop=getProps().get(name);
+		if (prop instanceof Alias)
+			return ((Alias) prop).value;
+		else
+			return prop;
+	}
 	public Props<Object> getProps() { return new Props<Object>(this,null);}
 
 	public static void log(String msg) { System.out.println(msg); }

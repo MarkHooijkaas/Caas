@@ -33,14 +33,20 @@ import org.kisst.cordys.caas.util.XmlNode;
 public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  {
 	private final LdapObject parent;
 	private final String group;
+	private final String type;
 	private final LinkedList<String> dangling=new LinkedList<String>();
 
-	public EntryObjectList(LdapObject parent, String group) {
+	public EntryObjectList(LdapObject parent, String group, String type) {
 		super(parent.getSystem());
 		this.parent=parent;
 		this.group=group;
+		this.type=type;
+	}
+	public EntryObjectList(LdapObject parent, String group) {
+		this(parent,group, group);
 	}
 	
+	@Override public String getVarName() { return parent.getVarName()+"."+type;}
 	@Override public String getKey() { return parent.getKey()+":Entries:"+group;}
 	@SuppressWarnings("unchecked")
 	protected void retrieveList() {

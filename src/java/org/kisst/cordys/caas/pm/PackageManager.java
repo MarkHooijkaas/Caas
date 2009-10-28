@@ -35,6 +35,7 @@ public class PackageManager {
 		this.system=system;
 	}
 	
+	public CaasPackage p(String filename) { return new CaasPackage(system,filename, null); }
     public Messages validate(String pmfile) { return validate(pmfile, null); }
     public Messages validate(String pmfile, String org) {
     	Messages warnings = new Messages();

@@ -103,7 +103,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		return null;
 	}
 
-	public boolean contains(T obj) { fetchList(); return list.contains(obj); }
+	public boolean contains(LdapObject obj) { fetchList(); return list.contains(obj); }
 	public T get(int index)  { fetchList(); return list.get(index); }
 	public T getAt(int index) { return get(index); } 
 	

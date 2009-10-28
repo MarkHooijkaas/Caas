@@ -34,7 +34,7 @@ public class SoapNode extends LdapObjectBase {
 	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
 
-	public final EntryObjectList<MethodSet> methodSets = new EntryObjectList<MethodSet>(this, "busmethodsets");
+	public final EntryObjectList<MethodSet> methodSets = new EntryObjectList<MethodSet>(this, "busmethodsets","ms");
 	public final EntryObjectList<MethodSet> ms = methodSets;
 	
 	public final StringList namespaces= new StringList("labeleduri"); 
