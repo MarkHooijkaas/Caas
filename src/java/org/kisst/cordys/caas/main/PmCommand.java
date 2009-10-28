@@ -29,6 +29,7 @@ public class PmCommand extends CompositeCommand{
 	
 	public PmCommand() {
 		super("caas [options] pm <cmd> [suboptions]");
+		options.addOption("o", "org", true, "override the default organization");
 		commands.put("validate", validate);
 		commands.put("install", null);
 		commands.put("purge", null);

@@ -1,4 +1,4 @@
-<caaspm isvp="Dummy">
+<caaspm isvp="Dummy" org="ESB">
   <isvp name="kisst.org HttpConnector 1.0">
     <version filename="HttpConnector-1.0.0rc8-inprogress.isvp" tested="BAD">
       <warning message="This version is OK for most services, except for the xyz service"/>
@@ -8,12 +8,12 @@
     <version filename="HttpConnector-1.0.2.isvp" tested="BAD"/>
   </isvp>
   
-  <soapnode org="ESB" name="UDDI Service">
+  <soapnode name="UDDI Service">
     <ms name="Method Set UDDI" isvp="Cordys Integrator 4.2"/>
     <ms name="Uddi Test" isvp=""/>
   </soapnode>
   
-  <user org="ESB" name="mark">
+  <user name="mark">
     <role name="everyoneInESB" isvp=""/>
     <role name="organizationalAdmin" isvp="Software Package Cordys 1.0"/>
     <role name="developer2" isvp="Software Package Cordys 1.0"/>

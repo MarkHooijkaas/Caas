@@ -35,8 +35,9 @@ public class PackageManager {
 		this.system=system;
 	}
 	
-	public Messages validate(String pmfile, String org) {
-		Messages warnings = new Messages();
+    public Messages validate(String pmfile) { return validate(pmfile, null); }
+    public Messages validate(String pmfile, String org) {
+    	Messages warnings = new Messages();
 		
 		XmlNode pm=new XmlNode(FileUtil.loadString(pmfile));
 		if (org==null)
