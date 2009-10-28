@@ -39,18 +39,18 @@ public class CaasPackage {
 	}
 	
 	private final CordysSystem system;
-	private final String orgName;
 	private final Objectives objectives = new Objectives();
 	private final Messages warnings=new Messages();
 	private final Organization org;
 
 	public CaasPackage(CordysSystem system, String pmfile, String org) {
+		String orgName;
 		this.system=system;
 		XmlNode pm=new XmlNode(FileUtil.loadString(pmfile));
 		if (org==null)
-			this.orgName=pm.getAttribute("org");
+			orgName=pm.getAttribute("org");
 		else
-			this.orgName=org;
+			orgName=org;
 		this.org=system.org.getByName(orgName);
 		
 		for (XmlNode child: pm.getChildren()) {
