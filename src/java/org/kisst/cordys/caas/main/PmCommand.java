@@ -23,7 +23,7 @@ package org.kisst.cordys.caas.main;
 public class PmCommand extends CompositeCommand{
 	private Command validate=new Command() {
 		public void run(Environment env, String[] args) {
-			System.out.println(env.getSystem().pm.validate(args[0]));
+			System.out.println(env.getSystem().pm.validate(args[0],null));
 		}
 	};
 	

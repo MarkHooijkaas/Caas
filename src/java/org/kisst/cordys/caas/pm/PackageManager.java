@@ -35,15 +35,18 @@ public class PackageManager {
 		this.system=system;
 	}
 	
-	public Messages validate(String pmfile) {
+	public Messages validate(String pmfile, String org) {
 		Messages warnings = new Messages();
 		
 		XmlNode pm=new XmlNode(FileUtil.loadString(pmfile));
+		if (org==null)
+			org=pm.getAttribute("org");
+
 		for (XmlNode child: pm.getChildren()) {
 			if ("soapnode".equals(child.getName()))
-				validateSoapNode(warnings, child);
+				validateSoapNode(warnings, child, org);
 			else if ("user".equals(child.getName()))
-				validateUser(warnings, child);
+				validateUser(warnings, child, org);
 			else if ("isvp".equals(child.getName()))
 				validateIsvp(warnings, child);
 
@@ -79,8 +82,8 @@ public class PackageManager {
 			warnings.add("No matching version found for isvp ["+isvp.getName()+"], with filename:"+isvp.filename.get());
 	}
 
-	private void validateUser(Messages warnings, XmlNode node) {
-		String orgName=node.getAttribute("org");
+	private void validateUser(Messages warnings, XmlNode node, String orgName) {
+		//String orgName=node.getAttribute("org");
 		String name=node.getAttribute("name");
 		Organization org=system.org.getByName(orgName);
 		if (org==null) {
@@ -114,8 +117,8 @@ public class PackageManager {
 		}
 	}
 
-	private void validateSoapNode(Messages warnings, XmlNode node) {
-		String orgName=node.getAttribute("org");
+	private void validateSoapNode(Messages warnings, XmlNode node, String orgName) {
+		//String orgName=node.getAttribute("org");
 		String name=node.getAttribute("name");
 		Organization org=system.org.getByName(orgName);
 		if (org==null) {
