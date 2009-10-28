@@ -76,6 +76,22 @@ public class CaasPackage {
 		}
 		return warnings;
 	}
+	
+	public Messages configure() {
+		Messages warnings=this.warnings.clone();
+		for (Objective o: objectives) {
+			if (o.target==null)
+				warnings.add("unknown target "+o.targetName+" should have entry "+o.entry.getVarName());
+			else if (o.entry instanceof GhostObject)
+				warnings.add("target "+o.targetName+" should have unknown entry "+o.entry.getVarName());
+			else if (o.target.contains(o.entry))
+				warnings.add("target "+o.targetName+" already has entry "+o.entry.getVarName());
+			else
+				o.target.add(o.entry);
+		}
+		return warnings;
+	}
+
 	private void parseIsvp(XmlNode node) {
 		String name=node.getAttribute("name");
 		Isvp isvp=system.isvp.getByName(name);

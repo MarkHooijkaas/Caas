@@ -73,12 +73,13 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 	}
 	@SuppressWarnings("unchecked")
 	public List<String> getDangling() { fetchList(); return (List<String>) dangling.clone(); }
-	public void add(T obj) { add(obj.getDn()); }
+	public void add(LdapObject obj) { add(obj.getDn()); }
 	public void remove(T obj) { remove(obj.getDn()); }
 	public void add(String value) {
 		XmlNode newEntry=parent.getEntry().clone();
 		newEntry.getChild(group).add("string").setText(value);
 		parent.updateLdap(newEntry);
+		parent.clear();
 	}
 	public void remove(String value) {
 		XmlNode newEntry= parent.getEntry().clone();
@@ -88,5 +89,6 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 				list.remove(e);
 		}
 		parent.updateLdap(newEntry);
+		parent.clear();
 	}
 }
