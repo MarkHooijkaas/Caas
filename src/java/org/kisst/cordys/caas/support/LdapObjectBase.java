@@ -71,7 +71,7 @@ public abstract class LdapObjectBase extends LdapObject {
 
 	public static LdapObject createObject(CordysSystem system, XmlNode entry) {
 		if (entry==null)
-			throw new RuntimeException("could not create LdapObject with null entry");
+			return null;
 		String newdn=entry.getAttribute("dn");
 		//System.out.println("createObject ["+newdn+"]");
 		LdapObject parent = calcParent(system, entry.getAttribute("dn"));
