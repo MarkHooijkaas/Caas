@@ -32,4 +32,8 @@ public class PackageManager {
     public Messages validate(String pmfile, String org) {
     	return new CaasPackage(system, pmfile, org).validate(); 
 	}
+    public Messages configure(String pmfile) { return configure(pmfile, null); }
+    public Messages configure(String pmfile, String org) {
+    	return new CaasPackage(system, pmfile, org).configure(); 
+	}
 }

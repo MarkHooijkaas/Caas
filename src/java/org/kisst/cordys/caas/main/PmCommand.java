@@ -26,12 +26,22 @@ public class PmCommand extends CompositeCommand{
 			System.out.println(env.getSystem().pm.validate(args[0],null));
 		}
 	};
+	private Command configure=new Command() {
+		public void run(Environment env, String[] args) {
+			System.out.println(env.getSystem().pm.p(args[0]).configure());
+		}
+	};
+	private Command purge=new Command() {
+		public void run(Environment env, String[] args) {
+			System.out.println("purge command not implemented yet");
+		}
+	};
 	
 	public PmCommand() {
 		super("caas [options] pm <cmd> [suboptions]");
 		options.addOption("o", "org", true, "override the default organization");
 		commands.put("validate", validate);
-		commands.put("install", null);
-		commands.put("purge", null);
+		commands.put("configure", configure);
+		commands.put("purge", purge);
 	}
 }
