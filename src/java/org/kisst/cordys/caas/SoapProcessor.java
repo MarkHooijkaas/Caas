@@ -41,7 +41,7 @@ public class SoapProcessor extends LdapObjectBase {
 	public final XmlSubProperty abortTime = new XmlSubProperty(config, "abortTime");  
 	public final XmlSubProperty cancelReplyInterval = new XmlSubProperty(config, "cancelReplyInterval");  
 	public final XmlSubProperty implementation = new XmlSubProperty(config, "configuration/@implementation");  
-	public final XmlSubProperty useSystemLogPolicy = new XmlSubProperty(config, "loggerconfiguration/systempolicy");  
+	public final XmlBoolProperty useSystemLogPolicy = new XmlBoolProperty(config, "loggerconfiguration/systempolicy",true);  
 	
 	private XmlNode workerprocess;
 	protected SoapProcessor(LdapObject parent, String dn) {

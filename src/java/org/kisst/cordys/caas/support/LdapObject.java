@@ -72,6 +72,19 @@ public abstract class LdapObject extends CordysObject {
 			xml.set(newnode);
 		}
 	}
+	public class XmlBoolProperty extends XmlSubProperty {
+		private final boolean defaultValue;
+		public XmlBoolProperty(XmlProperty xml, String path, boolean defaultValue) { 
+			super(xml, path);
+			this.defaultValue=defaultValue;
+		}
+		public boolean getBool() {
+			String value=get();
+			if (value==null)
+				return defaultValue;
+			return "true".equals(value);			
+		}
+	}
 
 	public class BooleanProperty extends StringProperty {
 		public BooleanProperty(String path) {super(path);}
