@@ -83,8 +83,10 @@ public class ObjectiveBase implements Objective {
 	private boolean check(Organization org, LdapObject entry) {
 		if (entry==null)
 			return false;
-		else if (target.contains(org, entry))
+		else if (target.contains(org, entry)) {
+			env.info("target "+target+" has entry "+entry.getVarName());
 			return true;
+		}
 		env.error("target "+target+" should have entry "+entry.getVarName());
 		return false;
 	}

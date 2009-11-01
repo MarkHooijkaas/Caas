@@ -49,6 +49,8 @@ public class CaasMain extends CompositeCommand {
 
 		if (env.hasOption("debug"))
 			env.debug=true;
+		if (env.hasOption("verbose"))
+			env.verbose=true;
 		if (env.hasOption("quiet"))
 			env.quiet=true;
 		

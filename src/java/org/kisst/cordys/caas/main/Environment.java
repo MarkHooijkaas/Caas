@@ -50,7 +50,7 @@ public class Environment {
 		return system;
 	}
 	
-	private void log(String type, String msg){ System.out.println(msg);}
+	private void log(String type, String msg){ System.out.println(type+" "+msg);}
 	public void debug(String msg) { if (debug   && ! quiet) log("DEBUG",msg); }
 	public void info(String msg)  { if (verbose && ! quiet) log("INFO ", msg); }
 	public void warn(String msg)  { if (! quiet) log("WARN ", msg); }
