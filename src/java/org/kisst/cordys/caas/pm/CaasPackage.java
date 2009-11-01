@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.Organization;
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
@@ -40,7 +41,6 @@ public class CaasPackage {
 	
 	private final CordysSystem system;
 	private final LinkedList<Objective> objectives = new LinkedList<Objective>();
-	private final Messages warnings=new Messages();
 	private final Organization org;
 
 	public CaasPackage(CordysSystem system, String pmfile, String org) {
@@ -64,39 +64,24 @@ public class CaasPackage {
 		}
 	}
 
-	public Messages validate() {
-		Messages warnings=this.warnings.clone();
-		for (Objective o: objectives) {
-			if (o.target==null)
-				warnings.add("unknown target "+o.target+" should have entry "+o.entry.getVarName());
-			else if (o.entry instanceof GhostObject)
-				warnings.add("target "+o.target+" should have unknown entry "+o.entry.getVarName());
-			else if (!o.isSatisfied(org))
-				warnings.add("target "+o.target+" should have entry "+o.entry.getVarName());
-		}
-		return warnings;
+	public boolean validate() {
+		boolean result=true;
+		for (Objective o: objectives) 
+			result= o.isSatisfied(org) && result; 
+		return result;
 	}
 	
-	public Messages configure() {
-		Messages warnings=this.warnings.clone();
-		for (Objective o: objectives) {
-			if (o.target==null)
-				warnings.add("unknown target "+o.target+" should have entry "+o.entry.getVarName());
-			else if (o.entry instanceof GhostObject)
-				warnings.add("target "+o.target+" should have unknown entry "+o.entry.getVarName());
-			else if (o.isSatisfied(org))
-				warnings.add("target "+o.target+" already has entry "+o.entry.getVarName());
-			else
-				o.satisfy(org);
-		}
-		return warnings;
+	public void configure() {
+		for (Objective o: objectives)
+			o.satisfy(org);
 	}
 
 	private void parseIsvp(XmlNode node) {
+		Environment env=Environment.get();
 		String name=node.getAttribute("name");
 		Isvp isvp=system.isvp.getByName(name);
 		if (isvp==null) {
-			warnings.add("required isvp "+name+" is not installed");
+			env.warn("required isvp "+name+" is not installed");
 			return;
 		}
 		// TODO: check if loaded on all necessary machines
@@ -108,15 +93,15 @@ public class CaasPackage {
 					String tested=child.getAttribute("tested");
 					if ("OK".equals(tested))
 						continue;
-					else
-						warnings.addWarnings("required isvp "+isvp.getVarName()+" has version "+isvp.filename+" that tested "+tested,child);
+					else // TODO: log nested warnings
+						env.warn("required isvp "+isvp.getVarName()+" has version "+isvp.filename+" that tested "+tested);
 				}
 			}
 			else
 				throw new RuntimeException("Unknown element in isvp section "+name+":\n"+child.getPretty());
 		}
 		if (! foundMatchingVersion)
-			warnings.add("required isvp "+isvp.getVarName()+", has version "+isvp.filename.get()+" that was not mentioned in the known versions");
+			env.warn("required isvp "+isvp.getVarName()+", has version "+isvp.filename.get()+" that was not mentioned in the known versions");
 	}
 
 	private void parseSoapNode(XmlNode node) {

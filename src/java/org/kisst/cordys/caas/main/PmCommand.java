@@ -30,7 +30,7 @@ public class PmCommand extends CompositeCommand{
 	private Command configure=new Command() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
-			System.out.println(env.getSystem().pm.p(args[0]).configure());
+			env.getSystem().pm.p(args[0]).configure();
 		}
 	};
 	private Command purge=new Command() {

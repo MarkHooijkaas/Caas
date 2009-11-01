@@ -28,12 +28,12 @@ public class PackageManager {
 	}
 	
 	public CaasPackage p(String filename) { return new CaasPackage(system,filename, null); }
-    public Messages validate(String pmfile) { return validate(pmfile, null); }
-    public Messages validate(String pmfile, String org) {
+    public boolean validate(String pmfile) { return validate(pmfile, null); }
+    public boolean validate(String pmfile, String org) {
     	return new CaasPackage(system, pmfile, org).validate(); 
 	}
-    public Messages configure(String pmfile) { return configure(pmfile, null); }
-    public Messages configure(String pmfile, String org) {
-    	return new CaasPackage(system, pmfile, org).configure(); 
+    public void configure(String pmfile) { configure(pmfile, null); }
+    public void configure(String pmfile, String org) {
+    	new CaasPackage(system, pmfile, org).configure(); 
 	}
 }
