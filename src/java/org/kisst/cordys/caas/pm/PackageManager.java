@@ -19,21 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.pm;
 
-import org.kisst.cordys.caas.CordysSystem;
 
 public class PackageManager {
-	private final CordysSystem system;
-	public PackageManager(CordysSystem system) {
-		this.system=system;
-	}
-	
-	public CaasPackage p(String filename) { return new CaasPackage(system,filename, null); }
-    public boolean validate(String pmfile) { return validate(pmfile, null); }
-    public boolean validate(String pmfile, String org) {
-    	return new CaasPackage(system, pmfile, org).validate(); 
-	}
-    public void configure(String pmfile) { configure(pmfile, null); }
-    public void configure(String pmfile, String org) {
-    	new CaasPackage(system, pmfile, org).configure(); 
-	}
+	public CaasPackage p(String filename) { return new CaasPackage(filename); }
 }

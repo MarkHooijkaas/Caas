@@ -22,121 +22,48 @@ package org.kisst.cordys.caas.pm;
 import java.util.LinkedList;
 
 import org.kisst.cordys.caas.CordysSystem;
-import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.Organization;
-import org.kisst.cordys.caas.main.Environment;
-import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObject;
-import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.FileUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class CaasPackage {
-	public static class GhostObject extends LdapObjectBase {
-		private GhostObject(LdapObject parent, String isvpName, String type, String entry) {
-			super(parent, parent.getSystem().getName()+".isvp.\""+isvpName+"\"."+type+".\""+entry+"\"");
-		}
-		@Override public String getVarName() { return getDn(); }
-	}
-	
-	private final CordysSystem system;
 	private final LinkedList<Objective> objectives = new LinkedList<Objective>();
-	private final Organization org;
+	private final String orgName;
 
-	public CaasPackage(CordysSystem system, String pmfile, String org) {
-		String orgName;
-		this.system=system;
+	public CaasPackage(String pmfile) {
 		XmlNode pm=new XmlNode(FileUtil.loadString(pmfile));
-		if (org==null)
-			orgName=pm.getAttribute("org");
-		else
-			orgName=org;
-		this.org=system.org.getByName(orgName);
+		orgName=pm.getAttribute("org");
 		
 		for (XmlNode child: pm.getChildren()) {
 			if ("soapnode".equals(child.getName()))
-				parseSoapNode(child);
+				objectives.add(new SoapNodeObjective(child));
 			else if ("user".equals(child.getName()))
-				parseUser(child);
+				objectives.add(new UserObjective(child));
 			else if ("isvp".equals(child.getName()))
-				parseIsvp(child);
+				objectives.add(new IsvpObjective(child));
 
 		}
 	}
 
-	public boolean validate() {
+	public boolean validate(CordysSystem system) { return validate(system.org.getByName(orgName)); }
+	public void configure(CordysSystem system)   { configure(system.org.getByName(orgName)); }
+	public void purge(CordysSystem system)       { purge(system.org.getByName(orgName)); }
+	
+	public boolean validate(Organization org) {
 		boolean result=true;
 		for (Objective o: objectives) 
-			result= o.isSatisfied(org) && result; 
+			result= o.check(org) && result; 
 		return result;
 	}
 	
-	public void configure() {
+	public void configure(Organization org) {
 		for (Objective o: objectives)
-			o.satisfy(org);
+			o.configure(org);
 	}
 
-	private void parseIsvp(XmlNode node) {
-		Environment env=Environment.get();
-		String name=node.getAttribute("name");
-		Isvp isvp=system.isvp.getByName(name);
-		if (isvp==null) {
-			env.warn("required isvp "+name+" is not installed");
-			return;
-		}
-		// TODO: check if loaded on all necessary machines
-		boolean foundMatchingVersion=false;
-		for (XmlNode child: node.getChildren()) {
-			if ("version".equals(child.getName())) {
-				if (isvp.filename.get().equals(child.getAttribute("filename"))) {
-					foundMatchingVersion=true;
-					String tested=child.getAttribute("tested");
-					if ("OK".equals(tested))
-						continue;
-					else // TODO: log nested warnings
-						env.warn("required isvp "+isvp.getVarName()+" has version "+isvp.filename+" that tested "+tested);
-				}
-			}
-			else
-				throw new RuntimeException("Unknown element in isvp section "+name+":\n"+child.getPretty());
-		}
-		if (! foundMatchingVersion)
-			env.warn("required isvp "+isvp.getVarName()+", has version "+isvp.filename.get()+" that was not mentioned in the known versions");
+	public void purge(Organization org) {
+		for (Objective o: objectives)
+			o.remove(org);
 	}
 
-	private void parseSoapNode(XmlNode node) {
-		Target target=new Target.SoapNode(node);
-		for (XmlNode child: node.getChildren()) {
-				LdapObject entry=findEntry(child,"ms");
-				objectives.add(new Objective(target, entry));
-		}
-	}
-
-	private void parseUser(XmlNode node) {
-		Target target = new Target.User(node);
-		for (XmlNode child: node.getChildren()) {
-				LdapObject entry=findEntry(child,"role");
-				objectives.add(new Objective(target, entry));
-		}
-	}
-
-	private LdapObject findEntry(XmlNode node, String propName) {
-		if (! propName.equals(node.getName()))
-			throw new RuntimeException("Unknown element in "+node.getParent().getName()+" section "+node.getParent().getAttribute("name")+":\n"+node.getPretty());
-			
-		String entryName=node.getAttribute("name");
-		String isvpName=node.getAttribute("isvp");
-		LdapObject entry=null;
-		if (isvpName.length()==0)
-			entry=((ChildList<?>) org.getProp(propName)).getByName(entryName);
-		else {
-			Isvp isvp=system.isvp.getByName(isvpName);
-			if (isvp!=null)
-				entry=((ChildList<?>) isvp.getProp(propName)).getByName(entryName);
-		}
-		if (entry==null)
-			return new GhostObject(system, isvpName,propName,entryName);
-		else
-			return entry;
-	}
 }

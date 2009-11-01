@@ -19,23 +19,27 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
+import org.kisst.cordys.caas.Caas;
+
 
 public class PmCommand extends CompositeCommand{
 	private Command validate=new Command() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
-			System.out.println(env.getSystem().pm.validate(args[0],null));
+			boolean result=Caas.pm.p(args[0]).validate(env.getSystem());
+			System.out.println(result);
 		}
 	};
 	private Command configure=new Command() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
-			env.getSystem().pm.p(args[0]).configure();
+			Caas.pm.p(args[0]).configure(env.getSystem());
 		}
 	};
 	private Command purge=new Command() {
 		public void run(String[] args) {
-			System.out.println("purge command not implemented yet");
+			Environment env=Environment.get();
+			Caas.pm.p(args[0]).purge(env.getSystem());
 		}
 	};
 	

@@ -22,12 +22,11 @@ package org.kisst.cordys.caas;
 import java.util.HashMap;
 
 import org.kisst.cordys.caas.main.Environment;
-import org.kisst.cordys.caas.pm.PackageManager;
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.support.ChildList;
-import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.support.CordysObjectList;
+import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.XmlObjectList;
 import org.kisst.cordys.caas.util.XmlNode;
@@ -61,7 +60,6 @@ public class CordysSystem extends LdapObject {
 	public final XmlObjectList<Connector> connector = connectors;
 	public final XmlObjectList<Connector> conn = connectors;
 	
-	public final PackageManager pm;
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
 		protected void retrieveList() {
@@ -87,7 +85,6 @@ public class CordysSystem extends LdapObject {
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
 		this.version=response.getChildText("version");
 		this.build=response.getChildText("build");
-		this.pm=new PackageManager(this);
 		rememberLdap(this);
 	}
 

@@ -25,6 +25,7 @@ import java.net.ConnectException;
 import java.util.Properties;
 
 import org.kisst.cordys.caas.main.Environment;
+import org.kisst.cordys.caas.pm.PackageManager;
 import org.kisst.cordys.caas.soap.DummyCaller;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.util.FileUtil;
@@ -81,4 +82,6 @@ public class Caas {
 	
 	public static boolean getDebug() { return Environment.get().debug; }
 	public static void setDebug(boolean value) { Environment.get().debug=value; }
+	
+	public final static PackageManager pm=new PackageManager();
 }

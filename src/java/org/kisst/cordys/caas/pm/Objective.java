@@ -20,39 +20,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas.pm;
 
 import org.kisst.cordys.caas.Organization;
-import org.kisst.cordys.caas.main.Environment;
-import org.kisst.cordys.caas.pm.CaasPackage.GhostObject;
-import org.kisst.cordys.caas.support.LdapObject;
 
-public class Objective {
-	public Objective(Target target, LdapObject entry) {
-		this.target=target;
-		this.entry=entry;
-	}
-	public final Target target;
-	public final LdapObject entry;
-	
-	public boolean isSatisfied(Organization org) {
-		boolean result=target.links(org, entry);
-		Environment env=Environment.get();
-		if (! target.exists(org))
-			env.error("unknown target "+target+" should have entry "+entry.getVarName());
-		else if (entry instanceof GhostObject)
-			env.error("target "+target+" should have unknown entry "+entry.getVarName());
-		else if (!result)
-			env.error("target "+target+" should have entry "+entry.getVarName());
-		return result;
-	}
-	public void satisfy(Organization org) { 
-		Environment env=Environment.get();
-		if (target==null)
-			env.warn("unknown target "+target+" should have entry "+entry.getVarName());
-		else if (entry instanceof GhostObject)
-			env.warn("target "+target+" should have unknown entry "+entry.getVarName());
-		else if (target.links(org, entry))
-			env.warn("target "+target+" already has entry "+entry.getVarName());
-		else
-			target.link(org, entry); 
-	}
-	public void remove(Organization org) { target.unlink(org, entry); }
+public interface Objective {
+	public boolean check(Organization org);
+	public void configure(Organization org);
+	public void remove(Organization org);
 }

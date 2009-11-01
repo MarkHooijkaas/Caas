@@ -8,22 +8,14 @@ import org.kisst.cordys.caas.util.XmlNode;
 public abstract class Target {
 	protected final String name;
 	protected Target(XmlNode node) {this.name=node.getAttribute("name"); }
+	abstract public String getVarName(Organization org);
 	abstract boolean exists(Organization org);
 	abstract EntryObjectList<?> getList(Organization org);
 	
-	boolean links(Organization org, LdapObject part) { return getList(org).contains(part); }
-	void     link(Organization org, LdapObject part) { getList(org).add(part); }
-	void   unlink(Organization org, LdapObject part) { getList(org).remove(part); }
+	public String toString() { return name; }
 	
-	public static class User extends Target {
-		public User(XmlNode node) { super(node); }
-		@Override boolean exists(Organization org) { return org.users.getByName(name)!=null; }
-		@Override EntryObjectList<?> getList(Organization org) { return org.users.getByName(name).roles; }
-	}
-
-	public static class SoapNode extends Target {
-		SoapNode(XmlNode node) { super(node); }
-		@Override boolean exists(Organization org) { return org.sn.getByName(name)!=null; }
-		@Override EntryObjectList<?> getList(Organization org) { return org.sn.getByName(name).ms; }
-	}
+	boolean contains(Organization org, LdapObject part) { return getList(org).contains(part); }
+	void         add(Organization org, LdapObject part) { getList(org).add(part); }
+	void      remove(Organization org, LdapObject part) { getList(org).remove(part); }
+	
 }
