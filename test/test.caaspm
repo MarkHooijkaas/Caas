@@ -1,6 +1,6 @@
 <caaspm isvp="Dummy" org="ESB">
   <isvp name="kisst.org HttpConnector 1.0">
-    <version filename="HttpConnector-1.0.0rc8-inprogress.isvp" tested="BAD">
+    <version filename="HttpConnector-1.0.0rc8-inprogress.isvp" tested="OK">
       <warning message="This version is OK for most services, except for the xyz service"/>
     </version>
     <version filename="HttpConnector-1.0.0.isvp" tested="OK"/>
@@ -16,6 +16,6 @@
   <user name="mark">
     <role name="everyoneInESB" isvp=""/>
     <role name="organizationalAdmin" isvp="Software Package Cordys 1.0"/>
-    <role name="developer2" isvp="Software Package Cordys 1.0"/>
+    <role name="developer" isvp="Software Package Cordys 1.0"/>
   </user>
 </caaspm>
