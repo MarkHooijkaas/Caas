@@ -45,11 +45,11 @@ public class CaasPackage {
 		}
 	}
 
-	public boolean validate(CordysSystem system) { return validate(system.org.getByName(orgName)); }
+	public boolean check(CordysSystem system) { return check(system.org.getByName(orgName)); }
 	public void configure(CordysSystem system)   { configure(system.org.getByName(orgName)); }
 	public void purge(CordysSystem system)       { purge(system.org.getByName(orgName)); }
 	
-	public boolean validate(Organization org) {
+	public boolean check(Organization org) {
 		boolean result=true;
 		for (Objective o: objectives) 
 			result= o.check(org) && result; 
