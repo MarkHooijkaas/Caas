@@ -19,11 +19,11 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.pm;
 
+import java.util.LinkedList;
+
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.Organization;
-import org.kisst.cordys.caas.SoapNode;
-import org.kisst.cordys.caas.User;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
@@ -39,7 +39,7 @@ public class CaasPackage {
 	}
 	
 	private final CordysSystem system;
-	private final Objectives objectives = new Objectives();
+	private final LinkedList<Objective> objectives = new LinkedList<Objective>();
 	private final Messages warnings=new Messages();
 	private final Organization org;
 
@@ -68,11 +68,11 @@ public class CaasPackage {
 		Messages warnings=this.warnings.clone();
 		for (Objective o: objectives) {
 			if (o.target==null)
-				warnings.add("unknown target "+o.targetName+" should have entry "+o.entry.getVarName());
+				warnings.add("unknown target "+o.target+" should have entry "+o.entry.getVarName());
 			else if (o.entry instanceof GhostObject)
-				warnings.add("target "+o.targetName+" should have unknown entry "+o.entry.getVarName());
-			else if (!o.target.contains(o.entry))
-				warnings.add("target "+o.targetName+" should have entry "+o.entry.getVarName());
+				warnings.add("target "+o.target+" should have unknown entry "+o.entry.getVarName());
+			else if (!o.isSatisfied(org))
+				warnings.add("target "+o.target+" should have entry "+o.entry.getVarName());
 		}
 		return warnings;
 	}
@@ -81,13 +81,13 @@ public class CaasPackage {
 		Messages warnings=this.warnings.clone();
 		for (Objective o: objectives) {
 			if (o.target==null)
-				warnings.add("unknown target "+o.targetName+" should have entry "+o.entry.getVarName());
+				warnings.add("unknown target "+o.target+" should have entry "+o.entry.getVarName());
 			else if (o.entry instanceof GhostObject)
-				warnings.add("target "+o.targetName+" should have unknown entry "+o.entry.getVarName());
-			else if (o.target.contains(o.entry))
-				warnings.add("target "+o.targetName+" already has entry "+o.entry.getVarName());
+				warnings.add("target "+o.target+" should have unknown entry "+o.entry.getVarName());
+			else if (o.isSatisfied(org))
+				warnings.add("target "+o.target+" already has entry "+o.entry.getVarName());
 			else
-				o.target.add(o.entry);
+				o.satisfy(org);
 		}
 		return warnings;
 	}
@@ -120,28 +120,18 @@ public class CaasPackage {
 	}
 
 	private void parseSoapNode(XmlNode node) {
-		String snName=node.getAttribute("name");
-		SoapNode sn=org.sn.getByName(snName);
-		
+		Target target=new Target.SoapNode(node);
 		for (XmlNode child: node.getChildren()) {
 				LdapObject entry=findEntry(child,"ms");
-				if (sn==null)
-					objectives.add(org.getVarName()+".sn."+snName, entry);
-				else
-					objectives.add(sn.ms, entry);
+				objectives.add(new Objective(target, entry));
 		}
 	}
 
 	private void parseUser(XmlNode node) {
-		String userName=node.getAttribute("name");
-		User user=org.users.getByName(userName);
-		
+		Target target = new Target.User(node);
 		for (XmlNode child: node.getChildren()) {
 				LdapObject entry=findEntry(child,"role");
-				if (user==null)
-					objectives.add(org.getVarName()+".user."+userName, entry);
-				else
-					objectives.add(user.roles, entry);
+				objectives.add(new Objective(target, entry));
 		}
 	}
 

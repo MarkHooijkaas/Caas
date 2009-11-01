@@ -74,7 +74,7 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 	@SuppressWarnings("unchecked")
 	public List<String> getDangling() { fetchList(); return (List<String>) dangling.clone(); }
 	public void add(LdapObject obj) { add(obj.getDn()); }
-	public void remove(T obj) { remove(obj.getDn()); }
+	public void remove(LdapObject obj) { remove(obj.getDn()); }
 	public void add(String value) {
 		XmlNode newEntry=parent.getEntry().clone();
 		newEntry.getChild(group).add("string").setText(value);

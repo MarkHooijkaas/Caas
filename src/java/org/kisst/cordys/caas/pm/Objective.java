@@ -19,21 +19,18 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.pm;
 
-import org.kisst.cordys.caas.support.EntryObjectList;
+import org.kisst.cordys.caas.Organization;
 import org.kisst.cordys.caas.support.LdapObject;
 
 public class Objective {
-	public Objective(EntryObjectList<?> target, LdapObject entry) {
-		this.targetName=target.getVarName();
+	public Objective(Target target, LdapObject entry) {
 		this.target=target;
 		this.entry=entry;
 	}
-	public Objective(String targetName, LdapObject entry) {
-		this.targetName=targetName;
-		this.target=null;
-		this.entry=entry;
-	}
-	public final EntryObjectList<?> target;
-	public final String targetName;
+	public final Target target;
 	public final LdapObject entry;
+	
+	public boolean isSatisfied(Organization org) { return target.links(org, entry); }
+	public void satisfy(Organization org) { target.link(org, entry); }
+	public void remove(Organization org) { target.unlink(org, entry); }
 }

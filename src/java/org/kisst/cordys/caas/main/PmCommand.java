@@ -22,17 +22,19 @@ package org.kisst.cordys.caas.main;
 
 public class PmCommand extends CompositeCommand{
 	private Command validate=new Command() {
-		public void run(Environment env, String[] args) {
+		public void run(String[] args) {
+			Environment env=Environment.get();
 			System.out.println(env.getSystem().pm.validate(args[0],null));
 		}
 	};
 	private Command configure=new Command() {
-		public void run(Environment env, String[] args) {
+		public void run(String[] args) {
+			Environment env=Environment.get();
 			System.out.println(env.getSystem().pm.p(args[0]).configure());
 		}
 	};
 	private Command purge=new Command() {
-		public void run(Environment env, String[] args) {
+		public void run(String[] args) {
 			System.out.println("purge command not implemented yet");
 		}
 	};

@@ -25,7 +25,7 @@ public class CaasMain extends CompositeCommand {
 
 	public static void main(String[] args) {
 		CaasMain caas=new CaasMain();
-		caas.run(new Environment(), args);
+		caas.run(args);
 	}
 
 	private final PmCommand pm=new PmCommand();
@@ -43,7 +43,8 @@ public class CaasMain extends CompositeCommand {
 		options.addOption("c", "cop", true, "location of a .cop file with connection properties");
 	}
 	
-	@Override public void execute(Environment env, String[] args) {
+	@Override public void execute(String[] args) {
+		Environment env=Environment.get();
 		env.setSystem(env.getOptionValue("cop"));
 
 		if (env.hasOption("debug"))
@@ -55,6 +56,6 @@ public class CaasMain extends CompositeCommand {
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
 		defaultCommand="shell";
-		super.execute(env, args);
+		super.execute(args);
 	}
 }

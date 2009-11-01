@@ -30,7 +30,7 @@ abstract public class CompositeCommand extends CommandBase {
 	protected String defaultCommand="help";
 
 	private Command help= new Command() {
-		public void run(Environment env, String[] args) {
+		public void run(String[] args) {
 			String commandNames="";
 			for (String c: commands.keySet())
 				commandNames+=", "+c;
@@ -48,9 +48,10 @@ abstract public class CompositeCommand extends CommandBase {
 		options.addOption("h", "help", false, "print this help message");
 	}
 	
-	@Override public void execute(Environment env, String[] args) {
+	@Override public void execute(String[] args) {
+		Environment env=Environment.get();
 		if (env.hasOption("help"))
-			help.run(env, args);
+			help.run(args);
 		else
 			runCommand(env, args);
 	}
@@ -65,6 +66,6 @@ abstract public class CompositeCommand extends CommandBase {
 		if (command==null)
 			System.out.println("Unknown subcommand "+cmd);
 		else
-			command.run(env, args);
+			command.run(args);
 	}
 }

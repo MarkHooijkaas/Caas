@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class HttpClientCaller implements SoapCaller {
@@ -104,35 +105,36 @@ public class HttpClientCaller implements SoapCaller {
 		return response;
 	}
 
-	public String call(String input, boolean debug) {
-		return call(input,debug, null, null); // TODO: use other parameters
+	public String call(String input) {
+		return call(input,null, null); // TODO: use other parameters
 	}
 
-	public String call(String input, boolean debug, String org, String processor) {
+	public String call(String input, String org, String processor) {
 		String soap="<SOAP:Envelope xmlns:SOAP=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP:Body>"
 			+ input
 			+ "</SOAP:Body></SOAP:Envelope>";
-		if (debug)
-			System.out.println(soap);
+		Environment.get().debug(soap);
 		String response = httpCall(soap, org, processor);
-		if (debug || response.indexOf("SOAP:Fault")>0)
+		Environment.get().debug(response);
+		if (response.indexOf("SOAP:Fault")>0)
 			throw new RuntimeException(response);
 		return response;
 	}
 
-	public XmlNode call(XmlNode method, boolean debug) {
-		return call(method, debug, null, null);
+	public XmlNode call(XmlNode method) {
+		return call(method, null, null);
 	}
-	public XmlNode call(XmlNode method, boolean debug, String org, String processor) {
-		if (debug)
-			System.out.println(method.getPretty());
+	public XmlNode call(XmlNode method, String org, String processor) {
+		Environment env=Environment.get();
+		if (env.debug)
+			env.debug(method.getPretty());
 		String xml = method.toString();
-		String response= call(xml, false, org, processor);
+		String response= call(xml, org, processor);
 		XmlNode output=new XmlNode(response);
 		if (output.getName().equals("Envelope"))
 			output=output.getChild("Body").getChildren().get(0);
-		if (debug)
-			System.out.println(output.getPretty());
+		if (env.debug)
+			env.debug(output.getPretty());
 		return output;
 	}
 	

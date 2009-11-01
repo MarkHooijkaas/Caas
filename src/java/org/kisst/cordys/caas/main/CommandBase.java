@@ -23,12 +23,12 @@ import org.apache.commons.cli.Options;
 
 
 abstract public class CommandBase implements Command {
-	abstract protected void execute(Environment env, String[] args);
+	abstract protected void execute(String[] args);
 	protected final Options options = new Options();
 
-	public final void run(Environment env, String[] args) {
-		args=env.parse(options, args);
-		execute(env, args);
+	public final void run(String[] args) {
+		args=Environment.get().parse(options, args);
+		execute(args);
 	}
 
 	protected static String[] subArgs(String[] args, int pos) {

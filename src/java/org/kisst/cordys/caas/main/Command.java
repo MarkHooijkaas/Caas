@@ -20,5 +20,5 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas.main;
 
 public interface Command {
-	public void run(Environment env, String[] args);
+	public void run(String[] args);
 }

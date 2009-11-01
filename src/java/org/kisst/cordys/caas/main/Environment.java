@@ -27,6 +27,10 @@ import org.kisst.cordys.caas.Caas;
 import org.kisst.cordys.caas.CordysSystem;
 
 public class Environment {
+	private final static Environment singleton=new Environment();
+	public static Environment get() { return singleton; }
+	private Environment() {}
+	
 	public boolean debug=false;
 	public boolean quiet=false;
 	public boolean verbose=false;
@@ -34,18 +38,25 @@ public class Environment {
 	private CommandLine cmdline;
 	private String copfile;
 	
+	
 	public void setSystem(String copfile) { this.copfile=copfile; }
 	public CordysSystem getSystem() {
 		if (system!=null)
 			return system;
 		if (copfile==null)
 			copfile=System.getProperty("user.home")+"/config/caas/default.cop";
-		log(copfile);
+		info(copfile);
 		system=Caas.connect(copfile);
 		return system;
 	}
 	
-	public void log(String msg){ System.out.println(msg);}
+	private void log(String type, String msg){ System.out.println(msg);}
+	public void debug(String msg) { if (debug   && ! quiet) log("DEBUG",msg); }
+	public void info(String msg)  { if (verbose && ! quiet) log("INFO ", msg); }
+	public void warn(String msg)  { if (! quiet) log("WARN ", msg); }
+	public void error(String msg)  { log("ERROR", msg); }
+	
+	
 	public boolean hasOption(String name) { return cmdline.hasOption(name); }
 	public String getOptionValue(String name) { return cmdline.getOptionValue(name); }
 	

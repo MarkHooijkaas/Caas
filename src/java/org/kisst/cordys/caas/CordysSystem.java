@@ -21,6 +21,7 @@ package org.kisst.cordys.caas;
 
 import java.util.HashMap;
 
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.pm.PackageManager;
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.support.ChildList;
@@ -37,10 +38,10 @@ public class CordysSystem extends LdapObject {
 	private final HashMap<String, LdapObject> ldapcache=new HashMap<String, LdapObject>();
 	private final String name;
 	private final String dn; 
+	private final Environment env;
 
 	public final String version;
 	public final String build;
-	public boolean debug=false;
 	public boolean useCache=true;
 	//public int displayFormat=0;
 	
@@ -76,6 +77,7 @@ public class CordysSystem extends LdapObject {
 
 	public CordysSystem(String name, SoapCaller caller) {
 		super();
+		this.env=Environment.get();
 		this.name=name;
 		this.caller=caller;
 		XmlNode response=call(new XmlNode("GetVersion",xmlns_monitor));
@@ -90,6 +92,7 @@ public class CordysSystem extends LdapObject {
 	}
 
 	@Override public String toString() { return "CordysSystem("+name+")"; }
+	public Environment getEnv() { return env;}
 	@Override public CordysSystem getSystem() { return this; }
 	@Override public String getDn()   { return dn; }
 	@Override public String getKey()  { return "ldap:"+dn; }
@@ -134,10 +137,10 @@ public class CordysSystem extends LdapObject {
 	public void removeLdap(String dn)   { ldapcache.remove(dn); }
 
 	public String call(String input, String org, String processor) {
-		return caller.call(input, debug, org, processor); 
+		return caller.call(input, org, processor); 
 	}
-	public String call(String soap) { return caller.call(soap, debug); }
-	public XmlNode call(XmlNode method) { return caller.call(method, debug); }
+	public String call(String soap) { return caller.call(soap); }
+	public XmlNode call(XmlNode method) { return caller.call(method); }
 
 	public void refreshSoapProcessors() {
 		XmlNode method=new XmlNode("List", xmlns_monitor);
@@ -177,7 +180,7 @@ public class CordysSystem extends LdapObject {
 		keynode.setText(key);
 		if (version !=null)
 			keynode.setAttribute("version", version);
-		XmlNode response = caller.call(method, debug, organization, null);
+		XmlNode response = caller.call(method, organization, null);
 		return response.getChild("tuple/old");
 	}
 }

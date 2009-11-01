@@ -21,6 +21,7 @@ package org.kisst.cordys.caas.soap;
 
 import java.util.HashMap;
 
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class DummyCaller implements SoapCaller {
@@ -39,20 +40,21 @@ public class DummyCaller implements SoapCaller {
 			addFromXmlDump(n);
 	}
 
-	public String call(String input, boolean debug) {
+	public String call(String input) {
 		throw new RuntimeException("HTTP calls not supported "+input);
 	}
 
-	public String call(String input, boolean debug, String org, String processor) {
+	public String call(String input, String org, String processor) {
 		throw new RuntimeException("HTTP calls not supported "+input);
 	}
 
-	public XmlNode call(XmlNode method, boolean debug) {
-		return call(method, debug, null, null);
+	public XmlNode call(XmlNode method) {
+		return call(method, null, null);
 	}
-	public XmlNode call(XmlNode method, boolean debug, String org, String processor) {
-		if (debug)
-			System.out.println(method.getPretty());
+	public XmlNode call(XmlNode method, String org, String processor) {
+		Environment env=Environment.get();
+		if (env.debug)
+			env.debug(method.getPretty());
 		XmlNode output;
 		if (method.getName().equals("GetLDAPObject"))
 			output=getObject(method);
@@ -63,9 +65,8 @@ public class DummyCaller implements SoapCaller {
 		else
 			throw new RuntimeException("Unknown calls "+method.getPretty());
 			
-			
-		if (debug)
-			System.out.println(output.getPretty());
+		if (env.debug)
+			env.debug(output.getPretty());
 		return output;
 	}
 

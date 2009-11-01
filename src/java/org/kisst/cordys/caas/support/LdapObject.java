@@ -145,6 +145,10 @@ public abstract class LdapObject extends CordysObject {
 	}
 	abstract public String getDn();
 	@Override public void myclear() { super.myclear(); entry=null; }
+	public void debug(String msg) { getSystem().getEnv().debug(msg); } 
+	public void info(String msg)  { getSystem().getEnv().info(msg); } 
+	public void warn(String msg)  { getSystem().getEnv().warn(msg); } 
+	public void error(String msg) { getSystem().getEnv().error(msg); } 
 
 	@Override public String getVarName() {
 		String name= getName();

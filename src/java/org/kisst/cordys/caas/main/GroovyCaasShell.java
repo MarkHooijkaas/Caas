@@ -28,12 +28,12 @@ import java.net.URL;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
 public class GroovyCaasShell implements Command {
-	public void run(Environment env, String[] args) {
+	public void run(String[] args) {
 		if (args.length>0 && args[0].equals("--download")) {
 			downloadAll();
 			return;
 		}
-		run(args);
+		runAny(args);
 	}
 
 	private static void downloadAll() {
@@ -97,7 +97,7 @@ public class GroovyCaasShell implements Command {
 		}
 	}
 
-	private static void run(String[] args) {
+	private static void runAny(String[] args) {
 		int i=0;
 		boolean debug=false;
 		String filename=null;
