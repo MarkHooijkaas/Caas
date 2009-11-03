@@ -20,6 +20,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import org.kisst.cordys.caas.support.CordysObject;
+import org.kisst.cordys.caas.util.XmlNode;
 
 public class Machine extends CordysObject {
 	private final SoapProcessor monitor;
@@ -36,4 +37,36 @@ public class Machine extends CordysObject {
 	@Override public String getKey() { return "machine:"+getName();	}
 	@Override public CordysSystem getSystem() { return monitor.getSystem();	}
 	@Override public String getVarName() { return getSystem().getVarName()+".machine."+getName();}
+
+	public SoapProcessor getMonitor() { return monitor; }
+	
+	public void refreshSoapProcessors() {
+		XmlNode method=new XmlNode("List", xmlns_monitor);
+		XmlNode response=monitor.call(method);
+		for (XmlNode s: response.getChildren("tuple")) {
+			XmlNode workerprocess=s.getChild("old/workerprocess");
+			String dn=workerprocess.getChildText("name");
+			SoapProcessor obj= (SoapProcessor) getSystem().getLdap(dn);
+			obj.setWorkerprocess(workerprocess);
+		}
+	}
+
+	public void loadIsvp(String filename) {
+		filename=filename.trim();
+		if (filename.endsWith(".isvp"))
+			filename=filename.substring(0,filename.length()-5);
+		XmlNode method=new XmlNode("GetISVPackageDefinition", xmlns_isv);
+		XmlNode file=method.add("file");
+		file.setText(filename);
+		file.setAttribute("type", "isvpackage");
+		file.setAttribute("detail", "false");
+		file.setAttribute("wizardsteps", "true");
+		XmlNode details=monitor.call(method);
+		
+		method=new XmlNode("LoadISVPackage", xmlns_isv);
+		method.add("url").setText("http://"+hostname+"/cordys/wcp/isvcontent/packages/"+filename+".isvp");
+		method.add(details.getChild("ISVPackage").detach());
+		monitor.call(method);
+	}
+
 }

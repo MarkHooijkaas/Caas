@@ -152,34 +152,15 @@ public class CordysSystem extends LdapObject {
 	public XmlNode call(XmlNode method) { return caller.call(method); }
 
 	public void refreshSoapProcessors() {
-		XmlNode method=new XmlNode("List", xmlns_monitor);
-		XmlNode response=call(method);
-		for (XmlNode s: response.getChildren("tuple")) {
-			XmlNode workerprocess=s.getChild("old/workerprocess");
-			String dn=workerprocess.getChildText("name");
-			SoapProcessor obj= (SoapProcessor) getLdap(dn);
-			obj.setWorkerprocess(workerprocess);
-		}
+		for (Machine m: machines)
+			m.refreshSoapProcessors();
 	}
 
-	public Isvp loadIsvp(String filename) {
-		filename=filename.trim();
-		if (filename.endsWith(".isvp"))
-			filename=filename.substring(0,filename.length()-5);
-		XmlNode method=new XmlNode("GetISVPackageDefinition", xmlns_isv);
-		XmlNode file=method.add("file");
-		file.setText(filename);
-		file.setAttribute("type", "isvpackage");
-		file.setAttribute("detail", "false");
-		file.setAttribute("wizardsteps", "true");
-		XmlNode details=call(method);
-		
-		method=new XmlNode("LoadISVPackage", xmlns_isv);
-		method.add("url").setText("http://CORDYS42/cordys/wcp/isvcontent/packages/"+filename+".isvp");
-		method.add(details.getChild("ISVPackage").detach());
-		call(method);
-		return null;
+	public void loadIsvp(String filename) {
+		for (Machine m: machines)
+			m.loadIsvp(filename);
 	}
+	
 	public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
 	
 	public XmlNode getXml(String key) { return getXml(key, "isv", null); }
