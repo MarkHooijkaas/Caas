@@ -61,14 +61,9 @@ public class Isvp extends LdapObjectBase {
 	}
 		
 	public void unload(boolean deletereferences) {
-		XmlNode method=new XmlNode("UnloadISVPackage", xmlns_isv);
-		XmlNode file=method.add("file");
-		file.setText(getBasename());
-		if (deletereferences)
-			file.setAttribute("deletereference", "true");
-		else
-			file.setAttribute("deletereference", "false");
-		call(method);
+		for (Machine m: getSystem().machines)
+			// TODO: check if machine has the ISVP loaded
+			m.unloadIsvp(this, deletereferences);
 		getSystem().removeLdap(getDn());
 	}
 	
