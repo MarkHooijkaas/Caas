@@ -69,4 +69,15 @@ public class Machine extends CordysObject {
 		monitor.call(method);
 	}
 
+	public void unloadIsvp(Isvp isvp, boolean deletereferences) {
+		XmlNode method=new XmlNode("UnloadISVPackage", xmlns_isv);
+		XmlNode file=method.add("file");
+		file.setText(isvp.getBasename());
+		if (deletereferences)
+			file.setAttribute("deletereference", "true");
+		else
+			file.setAttribute("deletereference", "false");
+		monitor.call(method);
+		//TODO: do this only for last machine??? getSystem().removeLdap(isvp.getDn());
+	}
 }
