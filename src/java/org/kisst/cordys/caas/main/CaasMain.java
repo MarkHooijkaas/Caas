@@ -19,20 +19,21 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.kisst.cordys.caas.Caas;
 
 public class CaasMain extends CompositeCommand {
-
 	public static void main(String[] args) {
 		CaasMain caas=new CaasMain();
 		caas.run(args);
 	}
-
+	protected final Options options = new Options();
 	private final PmCommand pm=new PmCommand();
 	private final GroovyCaasShell shell = new GroovyCaasShell();
 
 	private CaasMain() {
-		super("caas [options] [cmd] [suboptions]");
+		super("caas [options] [cmd] ...", "shell"); 
 		commands.put("pm", pm);
 		commands.put("shell", shell);
 		commands.put("run", shell);
@@ -41,9 +42,25 @@ public class CaasMain extends CompositeCommand {
 		options.addOption("v", "verbose", false, "be verbose about what you are doing");
 		options.addOption("d", "debug", false, "if this option is set debug logging will be shown");
 		options.addOption("c", "cop", true, "location of a .cop file with connection properties");
+		options.addOption("h", "help", false, "show this help information");
+	}
+
+
+	protected static String[] subArgs(String[] args, int pos) {
+		String result[]= new String[args.length-pos];
+		for (int i=pos; i<args.length; i++)
+			result[i-pos]=args[i];
+		return result;
+	}
+
+	@Override public void printHelp(String[] args) {
+		new HelpFormatter().printHelp(80, usage, 
+				"[cmd] is one of "+getCommandNames()+"\nOptions:", 
+				options, null);
 	}
 	
-	@Override public void execute(String[] args) {
+	@Override public void run(String[] args) {
+		args=Environment.get().parse(options, args);
 		Environment env=Environment.get();
 		env.setSystem(env.getOptionValue("cop"));
 
@@ -53,11 +70,30 @@ public class CaasMain extends CompositeCommand {
 			env.verbose=true;
 		if (env.hasOption("quiet"))
 			env.quiet=true;
-		
 		if (! env.quiet)
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
-		defaultCommand="shell";
-		super.execute(args);
+		if (env.hasOption("help")) {
+			printHelp(args);
+			return;
+		}
+
+		try {
+			super.run(args);
+		}
+		catch (java.lang.NoClassDefFoundError e) {
+			e.printStackTrace();
+			missingJar();
+		}
 	}
+	
+	private static void missingJar() {
+		System.out.println("Some kind of error occured");
+		System.out.println("This might be due to not having downloaded the necessary jar files");
+		System.out.println("In order to do this one should execute the following command");
+		System.out.println("\tjava -jar "+System.getProperty("java.class.path")+" setup");
+		System.out.println("Or, if you behind a firewall or proxyserver, try the following command");
+		System.out.println("\tjava -autoproxy -jar "+System.getProperty("java.class.path")+" --download");
+	}
+
 }

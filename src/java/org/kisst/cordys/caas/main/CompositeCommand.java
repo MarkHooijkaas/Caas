@@ -21,42 +21,32 @@ package org.kisst.cordys.caas.main;
 
 import java.util.LinkedHashMap;
 
-import org.apache.commons.cli.HelpFormatter;
-
 
 abstract public class CompositeCommand extends CommandBase {
 	protected final LinkedHashMap<String, Command> commands=new LinkedHashMap<String,Command>();
-	private final String usage;
-	protected String defaultCommand="help";
+	private final String defaultCommand;
+	protected final String usage;
 
-	private Command help= new Command() {
-		public void run(String[] args) {
-			String commandNames="";
-			for (String c: commands.keySet())
-				commandNames+=", "+c;
-			new HelpFormatter().printHelp(80,  
-					"Usage: "+usage
-					+"\twhere <cmd> is one of "+commandNames.substring(2),
-					"Options:",
-					options, null );
-		}
+	private Command help=new Command() { 
+		public void run(String[] args) { printHelp(args); }
 	};
+	
+	
+	public String getCommandNames() {
+		String commandNames="";
+		for (String c: commands.keySet())
+			commandNames+=", "+c;
+		return commandNames.substring(2);
+	}
 
-	public CompositeCommand(String usage) {
+
+	public CompositeCommand(String usage, String defaultCommand) {
 		this.usage=usage;
+		this.defaultCommand=defaultCommand;
 		commands.put("help", help);
-		options.addOption("h", "help", false, "print this help message");
 	}
 	
-	@Override public void execute(String[] args) {
-		Environment env=Environment.get();
-		if (env.hasOption("help"))
-			help.run(args);
-		else
-			runCommand(env, args);
-	}
-
-	protected void runCommand(Environment env, String[] args) {
+	@Override public void run(String[] args) {
 		String cmd=defaultCommand;
 		if (args.length>0) {
 			cmd=args[0];
@@ -68,4 +58,12 @@ abstract public class CompositeCommand extends CommandBase {
 		else
 			command.run(args);
 	}
+	
+	protected static String[] subArgs(String[] args, int pos) {
+		String result[]= new String[args.length-pos];
+		for (int i=pos; i<args.length; i++)
+			result[i-pos]=args[i];
+		return result;
+	}
+
 }

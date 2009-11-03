@@ -19,23 +19,19 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-import org.apache.commons.cli.Options;
 
 
 abstract public class CommandBase implements Command {
-	abstract protected void execute(String[] args);
-	protected final Options options = new Options();
-
-	public final void run(String[] args) {
-		args=Environment.get().parse(options, args);
-		execute(args);
+	abstract public void run(String[] args);
+	
+	public void printHelp(String[] args) {
+		System.out.println("TODO");
 	}
 
-	protected static String[] subArgs(String[] args, int pos) {
-		String result[]= new String[args.length-pos];
-		for (int i=pos; i<args.length; i++)
-			result[i-pos]=args[i];
-		return result;
+	protected void checkHelp(String[] args) {
+		if (args.length==0)
+			return;
+		if(args[0].equals("help") || args[0].equals("--help"))
+			printHelp(args);
 	}
-
 }
