@@ -43,6 +43,7 @@ public class CaasMain extends CompositeCommand {
 		options.addOption("d", "debug", false, "if this option is set debug logging will be shown");
 		options.addOption("c", "cop", true, "location of a .cop file with connection properties");
 		options.addOption("h", "help", false, "show this help information");
+		options.addOption(null, "version", false, "show the version information");
 	}
 
 
@@ -70,6 +71,11 @@ public class CaasMain extends CompositeCommand {
 			env.verbose=true;
 		if (env.hasOption("quiet"))
 			env.quiet=true;
+		if (env.hasOption("version")) {
+			System.out.println(Caas.getVersion());
+			return;
+		}
+
 		if (! env.quiet)
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
