@@ -84,6 +84,8 @@ public class CordysSystem extends LdapObject {
 		}
 		@Override public String getKey() { return getKey()+":machine"; }
 	}; 
+	public final CordysObjectList<Machine> machine = machines;
+		
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		super();

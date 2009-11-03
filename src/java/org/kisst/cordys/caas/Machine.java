@@ -19,6 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kisst.cordys.caas.support.CordysObject;
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -79,5 +82,17 @@ public class Machine extends CordysObject {
 			file.setAttribute("deletereference", "false");
 		monitor.call(method);
 		//TODO: do this only for last machine??? getSystem().removeLdap(isvp.getDn());
+	}
+	
+	public List<String> getIsvpFiles() {
+		LinkedList<String> result=new LinkedList<String>();
+		XmlNode method=new XmlNode("ListISVPackages", xmlns_isv);
+		method.add("type").setText("ISVPackage");
+		XmlNode response=monitor.call(method);
+		for (XmlNode child: response.getChildren()) {
+			String url=child.getText();
+			result.add(url.substring(url.lastIndexOf("/")+1));
+		}
+		return result;
 	}
 }
