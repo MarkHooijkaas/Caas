@@ -73,6 +73,18 @@ public class CordysSystem extends LdapObject {
 	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
 	@Override public String getVarName() { return name; }
 
+	
+	@SuppressWarnings("unchecked")
+	public final CordysObjectList<Machine> machines = new CordysObjectList(this) {
+		protected void retrieveList() {
+			for (SoapProcessor sp: soapProcessors) {
+				if (sp.getName().indexOf("monitor")>=0)
+					grow(new Machine(sp));
+			}
+		}
+		@Override public String getKey() { return getKey()+":machine"; }
+	}; 
+	
 	public CordysSystem(String name, SoapCaller caller) {
 		super();
 		this.env=Environment.get();
