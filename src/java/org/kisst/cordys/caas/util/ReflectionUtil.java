@@ -25,10 +25,10 @@ import java.lang.reflect.Method;
 
 public class ReflectionUtil {
 
-	public static Constructor getConstructor(Class cls, Class[] signature) {
-		Constructor[] consarr = cls.getDeclaredConstructors();
+	public static Constructor<?> getConstructor(Class<?> cls, Class<?>[] signature) {
+		Constructor<?>[] consarr = cls.getDeclaredConstructors();
 		for (int i=0; i<consarr.length; i++) {
-			Class[] paramtypes = consarr[i].getParameterTypes();
+			Class<?>[] paramtypes = consarr[i].getParameterTypes();
 			if (java.util.Arrays.equals(signature, paramtypes))
 				return consarr[i];
 		}
@@ -53,14 +53,14 @@ public class ReflectionUtil {
 		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
 	}
 
-	private static Class[] getSignature(Object[] args) {
-		Class[] signature=new Class[args.length];
+	private static Class<?>[] getSignature(Object[] args) {
+		Class<?>[] signature=new Class[args.length];
 		for (int i=0; i<args.length; i++)
 			signature[i]=args[i].getClass();
 		return signature;
 	}
 
-	public static Class findClass(String name) {
+	public static Class<?> findClass(String name) {
 		try {	
 			return Class.forName(name);
 		}
@@ -73,13 +73,13 @@ public class ReflectionUtil {
 	}
 	public static Object createObject(Class<?> c, Object[] args) {
 		try {
-			Constructor cons= c.getConstructor(getSignature(args));
+			Constructor<?> cons= c.getConstructor(getSignature(args));
 			return createObject(cons,args);
 		}
 		catch (NoSuchMethodException e) { throw new RuntimeException(e); } 
 	}
 			
-	public static Object createObject(Constructor cons, Object[] args) {
+	public static Object createObject(Constructor<?> cons, Object[] args) {
 		try {
 			cons.setAccessible(true);
 			return cons.newInstance(args);

@@ -70,14 +70,14 @@ public class XmlNode {
 	}
 
 	public List<XmlNode> getChildren() {
-		List l = element.getChildren();
+		List<?> l = element.getChildren();
 		ArrayList<XmlNode> result=new ArrayList<XmlNode>(l.size());
 		for (Object o: l)
 			result.add(new XmlNode((Element) o));
 		return result;
 	}
 	public List<XmlNode> getChildren(String name) {
-		List l = element.getChildren(name, null);
+		List<?> l = element.getChildren(name, null);
 		ArrayList<XmlNode> result=new ArrayList<XmlNode>(l.size());
 		for (Object o: l)
 			result.add(new XmlNode((Element) o));

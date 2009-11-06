@@ -41,7 +41,7 @@ public class XmlObjectList<T extends CordysXmlObject> extends CordysObjectList<T
 		//	response=response.getChild("Body").getChildren().get(0);
 		for (XmlNode tuple : response.getChildren("tuple")) {
 			Connector obj=new Connector(getSystem(), tuple.getAttribute("key"));
-			if (clz==null || obj.getClass()==clz)
+			if (clz==null || obj.getClass()== (Class) clz)
 				this.grow((T) obj);
 			//System.out.println(dn);
 		}

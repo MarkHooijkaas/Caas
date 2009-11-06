@@ -268,7 +268,7 @@ public abstract class LdapObject extends CordysObject {
 		my.setAttribute("dn", getDn());
 		my.add(getEntry().clone());
 		XmlNode children=my.add("children");
-		for (ChildList<?> clist: new Props<ChildList>(this, ChildList.class)) {
+		for (ChildList<?> clist: new Props<ChildList<?>>(this, ChildList.class)) {
 			for (LdapObject o: clist)
 				o.dumpXml(children);
 		}

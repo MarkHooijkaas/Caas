@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Differences {
 	private final static class AttributeDiff { String name; Object v1; Object v2;} 
-	private final static class ChildDiff { String name; Differences diffs;}
+	private final static class ChildDiff { @SuppressWarnings("unused") String name; Differences diffs;}
 	//private final Differences parent;
 	private final String name1;
 	private final String name2;

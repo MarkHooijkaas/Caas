@@ -40,7 +40,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public static void log(String msg) { System.out.println(msg); }
 	public void myclear() {}
 	public void clear() {
-		for (CordysObjectList o: new Props<CordysObjectList>(this, CordysObjectList.class)) {
+		for (CordysObjectList<?> o: new Props<CordysObjectList<?>>(this, CordysObjectList.class)) {
 			o.clear();
 		}
 		myclear();
@@ -75,11 +75,11 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 				continue;
 			else if (v1 instanceof XmlNode) 
 				continue;
-			else if (v1 instanceof ChildList) {
+			else if (v1 instanceof ChildList<?>) {
 				if (depth>0)
-					diffs.addChildDiffs(((CordysObjectList)v1).diff(diffs, (CordysObjectList)v2, depth-1));
+					diffs.addChildDiffs(((CordysObjectList<?>)v1).diff(diffs, (CordysObjectList<?>)v2, depth-1));
 			}
-			else if (v1 instanceof CordysObjectList)
+			else if (v1 instanceof CordysObjectList<?>)
 				continue;
 			else if (v1==null || ! v1.equals(v2))
 				diffs.attributeDiffers(key, v1, v2);

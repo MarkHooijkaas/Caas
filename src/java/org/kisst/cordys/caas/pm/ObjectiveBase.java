@@ -101,7 +101,7 @@ public class ObjectiveBase implements Objective {
 	}
 	private void configure(Organization org, LdapObject entry) { 
 		if (entry==null)
-			env.warn("target "+target+" should have unknown entry "+entry.getVarName());
+			env.warn("target "+target+" should have unknown entry "); // TODO: +entry.getVarName());
 		else if (target.contains(org, entry))
 			env.warn("target "+target+" already has entry "+entry.getVarName());
 		else
@@ -118,7 +118,7 @@ public class ObjectiveBase implements Objective {
 	}
 	private void remove(Organization org, LdapObject entry) { 
 		if (entry==null)
-			env.warn("target "+target+" should have unknown entry "+entry.getVarName());
+			env.warn("target "+target+" should have unknown entry "); // TODO: +entry.getVarName());
 		else if (! target.contains(org, entry))
 			env.warn("target "+target+" does not have entry "+entry.getVarName());
 		else

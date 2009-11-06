@@ -54,7 +54,7 @@ public class GroovyCaasShell implements Command {
 	private static void runFile(String[] args) {
 		System.out.println("Running "+args[0]);
 		int code=0;
-		Class clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");
+		Class<?> clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");
 		ReflectionUtil.invoke(clz, null, "main", new Object[]{args});
 		System.exit(code);
 	}

@@ -75,16 +75,16 @@ public abstract class LdapObjectBase extends LdapObject {
 		String newdn=entry.getAttribute("dn");
 		//System.out.println("createObject ["+newdn+"]");
 		LdapObject parent = calcParent(system, entry.getAttribute("dn"));
-		Class resultClass = determineClass(system, entry);
+		Class<?> resultClass = determineClass(system, entry);
 		if (resultClass==null)
 			throw new RuntimeException("could not determine class for entry "+entry);
-		Constructor cons=ReflectionUtil.getConstructor(resultClass, new Class[]{LdapObject.class, String.class} );
+		Constructor<?> cons=ReflectionUtil.getConstructor(resultClass, new Class[]{LdapObject.class, String.class} );
 		LdapObject result = (LdapObject) ReflectionUtil.createObject(cons, new Object[]{parent, newdn});
 		result.setEntry(entry);
 		return result;
 	}
 	
-	private final static HashMap<String,Class> ldapObjectTypes=new HashMap<String,Class>();
+	private final static HashMap<String,Class<?>> ldapObjectTypes=new HashMap<String,Class<?>>();
 	static {
 		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
 		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
@@ -99,12 +99,12 @@ public abstract class LdapObjectBase extends LdapObject {
 		ldapObjectTypes.put("busconnectionpoint", ConnectionPoint.class);
 		ldapObjectTypes.put("busosprocess", OsProcess.class);
 	}
-	static private Class determineClass(CordysSystem system, XmlNode entry) {
+	static private Class<?> determineClass(CordysSystem system, XmlNode entry) {
 		if (entry==null)
 			return null;
 		XmlNode objectclass=entry.getChild("objectclass");
 		for(XmlNode o:objectclass.getChildren("string")) {
-			Class c=ldapObjectTypes.get(o.getText());
+			Class<?> c=ldapObjectTypes.get(o.getText());
 			if (c!=null)
 				return c;
 		}
@@ -125,7 +125,7 @@ public abstract class LdapObjectBase extends LdapObject {
 			XmlNode entry=retrieveEntry(system, dn);
 			if (entry==null) // could happen when restoring from a dump
 				continue;
-			Class resultClass = determineClass(system, entry);
+			Class<?> resultClass = determineClass(system, entry);
 			if (resultClass!=null)
 				return createObject(system, entry);
 		}
