@@ -31,12 +31,14 @@ public class CaasMain extends CompositeCommand {
 	protected final Options options = new Options();
 	private final PmCommand pm=new PmCommand();
 	private final GroovyCaasShell shell = new GroovyCaasShell();
+	private final SetupCommand setup = new SetupCommand();
 
 	private CaasMain() {
 		super("caas [options] [cmd] ...", "shell"); 
 		commands.put("pm", pm);
 		commands.put("shell", shell);
 		commands.put("run", shell);
+		commands.put("setup", setup);
 		
 		options.addOption("q", "quiet", false, "don't output anything unless errors happen");
 		options.addOption("v", "verbose", false, "be verbose about what you are doing");
@@ -99,7 +101,7 @@ public class CaasMain extends CompositeCommand {
 		System.out.println("In order to do this one should execute the following command");
 		System.out.println("\tjava -jar "+System.getProperty("java.class.path")+" setup");
 		System.out.println("Or, if you behind a firewall or proxyserver, try the following command");
-		System.out.println("\tjava -autoproxy -jar "+System.getProperty("java.class.path")+" --download");
+		System.out.println("\tjava -autoproxy -jar "+System.getProperty("java.class.path")+" setup");
 	}
 
 }
