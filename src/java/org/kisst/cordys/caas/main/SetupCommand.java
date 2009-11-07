@@ -28,6 +28,7 @@ import java.net.URL;
 public class SetupCommand extends CommandBase{
 
 	@Override public void run(String args[]) {
+		System.setProperty("java.net.useSystemProxies", "true");
 		String libdir = getLibDir();
 		System.out.println("Downloading necessary jar files to "+libdir);
 		File d=new File(libdir);
