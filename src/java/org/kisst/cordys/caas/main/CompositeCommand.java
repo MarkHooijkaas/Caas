@@ -20,17 +20,56 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas.main;
 
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 
-abstract public class CompositeCommand extends CommandBase {
+abstract public class CompositeCommand implements Command {
+	private class HelpCommand extends CommandBase {
+		HelpCommand() {super("[<subcmd>]"); }
+		public void run(String[] args) { 
+			Command cmd=CompositeCommand.this;
+			String prefix=CompositeCommand.this.prefix;
+			if (args.length>0) {
+				Command cmd2=commands.get(args[0]);
+				if (cmd2!=null) {
+					prefix+=" "+args[0];
+					cmd=cmd2;
+				}
+			}
+			System.out.println("Usage: "+prefix+" "+cmd.getUsage()); 
+			System.out.println(cmd.getHelp()); 
+		}
+	}
+	
 	protected final LinkedHashMap<String, Command> commands=new LinkedHashMap<String,Command>();
 	private final String defaultCommand;
-	protected final String usage;
-
-	private Command help=new Command() { 
-		public void run(String[] args) { printHelp(args); }
-	};
+	//private final CompositeCommand parent;
+	private final String prefix;
+	protected final Command help=new HelpCommand();
 	
+	public CompositeCommand(String prefix) { this(prefix,"help"); }
+	public CompositeCommand(String prefix,String defaultCommand) {
+		this.defaultCommand=defaultCommand;
+		this.prefix=prefix;
+		commands.put("help", help);
+	}
+
+	public String getUsage() {
+		String commandNames="";
+		for (String c: commands.keySet())
+			commandNames+="|"+c;
+		return "["+commandNames.substring(1)+"] [arg ...]";
+
+	}
+
+	public String getHelp() {
+		StringBuilder result=new StringBuilder("\nUse any of the following commands:\n");
+		for (Entry<String,Command> entry: commands.entrySet()) {
+			Command cmd=entry.getValue();
+			result.append("\t"+prefix+" "+entry.getKey()+" "+cmd.getUsage()+"\n");
+		}
+		return result.toString();
+	}
 	
 	public String getCommandNames() {
 		String commandNames="";
@@ -39,14 +78,7 @@ abstract public class CompositeCommand extends CommandBase {
 		return commandNames.substring(2);
 	}
 
-
-	public CompositeCommand(String usage, String defaultCommand) {
-		this.usage=usage;
-		this.defaultCommand=defaultCommand;
-		commands.put("help", help);
-	}
-	
-	@Override public void run(String[] args) {
+	public void run(String[] args) {
 		String cmd=defaultCommand;
 		if (args.length>0) {
 			cmd=args[0];

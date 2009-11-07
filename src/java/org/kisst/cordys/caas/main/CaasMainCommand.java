@@ -19,22 +19,32 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.kisst.cordys.caas.Caas;
 
 public class CaasMainCommand extends CompositeCommand {
+	private class GroovyCommand extends CompositeCommand {
+		public GroovyCommand() {
+			super("caas groovy");
+			this.commands.put("run", new GroovyRunScript());
+			this.commands.put("shell", new GroovyShell());
+		}
+	}
+	
+	
 	protected final Options options = new Options();
-	private final PmCommand pm=new PmCommand();
-	private final GroovyCaasShell shell = new GroovyCaasShell();
-	private final SetupCommand setup = new SetupCommand();
 
 	public CaasMainCommand() {
-		super("caas [options] [cmd] ...", "shell"); 
-		commands.put("pm", pm);
-		commands.put("shell", shell);
-		commands.put("run", shell);
-		commands.put("setup", setup);
+		super("caas"); 
+		commands.put("shell", new GroovyShell());
+		commands.put("run", new GroovyRunScript());
+		commands.put("pm", new PmCommand());
+		commands.put("groovy", new GroovyCommand());
+		commands.put("setup", new SetupCommand());
 		
 		options.addOption("q", "quiet", false, "don't output anything unless errors happen");
 		options.addOption("v", "verbose", false, "be verbose about what you are doing");
@@ -44,6 +54,7 @@ public class CaasMainCommand extends CompositeCommand {
 		options.addOption(null, "version", false, "show the version information");
 	}
 
+	public String getUsage() { return "[options] "+super.getUsage();}
 
 	protected static String[] subArgs(String[] args, int pos) {
 		String result[]= new String[args.length-pos];
@@ -52,10 +63,18 @@ public class CaasMainCommand extends CompositeCommand {
 		return result;
 	}
 
-	@Override public void printHelp(String[] args) {
-		new HelpFormatter().printHelp(80, usage, 
-				"[cmd] is one of "+getCommandNames()+"\nOptions:", 
-				options, null);
+	public String getOptionHelp() {
+		String marker="XXXMARKERXXX";
+		StringWriter buffer=new StringWriter();
+		new HelpFormatter().printHelp(new PrintWriter(buffer), 80, "dummy", 
+				marker,	options, 8, 0, null);
+		String result = buffer.toString();
+		result = result.substring(result.indexOf(marker)+marker.length());
+		return result;
+	}
+	
+	@Override public String getHelp() {
+		return super.getHelp()+"\nPossible options:"+getOptionHelp();
 	}
 	
 	@Override public void run(String[] args) {
@@ -78,7 +97,7 @@ public class CaasMainCommand extends CompositeCommand {
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
 		if (env.hasOption("help")) {
-			printHelp(args);
+			help.run(args);
 			return;
 		}
 

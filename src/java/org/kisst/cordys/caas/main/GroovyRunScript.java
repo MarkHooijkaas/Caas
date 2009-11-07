@@ -15,12 +15,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 package org.kisst.cordys.caas.main;
 
-public interface Command {
-	public void run(String[] args);
-	public String getUsage();
-	public String getHelp();
+import org.kisst.cordys.caas.util.ReflectionUtil;
+
+public class GroovyRunScript extends CommandBase {
+	public GroovyRunScript() {	super("<script> [arg ...]"); }
+
+	public void run(String[] args) {
+		String filename=args[0];
+		Environment.get().info("Running "+filename);
+		Class<?> clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");
+		ReflectionUtil.invoke(clz, null, "main", new Object[]{args});
+	}
 }

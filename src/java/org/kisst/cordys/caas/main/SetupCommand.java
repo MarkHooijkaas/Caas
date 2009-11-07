@@ -25,17 +25,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class SetupCommand extends CommandBase{
+public class SetupCommand extends  CompositeCommand {
 
-	@Override public void run(String args[]) {
-		System.setProperty("java.net.useSystemProxies", "true");
+	public SetupCommand() {
+		super("caas setup", "all");
+		commands.put("all", new CommandBase()    { public void run(String args[]) {downloadBase(); downloadGroovy(); downloadJython(); }});
+		commands.put("groovy", new CommandBase() { public void run(String args[]) {downloadBase(); downloadGroovy(); }});
+		commands.put("jython", new CommandBase() { public void run(String args[]) {downloadBase(); downloadJython(); }});
+		commands.put("pm", new CommandBase()     { public void run(String args[]) {downloadBase(); }});
+	}
+
+	public void runold(String args[]) {
 		String libdir = getLibDir();
+		System.setProperty("java.net.useSystemProxies", "true");
 		System.out.println("Downloading necessary jar files to "+libdir);
 		File d=new File(libdir);
 		if (!d.exists()) {
 			System.out.println("Making new directory "+libdir);
 			d.mkdir();
 		}
+	}
+	
+	public void downloadBase() {
+		String libdir = getLibDir();
 		// httpclient and necessary files
 		download(libdir+"commons-httpclient-3.1.jar", "http://repo2.maven.org/maven2/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar");
 		download(libdir+"commons-logging-1.0.4.jar", "http://repo2.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar");
@@ -44,11 +56,17 @@ public class SetupCommand extends CommandBase{
 		// log4j and jdom
 		download(libdir+"log4j-1.2.13.jar", "http://repo2.maven.org/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar");
 		download(libdir+"jdom-1.0.jar", "http://repo2.maven.org/maven2/jdom/jdom/1.0/jdom-1.0.jar");
+	}
 
+	public void downloadGroovy() {
+		String libdir = getLibDir();
 		// groovy and files for interactive shell
 		download(libdir+"groovy-all-1.6.5.jar", "http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.6.5/groovy-all-1.6.5.jar");
 		download(libdir+"commons-cli-1.2.jar", "http://repo1.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar");
 		download(libdir+"jline-0.9.94.jar", "http://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94.jar");
+	}
+
+	public void downloadJython() {
 	}
 	
 	private static String getLibDir() {
@@ -88,5 +106,4 @@ public class SetupCommand extends CommandBase{
 			if (out!=null) try { out.close(); } catch (IOException e) {	/* ignore */ }
 		}
 	}
-
 }

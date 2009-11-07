@@ -22,16 +22,19 @@ package org.kisst.cordys.caas.main;
 
 
 abstract public class CommandBase implements Command {
+	private String usage;
+	
+	public CommandBase() { this.usage="";}
+	public CommandBase(String usage) { this.usage=usage;}
 	abstract public void run(String[] args);
 	
-	public void printHelp(String[] args) {
-		System.out.println("TODO");
-	}
+	public String getUsage() { return usage; }
+	public String getHelp()  { return usage;}
 
-	protected void checkHelp(String[] args) {
+	public void checkHelp(String prefix, String[] args) {
 		if (args.length==0)
 			return;
 		if(args[0].equals("help") || args[0].equals("--help"))
-			printHelp(args);
+			System.out.println(getHelp());
 	}
 }

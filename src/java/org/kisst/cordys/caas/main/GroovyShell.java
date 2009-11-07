@@ -21,21 +21,10 @@ package org.kisst.cordys.caas.main;
 
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
-public class GroovyCaasShell implements Command {
+public class GroovyShell extends CommandBase {
+	public GroovyShell() { super(); }
+
 	public void run(String[] args) {
-		int i=0;
-		String filename=null;
-		while (i<args.length) {
-			filename=args[i];
-			i++;
-		}
-		if (filename==null)
-			runShell(args);
-		else
-			runFile(args);
-	}
-	
-	private static void runShell(String[] args) {
 		int code=0;
 		SecurityManager psm = null;
 		try {
@@ -48,14 +37,6 @@ public class GroovyCaasShell implements Command {
 		finally {
 			System.setSecurityManager(psm);
 		}
-		System.exit(code);
-	}
-
-	private static void runFile(String[] args) {
-		System.out.println("Running "+args[0]);
-		int code=0;
-		Class<?> clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");
-		ReflectionUtil.invoke(clz, null, "main", new Object[]{args});
 		System.exit(code);
 	}
 }

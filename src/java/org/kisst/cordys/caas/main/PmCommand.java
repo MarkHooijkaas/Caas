@@ -23,20 +23,20 @@ import org.kisst.cordys.caas.Caas;
 
 
 public class PmCommand extends CompositeCommand {
-	private Command check=new Command() {
+	private Command check=new CommandBase() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			boolean result=Caas.pm.p(args[0]).check(env.getSystem());
 			System.out.println(result);
 		}
 	};
-	private Command configure=new Command() {
+	private Command configure=new CommandBase() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			Caas.pm.p(args[0]).configure(env.getSystem());
 		}
 	};
-	private Command purge=new Command() {
+	private Command purge=new CommandBase() {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			Caas.pm.p(args[0]).purge(env.getSystem());
@@ -44,7 +44,7 @@ public class PmCommand extends CompositeCommand {
 	};
 	
 	public PmCommand() {
-		super("caas [options] pm <cmd> [suboptions]", null); 
+		super("caas pm"); 
 		//options.addOption("o", "org", true, "override the default organization");
 		commands.put("check", check);
 		commands.put("configure", configure);
