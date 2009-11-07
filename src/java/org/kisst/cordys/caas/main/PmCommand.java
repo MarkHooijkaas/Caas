@@ -23,20 +23,20 @@ import org.kisst.cordys.caas.Caas;
 
 
 public class PmCommand extends CompositeCommand {
-	private Command check=new CommandBase() {
+	private Command check=new CommandBase("<file.caasii|isvpname>", "validates the given install info") {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			boolean result=Caas.pm.p(args[0]).check(env.getSystem());
 			System.out.println(result);
 		}
 	};
-	private Command configure=new CommandBase() {
+	private Command configure=new CommandBase("<file.caasii|isvpname>", "installs the given isvp") {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			Caas.pm.p(args[0]).configure(env.getSystem());
 		}
 	};
-	private Command purge=new CommandBase() {
+	private Command purge=new CommandBase("<file.caasii|isvpname>", "removes the given isvp") {
 		public void run(String[] args) {
 			Environment env=Environment.get();
 			Caas.pm.p(args[0]).purge(env.getSystem());
@@ -44,7 +44,7 @@ public class PmCommand extends CompositeCommand {
 	};
 	
 	public PmCommand() {
-		super("caas pm"); 
+		super("caas pm","run a caas package manager command"); 
 		//options.addOption("o", "org", true, "override the default organization");
 		commands.put("check", check);
 		commands.put("configure", configure);

@@ -22,14 +22,18 @@ package org.kisst.cordys.caas.main;
 
 
 abstract public class CommandBase implements Command {
-	private String usage;
+	private final String usage;
+	private final String summary;
 	
-	public CommandBase() { this.usage="";}
-	public CommandBase(String usage) { this.usage=usage;}
+	public CommandBase(String usage, String summary) { 
+		this.usage=usage;
+		this.summary=summary;
+	}
 	abstract public void run(String[] args);
 	
-	public String getUsage() { return usage; }
-	public String getHelp()  { return usage;}
+	public String getSyntax() { return usage; }
+	public String getHelp()  { return null;}
+	public String getSummary(){ return summary;}
 
 	public void checkHelp(String prefix, String[] args) {
 		if (args.length==0)

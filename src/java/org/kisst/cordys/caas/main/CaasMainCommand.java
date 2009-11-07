@@ -29,7 +29,7 @@ import org.kisst.cordys.caas.Caas;
 public class CaasMainCommand extends CompositeCommand {
 	private class GroovyCommand extends CompositeCommand {
 		public GroovyCommand() {
-			super("caas groovy");
+			super("caas groovy","run either a interactive groovy shell or a groovy script");
 			this.commands.put("run", new GroovyRunScript());
 			this.commands.put("shell", new GroovyShell());
 		}
@@ -39,7 +39,7 @@ public class CaasMainCommand extends CompositeCommand {
 	protected final Options options = new Options();
 
 	public CaasMainCommand() {
-		super("caas"); 
+		super("caas","run any of the caas subcommands"); 
 		commands.put("shell", new GroovyShell());
 		commands.put("run", new GroovyRunScript());
 		commands.put("pm", new PmCommand());
@@ -54,7 +54,7 @@ public class CaasMainCommand extends CompositeCommand {
 		options.addOption(null, "version", false, "show the version information");
 	}
 
-	public String getUsage() { return "[options] "+super.getUsage();}
+	public String getSyntax() { return "[options] "+super.getSyntax();}
 
 	protected static String[] subArgs(String[] args, int pos) {
 		String result[]= new String[args.length-pos];
@@ -74,7 +74,7 @@ public class CaasMainCommand extends CompositeCommand {
 	}
 	
 	@Override public String getHelp() {
-		return super.getHelp()+"\nPossible options:"+getOptionHelp();
+		return super.getHelp()+"\nOPTIONS	"+getOptionHelp();
 	}
 	
 	@Override public void run(String[] args) {

@@ -22,7 +22,7 @@ package org.kisst.cordys.caas.main;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
 public class GroovyRunScript extends CommandBase {
-	public GroovyRunScript() {	super("<script> [arg ...]"); }
+	public GroovyRunScript() {	super("<script> [arg ...]", "runs a groovy script"); }
 
 	public void run(String[] args) {
 		String filename=args[0];

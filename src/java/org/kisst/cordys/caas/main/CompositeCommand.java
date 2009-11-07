@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 
 abstract public class CompositeCommand implements Command {
 	private class HelpCommand extends CommandBase {
-		HelpCommand() {super("[<subcmd>]"); }
+		HelpCommand() {super("[<subcmd> ...]","show help about this command or one of it's subcommands"); }
 		public void run(String[] args) { 
 			Command cmd=CompositeCommand.this;
 			String prefix=CompositeCommand.this.prefix;
@@ -38,8 +38,11 @@ abstract public class CompositeCommand implements Command {
 				cmd=cmd2;
 				index++;
 			}
-			System.out.println("Usage: "+prefix+" "+cmd.getUsage()); 
-			System.out.println(cmd.getHelp()); 
+			System.out.println("NAME\n\t"+prefix+" - "+cmd.getSummary()); 
+			System.out.println("\nSYNOPSIS\n\t"+prefix+" "+cmd.getSyntax()); 
+			String help=cmd.getHelp();
+			if (help!=null)
+				System.out.println(help); 
 		}
 	}
 	
@@ -47,16 +50,18 @@ abstract public class CompositeCommand implements Command {
 	private final String defaultCommand;
 	//private final CompositeCommand parent;
 	private final String prefix;
+	private final String summary;
 	protected final Command help=new HelpCommand();
 	
-	public CompositeCommand(String prefix) { this(prefix,"help"); }
-	public CompositeCommand(String prefix,String defaultCommand) {
-		this.defaultCommand=defaultCommand;
+	public CompositeCommand(String prefix, String summary) { this(prefix,summary, "help"); }
+	public CompositeCommand(String prefix, String summary, String defaultCommand) {
 		this.prefix=prefix;
+		this.summary=summary;
+		this.defaultCommand=defaultCommand;
 		commands.put("help", help);
 	}
 
-	public String getUsage() {
+	public String getSyntax() {
 		String commandNames="";
 		for (String c: commands.keySet())
 			commandNames+="|"+c;
@@ -64,11 +69,12 @@ abstract public class CompositeCommand implements Command {
 
 	}
 
+	public String getSummary() { return summary; }
 	public String getHelp() {
-		StringBuilder result=new StringBuilder("\nUse any of the following commands:\n");
+		StringBuilder result=new StringBuilder("\nCOMMANDS\n");
 		for (Entry<String,Command> entry: commands.entrySet()) {
 			Command cmd=entry.getValue();
-			result.append("\t"+prefix+" "+entry.getKey()+" "+cmd.getUsage()+"\n");
+			result.append("\t"+prefix+" "+entry.getKey()+" "+cmd.getSyntax()+"\n");
 		}
 		return result.toString();
 	}

@@ -21,6 +21,7 @@ package org.kisst.cordys.caas.main;
 
 public interface Command {
 	public void run(String[] args);
-	public String getUsage();
+	public String getSyntax();
 	public String getHelp();
+	public String getSummary();
 }

@@ -22,7 +22,7 @@ package org.kisst.cordys.caas.main;
 import org.kisst.cordys.caas.util.ReflectionUtil;
 
 public class GroovyShell extends CommandBase {
-	public GroovyShell() { super(); }
+	public GroovyShell() { super("", "start a groovy shell"); }
 
 	public void run(String[] args) {
 		int code=0;
