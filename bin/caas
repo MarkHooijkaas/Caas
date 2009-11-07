@@ -1,25 +1,6 @@
 #!/bin/sh
-#CLASSPATH=build/classes/:lib/log4j-1.2.13.jar:lib/commons-httpclient-3.1.jar:lib/commons-logging-1.0.4.jar:lib/commons-codec-1.2.jar:lib/jdom-1.0.jar groovy $*
-
-
-STARTER=org.codehaus.groovy.tools.GroovyStarter
 
 JAVA_EXE=java
-JAVA_OPTS="-Xmx128m"
+JAVA_OPTS="-Xmx256m"
 
-CLASS=org.codehaus.groovy.tools.shell.Main
-CP=build/classes/
-CP=${CP}:lib/groovy-all-1.6.5.jar
-CP=${CP}:lib/log4j-1.2.13.jar
-CP=${CP}:lib/commons-httpclient-3.1.jar
-CP=${CP}:lib/commons-logging-1.0.4.jar
-CP=${CP}:lib/commons-codec-1.2.jar
-CP=${CP}:lib/jdom-1.0.jar
-CP=${CP}:lib/commons-cli-1.2.jar
-CP=${CP}:lib/jline-0.9.94.jar
-
-CMD_LINE_ARGS=$*
-
-export CLASSPATH=${CP}
-echo ${JAVA_EXE} -Dscript.name=init.groovy ${JAVA_OPTS}  ${STARTER} --main ${CLASS} ${CMD_LINE_ARGS}
-${JAVA_EXE} -Dscript.name=init.groovy ${JAVA_OPTS} ${STARTER} --main ${CLASS} ${CMD_LINE_ARGS}
+${JAVA_EXE} ${JAVA_OPTS} -jar `dirname $0`/../caas.jar $*
