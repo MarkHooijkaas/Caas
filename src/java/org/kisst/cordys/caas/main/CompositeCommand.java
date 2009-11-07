@@ -29,12 +29,14 @@ abstract public class CompositeCommand implements Command {
 		public void run(String[] args) { 
 			Command cmd=CompositeCommand.this;
 			String prefix=CompositeCommand.this.prefix;
-			if (args.length>0) {
-				Command cmd2=commands.get(args[0]);
-				if (cmd2!=null) {
-					prefix+=" "+args[0];
-					cmd=cmd2;
-				}
+			int index=0;
+			while (args.length>index && cmd instanceof CompositeCommand) {
+				Command cmd2=((CompositeCommand)cmd).commands.get(args[index]);
+				if (cmd2==null)
+					break;
+				prefix+=" "+args[index];
+				cmd=cmd2;
+				index++;
 			}
 			System.out.println("Usage: "+prefix+" "+cmd.getUsage()); 
 			System.out.println(cmd.getHelp()); 
