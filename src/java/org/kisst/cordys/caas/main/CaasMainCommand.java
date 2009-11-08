@@ -47,6 +47,7 @@ public class CaasMainCommand extends CompositeCommand {
 		commands.put("run", new GroovyRunScript());
 		commands.put("pm", new PmCommand());
 		commands.put("groovy", new GroovyCommand());
+		commands.put("log", new LogCommand());
 		commands.put("setup", new SetupCommand());
 		
 		options.addOption("q", "quiet", false, "don't output anything unless errors happen");
