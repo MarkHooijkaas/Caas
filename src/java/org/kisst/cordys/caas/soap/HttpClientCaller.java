@@ -33,16 +33,12 @@ import org.kisst.cordys.caas.main.Environment;
 
 public class HttpClientCaller extends BaseCaller {
 	private final HttpClient client = new HttpClient();
-	private final String username;
-	private final String password;
 	private final String ntlmhost;
 	private final String ntlmdomain;
 
 	public HttpClientCaller(String name)
 	{
 		super(name);
-		username   = Environment.get().getProp("system."+name+".gateway.username", null);
-		password   = Environment.get().getProp("system."+name+".gateway.password", null);
 		ntlmhost   = Environment.get().getProp("system."+name+".gateway.ntlmhost", null);
 		ntlmdomain = Environment.get().getProp("system."+name+".gateway.ntlmdomain", null);
 		if (ntlmdomain==null)
@@ -52,7 +48,7 @@ public class HttpClientCaller extends BaseCaller {
 
 	}
 
-	@Override public String doCall(String url, String input) {
+	@Override public String httpCall(String url, String input) {
 		//System.out.println(url);	
 		PostMethod method=new PostMethod(url);
 		method.setDoAuthentication(true);

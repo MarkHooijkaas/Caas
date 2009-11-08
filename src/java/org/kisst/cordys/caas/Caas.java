@@ -29,6 +29,8 @@ import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.pm.PackageManager;
 import org.kisst.cordys.caas.soap.DummyCaller;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
+import org.kisst.cordys.caas.soap.NativeCaller;
+import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.util.FileUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -87,21 +89,27 @@ public class Caas {
 		if (result!=null)
 			return result;
 		Environment env=Environment.get();
-		String url=env.getProp("system."+name+".gateway.url", null);
-		if (url==null)
-			throw new RuntimeException("No url configured in property system."+name+".gateway.url");
+		String classname=env.getProp("system."+name+".gateway.class", null);
 		try {
 			System.out.print("Connecting to system "+name+" ... ");
-			HttpClientCaller caller = new HttpClientCaller(name);
+			SoapCaller caller;
+			if (classname==null || classname.equals("HttpClientCaller"))
+				caller = new HttpClientCaller(name);
+			else if (classname.equals("NativeCaller"))
+				caller=new NativeCaller(name);
+			else
+				throw new RuntimeException("Unknown SoapCaller class "+classname);
 			result = new CordysSystem(name, caller);
 			System.out.println("OK");
 			return result;
 		}
 		catch (Exception e) {
-			// Catch any exceptions so it won't be a problem if anything fails in the Startup script
-			if (! (e.getCause() instanceof ConnectException))
-				e.printStackTrace();
 			System.out.println("FAILED");
+			// Catch any exceptions so it won't be a problem if anything fails in the Startup script
+			//if (! (e.getCause() instanceof ConnectException))
+			if (Environment.get().debug)
+				e.printStackTrace();
+			Environment.get().error(e.getMessage());
 			return null;
 		}		
 	}

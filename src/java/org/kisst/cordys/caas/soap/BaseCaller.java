@@ -23,24 +23,27 @@ import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public abstract class BaseCaller implements SoapCaller {
-	private final String baseurl;
+	protected final String baseurl;
+	protected final String username;
+	protected final String password;
 
-	protected abstract String doCall(String url, String input);
+	public abstract String httpCall(String url, String input);
 
 	public BaseCaller(String name)
 	{
 		String url =(String) Environment.get().getProp("system."+name+".gateway.url", null);
 		if (url==null)
-			throw new RuntimeException("unknown system "+name);
+			throw new RuntimeException("No url configured in property system."+name+".gateway.url");
 		int pos=url.indexOf("?");
 		if (pos>0)
 			baseurl=url.substring(0,pos);
 		else
 			baseurl=url;
-
+		username   = Environment.get().getProp("system."+name+".gateway.username", null);
+		password   = Environment.get().getProp("system."+name+".gateway.password", null);
 	}
 
-	public String httpCall(String input, String org, String processor) {
+	private String httpCall(String input, String org, String processor) {
 		String url=baseurl;
 		if (org!=null)
 			url += "?organization="+org;
@@ -50,7 +53,7 @@ public abstract class BaseCaller implements SoapCaller {
 			else
 				url += "&processor="+processor;
 		}
-		return doCall(url, input);
+		return httpCall(url, input);
 	}
 
 

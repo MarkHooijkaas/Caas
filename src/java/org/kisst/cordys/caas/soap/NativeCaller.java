@@ -32,9 +32,15 @@ import org.kisst.cordys.caas.main.Environment;
 
 public class NativeCaller extends BaseCaller {
 	private static class MyAuthenticator extends Authenticator {
+		private String username=null;
+		private String password=null;
 		private MyAuthenticator () { Authenticator.setDefault(this); }
+		public void setCredentials(String username, String password) {
+			this.username=username;
+			this.password=password;
+		}
 		@Override public PasswordAuthentication getPasswordAuthentication() {
-			Environment.get().warn("getPasswordAuthentication"
+			Environment.get().debug("getPasswordAuthentication"
 					+"\n\t"+this.getRequestingHost()
 					+"\n\t"+this.getRequestingPort()
 					+"\n\t"+this.getRequestingPrompt()
@@ -44,7 +50,10 @@ public class NativeCaller extends BaseCaller {
 					+"\n\t"+this.getRequestingURL()
 					+"\n\t"+this.getRequestorType()
 			);
-			return super.getPasswordAuthentication();
+			if (username!=null)
+				return new PasswordAuthentication(username, password.toCharArray());
+			else
+				return super.getPasswordAuthentication();
 		}
 	}
 	protected static final MyAuthenticator myAuthenticator = new MyAuthenticator();
@@ -52,7 +61,7 @@ public class NativeCaller extends BaseCaller {
 
 	public NativeCaller(String name) { super(name); }
 
-	@Override protected String doCall(String urlstr, String input) {
+	@Override public String httpCall(String urlstr, String input) {
 		try {
 			URL url=new URL(urlstr);
 			HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
@@ -66,6 +75,9 @@ public class NativeCaller extends BaseCaller {
 			httpConn.setDoOutput(true);
 			httpConn.setDoInput(true);
 
+			// Dangerous in multithreaded environments
+			myAuthenticator.setCredentials(username, password);
+			
 			OutputStream out = httpConn.getOutputStream();
 			out.write( b );    
 			out.close();
