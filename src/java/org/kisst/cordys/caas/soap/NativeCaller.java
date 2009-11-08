@@ -27,7 +27,6 @@ import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.Properties;
 
 import org.kisst.cordys.caas.main.Environment;
 
@@ -51,7 +50,7 @@ public class NativeCaller extends BaseCaller {
 	protected static final MyAuthenticator myAuthenticator = new MyAuthenticator();
 	
 
-	public NativeCaller(Properties props) { super(props); }
+	public NativeCaller(String name) { super(name); }
 
 	@Override protected String doCall(String urlstr, String input) {
 		try {

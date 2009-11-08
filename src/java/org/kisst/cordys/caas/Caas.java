@@ -22,6 +22,7 @@ package org.kisst.cordys.caas;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import org.kisst.cordys.caas.main.Environment;
@@ -79,9 +80,31 @@ public class Caas {
 		} catch (IOException e) { throw new RuntimeException(e);}
 		return props.getProperty("project.version");
 	}
-	
-	public static boolean getDebug() { return Environment.get().debug; }
-	public static void setDebug(boolean value) { Environment.get().debug=value; }
-	
+
+	private static LinkedHashMap<String, CordysSystem> systemCache = new LinkedHashMap<String, CordysSystem>();
+	public static CordysSystem getSystem(String name) {
+		CordysSystem result=systemCache.get(name);
+		if (result!=null)
+			return result;
+		Environment env=Environment.get();
+		String url=env.getProp("system."+name+".gateway.url", null);
+		if (url==null)
+			throw new RuntimeException("No url configured in property system."+name+".gateway.url");
+		try {
+			System.out.print("Connecting to system "+name+" ... ");
+			HttpClientCaller caller = new HttpClientCaller(name);
+			result = new CordysSystem(name, caller);
+			System.out.println("OK");
+			return result;
+		}
+		catch (Exception e) {
+			// Catch any exceptions so it won't be a problem if anything fails in the Startup script
+			if (! (e.getCause() instanceof ConnectException))
+				e.printStackTrace();
+			System.out.println("FAILED");
+			return null;
+		}		
+	}
+	public static CordysSystem getDefaultSystem() { return null; } // TODO
 	public final static PackageManager pm=new PackageManager();
 }

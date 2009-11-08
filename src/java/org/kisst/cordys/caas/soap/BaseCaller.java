@@ -19,8 +19,6 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.soap;
 
-import java.util.Properties;
-
 import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.util.XmlNode;
 
@@ -29,9 +27,11 @@ public abstract class BaseCaller implements SoapCaller {
 
 	protected abstract String doCall(String url, String input);
 
-	public BaseCaller(Properties props)
+	public BaseCaller(String name)
 	{
-		String url =(String) props.get("cordys.gateway.url");
+		String url =(String) Environment.get().getProp("system."+name+".gateway.url", null);
+		if (url==null)
+			throw new RuntimeException("unknown system "+name);
 		int pos=url.indexOf("?");
 		if (pos>0)
 			baseurl=url.substring(0,pos);

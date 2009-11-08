@@ -22,8 +22,11 @@ package org.kisst.cordys.caas.main;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.kisst.cordys.caas.Caas;
 
 public class CaasMainCommand extends CompositeCommand {
@@ -77,18 +80,24 @@ public class CaasMainCommand extends CompositeCommand {
 		return super.getHelp()+"\nOPTIONS	"+getOptionHelp();
 	}
 	
-	@Override public void run(String[] args) {
-		args=Environment.get().parse(options, args);
-		Environment env=Environment.get();
-		env.setSystem(env.getOptionValue("cop"));
 
-		if (env.hasOption("debug"))
+	@Override public void run(String[] args) {
+		CommandLine cmdline;
+		try {
+			cmdline = new PosixParser().parse( options, args, true);
+		} catch (ParseException e) { throw new RuntimeException(e); }
+		args=cmdline.getArgs();
+		Environment env=Environment.get();
+		//env.setSystem(cmdline.getOptionValue("cop"));
+		initEnvironment();
+
+		if (cmdline.hasOption("debug"))
 			env.debug=true;
-		if (env.hasOption("verbose"))
+		if (cmdline.hasOption("verbose"))
 			env.verbose=true;
-		if (env.hasOption("quiet"))
+		if (cmdline.hasOption("quiet"))
 			env.quiet=true;
-		if (env.hasOption("version")) {
+		if (cmdline.hasOption("version")) {
 			System.out.println(Caas.getVersion());
 			return;
 		}
@@ -96,11 +105,17 @@ public class CaasMainCommand extends CompositeCommand {
 		if (! env.quiet)
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
-		if (env.hasOption("help")) {
+		if (cmdline.hasOption("help")) {
 			help.run(args);
 			return;
 		}
 
 		super.run(args);
+	}
+
+	private void initEnvironment() {
+		String homedir=System.getProperty("user.home");
+		String filename=homedir+"/config/caas/caas.conf";
+		Environment.get().loadProperties(filename);
 	}
 }

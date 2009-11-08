@@ -19,12 +19,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.kisst.cordys.caas.Caas;
-import org.kisst.cordys.caas.CordysSystem;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class Environment {
 	private final static Environment singleton=new Environment();
@@ -34,21 +30,7 @@ public class Environment {
 	public boolean debug=false;
 	public boolean quiet=false;
 	public boolean verbose=false;
-	private CordysSystem system;
-	private CommandLine cmdline;
-	private String copfile;
-	
-	
-	public void setSystem(String copfile) { this.copfile=copfile; }
-	public CordysSystem getSystem() {
-		if (system!=null)
-			return system;
-		if (copfile==null)
-			copfile=System.getProperty("user.home")+"/config/caas/default.cop";
-		info(copfile);
-		system=Caas.connect(copfile);
-		return system;
-	}
+	private Properties props=new Properties();
 	
 	private void log(String type, String msg){ System.out.println(type+" "+msg);}
 	public void debug(String msg) { if (debug   && ! quiet) log("DEBUG",msg); }
@@ -56,14 +38,21 @@ public class Environment {
 	public void warn(String msg)  { if (! quiet) log("WARN ", msg); }
 	public void error(String msg)  { log("ERROR", msg); }
 	
-	
-	public boolean hasOption(String name) { return cmdline.hasOption(name); }
-	public String getOptionValue(String name) { return cmdline.getOptionValue(name); }
-	
-	public String[] parse(Options options, String[] args) {
+	public String getProp(String key, String defaultValue) { return props.getProperty(key, defaultValue); }
+	public void loadProperties(String filename) {
+		props.clear();
+		FileInputStream inp = null;
 		try {
-			cmdline = new PosixParser().parse( options, args, true);
-		} catch (ParseException e) { throw new RuntimeException(e); }
-		return cmdline.getArgs();
+			inp =new FileInputStream(filename);
+			props.load(inp);
+		} 
+		catch (java.io.IOException e) { throw new RuntimeException(e);  }
+		finally {
+			try {
+				if (inp!=null) 
+					inp.close();
+			}
+			catch (java.io.IOException e) { throw new RuntimeException(e);  }
+		}
 	}
 }
