@@ -54,6 +54,7 @@ public class SetupCommand extends  CompositeCommand {
 	}
 	
 	public void downloadBase() {
+		System.setProperty("java.net.useSystemProxies", "true");
 		String libdir = getLibDir();
 		// httpclient and necessary files
 		download(libdir+"commons-httpclient-3.1.jar", "http://repo2.maven.org/maven2/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar");
