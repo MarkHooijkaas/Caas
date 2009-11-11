@@ -29,4 +29,13 @@ public class Connector extends CordysXmlObject {
 	@Override public String getName() { return getData().getChildText("step/description"); }
 	public String getImplementation() { return getData().getChildText("step/implementation"); }
 	@Override protected String prefix() { return "conn"; }
+
+	@Override public String toString() { return getVarName(); }
+	@Override public String getVarName() {
+		String name=getName();
+		if (name.indexOf(" ")>=0 || name.indexOf('.')>=0)
+			return getSystem().getVarName()+".conn.\""+getName()+"\"";
+		else
+			return getSystem().getVarName()+".conn."+getName();
+	}
 }

@@ -36,7 +36,8 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public String getName() { return null; } 
 	abstract public String getVarName();
 	protected String prefix() { return ""; }
-
+	@Override public String toString() { return getVarName(); }
+	
 	abstract public String getKey(); 
 
 	public int compareTo(CordysObject other) {
