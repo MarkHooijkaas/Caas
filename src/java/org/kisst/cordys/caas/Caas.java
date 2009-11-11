@@ -113,8 +113,11 @@ public class Caas {
 			return null;
 		}		
 	}
+	public static String defaultSystem=null;
 	public static CordysSystem getDefaultSystem() {
-		return getSystem(Environment.get().getProp("caas.defaultSystem", "default"));
+		if (defaultSystem==null)
+			defaultSystem=Environment.get().getProp("caas.defaultSystem", "default");
+		return getSystem(defaultSystem);
 	}
 
 	public final static PackageManager pm=new PackageManager();

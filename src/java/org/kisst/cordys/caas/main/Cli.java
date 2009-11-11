@@ -40,12 +40,14 @@ public class Cli {
 			super(shortName, longName, desc, defaultValue);
 		}
 		public String get() { return (String) value; }
+		@Override public String getNames() { return super.getNames()+" <str>"; }
 	}
 	public class BooleanOption extends Option {
 		private BooleanOption(String shortName, String longName, String desc, boolean defaultValue) {
 			super(shortName, longName, desc, ""+defaultValue);
 		}
 		public boolean get() { return Boolean.getBoolean((String) value); }
+		@Override public String getNames() { return super.getNames()+" <bool>"; }
 	}
 	public class Flag extends Option {
 		private Flag(String shortName, String longName, String desc) { 

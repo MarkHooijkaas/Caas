@@ -23,16 +23,32 @@ import org.kisst.cordys.caas.Caas;
 
 
 public class PmCommand extends CompositeCommand {
-	private Command check=new CommandBase("<file.caasii|isvpname>", "validates the given install info") {
+	private abstract class HostCommand extends CommandBase {
+		public HostCommand(String usage, String summary) { super(usage, summary); }
+		Cli cli=new Cli();
+		Cli.StringOption system= cli.stringOption("s", "system", "the system to use", null);
+		protected String[] checkArgs(String[] args) {
+			args=cli.parse(args);
+			if (system.isSet())
+				Caas.defaultSystem=system.get();
+			return args;
+		}
+		@Override public String getHelp() {
+			return "\nOPTIONS\n"+cli.getSyntax("\t");
+		}
+	}
+	
+	private Command check=new HostCommand("[options] <file.caasii|isvpname>", "validates the given install info") {
 		@Override public void run(String[] args) {
+			args=checkArgs(args);
 			boolean result=Caas.pm.p(args[0]).check(Caas.getDefaultSystem());
 			System.out.println(result);
 		}
 	};
-	private Command configure=new CommandBase("<file.caasii|isvpname>", "installs the given isvp") {
+	private Command configure=new HostCommand("[options] <file.caasii|isvpname>", "installs the given isvp") {
 		@Override public void run(String[] args) { Caas.pm.p(args[0]).configure(Caas.getDefaultSystem());	}
 	};
-	private Command purge=new CommandBase("<file.caasii|isvpname>", "removes the given isvp") {
+	private Command purge=new HostCommand("[options] <file.caasii|isvpname>", "removes the given isvp") {
 		@Override public void run(String[] args) { Caas.pm.p(args[0]).purge(Caas.getDefaultSystem()); 	}
 	};
 	
