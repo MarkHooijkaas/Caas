@@ -101,4 +101,57 @@ public class Organization extends LdapObjectBase {
 	
 	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getDn()); }
 	public XmlNode getXml(String key) { return getSystem().getXml(key, "organization", getDn()); }
+	
+	
+	public XmlNode deduct(Isvp isvp) { return deduct(isvp, isvp.getName());	}
+	public XmlNode deduct(String isvpName) { return deduct(this, isvpName);	}
+	
+	private XmlNode deduct(LdapObject parent, String isvpName) {
+		XmlNode result=new XmlNode("caaspm");
+		result.setAttribute("isvp", isvpName);
+		result.setAttribute("org", this.getName());
+		for (SoapNode sn : this.soapNodes) {
+			XmlNode node=null;
+			for (MethodSet ms: sn.methodSets) {
+				if (ms.getParent()==parent) {
+					if (node==null) {
+						node=result.add("soapnode");
+						node.setAttribute("name", sn.getName());
+					}
+					XmlNode child=node.add("ms");
+					child.setAttribute("name", ms.getName());
+					child.setAttribute("isvp", isvpName);
+				}
+			}
+		}
+		for (User u : this.users) {
+			XmlNode node=null;
+			for (Role r: u.roles) {
+				if (r.getParent()==parent) {
+					if (node==null) {
+						node=result.add("user");
+						node.setAttribute("name", u.getName());
+					}
+					XmlNode child=node.add("role");
+					child.setAttribute("name", r.getName());
+					child.setAttribute("isvp", isvpName);
+				}
+			}
+		}
+		for (Role rr : this.roles) {
+			XmlNode node=null;
+			for (Role r: rr.roles) {
+				if (r.getParent()==parent) {
+					if (node==null) {
+						node=result.add("role");
+						node.setAttribute("name", rr.getName());
+					}
+					XmlNode child=node.add("role");
+					child.setAttribute("name", r.getName());
+					child.setAttribute("isvp", isvpName);
+				}
+			}
+		}
+		return result;
+	}
 }
