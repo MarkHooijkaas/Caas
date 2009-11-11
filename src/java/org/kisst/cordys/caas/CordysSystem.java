@@ -92,13 +92,12 @@ public class CordysSystem extends LdapObject {
 		this.env=Environment.get();
 		this.name=name;
 		this.caller=caller;
-		XmlNode response=call(new XmlNode("GetVersion",xmlns_monitor));
-		XmlNode header=response.getChild("../../Header/header");
-		String tmp=header.getChildText("sender/component");
+		XmlNode response=call(new XmlNode("GetInstallationInfo",xmlns_monitor));
+		String tmp=response.getChildText("tuple/old/soapprocessorsinfo/processor/dn");
 		String key="cn=soap nodes,o=system,";
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
-		this.version=response.getChildText("version");
-		this.build=response.getChildText("build");
+		this.version=response.getChildText("tuple/old/buildinfo/version");
+		this.build=response.getChildText("tuple/old/buildinfo/build");
 		rememberLdap(this);
 	}
 
