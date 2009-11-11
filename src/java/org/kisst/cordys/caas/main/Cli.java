@@ -27,12 +27,12 @@ public class Cli {
 			return index+2;
 		}
 		public String getNames() {
-			String result="  ";
-			if (shortName!=null)
-				result="-"+shortName;
-			if (longName!=null)
-				result+=",--"+longName;
-			return result;
+			if (longName==null)
+				return "-"+shortName;
+			else if (shortName==null)
+				return "   --"+longName;
+			else
+				return "-"+shortName+",--"+longName;
 		}
 	}
 	public class StringOption extends Option {
@@ -70,7 +70,7 @@ public class Cli {
 		return new BooleanOption(shortName, longName, desc, defaultValue);
 	}
 	public Flag flag(String shortName, String longName, String desc) {
-		return new Flag(shortName, desc, longName);
+		return new Flag(shortName, longName, desc);
 	}
 	
 	public String[] parse(String[] args) { 
@@ -112,7 +112,7 @@ public class Cli {
 			if (opt==last)
 				continue;
 			String name=opt.getNames();
-			while (name.length()<maxlen)
+			while (name.length()<maxlen+5)
 				name+=" ";
 			result.append(prefix+name+"   "+opt.desc+"\n");
 			last=opt;

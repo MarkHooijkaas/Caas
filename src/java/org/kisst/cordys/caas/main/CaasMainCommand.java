@@ -19,14 +19,6 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.kisst.cordys.caas.Caas;
 
 public class CaasMainCommand extends CompositeCommand {
@@ -39,7 +31,13 @@ public class CaasMainCommand extends CompositeCommand {
 	}
 	
 	
-	protected final Options options = new Options();
+	Cli cli=new Cli();
+	Cli.Flag quiet= cli.flag("q", "quiet", "don't output anything unless errors happen");
+	Cli.Flag verbose=cli.flag("v", "verbose", "be verbose about what you are doing");
+	Cli.Flag debug=cli.flag("d", "debug",  "if this option is set debug logging will be shown");
+	//options.addOption("c", "cop", true, "location of a .cop file with connection properties");
+	Cli.Flag showhelp=cli.flag("h", "help", "show this help information");
+	Cli.Flag version = cli.flag(null, "version", "show the version information");
 
 	public CaasMainCommand() {
 		super("caas","run any of the caas subcommands"); 
@@ -49,13 +47,6 @@ public class CaasMainCommand extends CompositeCommand {
 		commands.put("groovy", new GroovyCommand());
 		commands.put("log", new LogCommand());
 		commands.put("setup", new SetupCommand());
-		
-		options.addOption("q", "quiet", false, "don't output anything unless errors happen");
-		options.addOption("v", "verbose", false, "be verbose about what you are doing");
-		options.addOption("d", "debug", false, "if this option is set debug logging will be shown");
-		options.addOption("c", "cop", true, "location of a .cop file with connection properties");
-		options.addOption("h", "help", false, "show this help information");
-		options.addOption(null, "version", false, "show the version information");
 	}
 
 	public String getSyntax() { return "[options] "+super.getSyntax();}
@@ -67,38 +58,24 @@ public class CaasMainCommand extends CompositeCommand {
 		return result;
 	}
 
-	public String getOptionHelp() {
-		String marker="XXXMARKERXXX";
-		StringWriter buffer=new StringWriter();
-		new HelpFormatter().printHelp(new PrintWriter(buffer), 80, "dummy", 
-				marker,	options, 8, 0, null);
-		String result = buffer.toString();
-		result = result.substring(result.indexOf(marker)+marker.length());
-		return result;
-	}
-	
 	@Override public String getHelp() {
-		return super.getHelp()+"\nOPTIONS	"+getOptionHelp();
+		return super.getHelp()+"\nOPTIONS\n"+cli.getSyntax("\t");
 	}
 	
 
 	@Override public void run(String[] args) {
-		CommandLine cmdline;
-		try {
-			cmdline = new PosixParser().parse( options, args, true);
-		} catch (ParseException e) { throw new RuntimeException(e); }
-		args=cmdline.getArgs();
+		args=cli.parse(args);
 		Environment env=Environment.get();
 		//env.setSystem(cmdline.getOptionValue("cop"));
 		initEnvironment();
 
-		if (cmdline.hasOption("debug"))
+		if (debug.isSet())
 			env.debug=true;
-		if (cmdline.hasOption("verbose"))
+		if (verbose.isSet())
 			env.verbose=true;
-		if (cmdline.hasOption("quiet"))
+		if (quiet.isSet())
 			env.quiet=true;
-		if (cmdline.hasOption("version")) {
+		if (version.isSet()) {
 			System.out.println(Caas.getVersion());
 			return;
 		}
@@ -106,11 +83,10 @@ public class CaasMainCommand extends CompositeCommand {
 		if (! env.quiet)
 			System.out.println("caas: Cordys Administration Automation Scripting, version "+Caas.getVersion());
 
-		if (cmdline.hasOption("help")) {
+		if (showhelp.isSet()) {
 			help.run(args);
 			return;
 		}
-
 		super.run(args);
 	}
 
