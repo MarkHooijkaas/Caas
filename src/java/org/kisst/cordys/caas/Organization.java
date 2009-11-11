@@ -154,4 +154,41 @@ public class Organization extends LdapObjectBase {
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CordysObjectList<LdapObject> seek(final Role target) {
+		return new CordysObjectList(getSystem()) {
+			@Override protected void retrieveList() {
+				for (User u : users) {
+					for (Role r: u.roles) {
+						if (r==target)
+							grow(u);
+					}
+				}
+				for (Role rr : roles) {
+					for (Role r: rr.roles) {
+						if (r==target) 
+							grow(rr);
+					}
+				}
+			}
+			@Override public String getKey() { return Organization.this.getKey()+":seek("+target+")";}
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	public CordysObjectList<SoapNode> seek(final MethodSet target) {
+		return new CordysObjectList(getSystem()) {
+			@Override protected void retrieveList() {
+				for (SoapNode sn : soapNodes) {
+					for (MethodSet ms: sn.methodSets) {
+						if (ms==target)
+							grow(sn);
+					}
+				}
+			}
+			@Override public String getKey() { return Organization.this.getKey()+":seek("+target+")";}
+		};
+	}
+
 }

@@ -174,4 +174,30 @@ public class CordysSystem extends LdapObject {
 		XmlNode response = caller.call(method, organization, null);
 		return response.getChild("tuple/old");
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CordysObjectList<LdapObject> seek(final Role target) {
+		return new CordysObjectList(getSystem()) {
+			@Override protected void retrieveList() {
+				for (Organization org: organizations) {
+					for (LdapObject obj: org.seek(target))
+						grow(obj);
+				}
+			}
+			@Override public String getKey() { return CordysSystem.this.getKey()+":seek("+target+")";}
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	public CordysObjectList<SoapNode> seek(final MethodSet target) {
+		return new CordysObjectList(getSystem()) {
+			@Override protected void retrieveList() {
+				for (Organization org: organizations) {
+					for (LdapObject obj: org.seek(target))
+						grow(obj);
+				}
+			}
+			@Override public String getKey() { return CordysSystem.this.getKey()+":seek("+target+")";}
+		};
+	}
 }
