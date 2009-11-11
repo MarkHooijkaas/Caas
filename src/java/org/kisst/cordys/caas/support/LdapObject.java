@@ -152,8 +152,8 @@ public abstract class LdapObject extends CordysObject {
 
 	@Override public String getVarName() {
 		String name= getName();
-		if (name.indexOf(" ")>=0)
-			return getParent().getVarName()+"."+prefix()+"[\""+name+"\"]";
+		if (name.indexOf(" ")>=0 || name.indexOf('.')>=0)
+			return getParent().getVarName()+"."+prefix()+".\""+name+"\"";
 		else
 			return getParent().getVarName()+"."+prefix()+"."+name;
 	}
