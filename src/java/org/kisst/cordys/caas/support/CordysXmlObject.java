@@ -42,7 +42,7 @@ public class CordysXmlObject extends CordysObject {
 			data=system.getXml(path).getChildren().get(0);
 		return data;
 	}
-	public String toString() {
+	@Override public String toString() {
 		String c=this.getClass().getSimpleName()+"("+getName()+")";
 		if (parent!=null && (parent instanceof LdapObject))
 			c=parent.toString()+"."+c;

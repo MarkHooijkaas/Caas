@@ -51,7 +51,7 @@ public class Cli {
 		private Flag(String shortName, String longName, String desc) { 
 			super(shortName, longName, desc, null);	
 		}
-		public int parse(String[] args, int index) { set("true"); return index+1; }
+		@Override public int parse(String[] args, int index) { set("true"); return index+1; }
 	}
 	
 	

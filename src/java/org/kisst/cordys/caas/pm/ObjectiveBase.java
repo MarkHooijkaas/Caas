@@ -40,7 +40,7 @@ public class ObjectiveBase implements Objective {
 			this.isvpName=node.getAttribute("isvp");
 			this.name=node.getAttribute("name");
 		}
-		public String toString() { return "isvp.\""+isvpName+"\"."+propName+"."+name; } 
+		@Override public String toString() { return "isvp.\""+isvpName+"\"."+propName+"."+name; } 
 		public LdapObject findEntry(Organization org) {
 			CordysSystem system=org.getSystem();
 			LdapObject result=null;

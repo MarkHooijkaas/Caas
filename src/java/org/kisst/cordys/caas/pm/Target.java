@@ -31,7 +31,7 @@ public abstract class Target {
 	abstract boolean exists(Organization org);
 	abstract EntryObjectList<?> getList(Organization org);
 	
-	public String toString() { return name; }
+	@Override public String toString() { return name; }
 	
 	boolean contains(Organization org, LdapObject part) { return getList(org).contains(part); }
 	void         add(Organization org, LdapObject part) { getList(org).add(part); }

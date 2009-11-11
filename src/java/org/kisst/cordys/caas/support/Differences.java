@@ -66,7 +66,7 @@ public class Differences {
 		childs.add(d);
 	}
 	
-	public String toString() { return toString(""); }
+	@Override public String toString() { return toString(""); }
 	public String toString(String prefix) {
 		StringBuilder result=new StringBuilder();
 		toString(result,prefix);

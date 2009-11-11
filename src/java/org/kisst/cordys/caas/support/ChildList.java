@@ -54,10 +54,8 @@ public class ChildList<T extends LdapObject> extends CordysObjectList<T>  {
 		String dn;
 		if (parent instanceof CordysSystem)
 			dn=((CordysSystem) parent).getDn();
-		else if (parent instanceof LdapObject)
-			dn=((LdapObject) parent).getDn();
 		else 
-			throw new RuntimeException("parent "+parent+"of wrong type");
+			dn=parent.getDn();
 		method.add("dn").setText(prefix+dn); 
 		XmlNode response=system.call(method);
 		if (response.getName().equals("Envelope"))

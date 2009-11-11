@@ -24,7 +24,7 @@ import org.kisst.cordys.caas.util.ReflectionUtil;
 public class GroovyRunScript extends CommandBase {
 	public GroovyRunScript() {	super("<script> [arg ...]", "runs a groovy script"); }
 
-	public void run(String[] args) {
+	@Override public void run(String[] args) {
 		String filename=args[0];
 		Environment.get().info("Running "+filename);
 		Class<?> clz = ReflectionUtil.findClass("groovy.ui.GroovyMain");

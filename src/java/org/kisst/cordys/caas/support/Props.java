@@ -43,7 +43,7 @@ public class Props<T> implements Iterable<T> {
 			this.origName=origName;
 			this.value=value;
 		}
-		public String toString() { return value.toString(); }
+		@Override public String toString() { return value.toString(); }
 	}
 
 	public Props(Object target) { this(target, null); }
@@ -97,7 +97,7 @@ public class Props<T> implements Iterable<T> {
 		list.put(name, (T) value);
 	} 
 
-	public String toString() {
+	@Override public String toString() {
 		if (list.size()==0)
 			return "{}";
 		StringBuilder result=new StringBuilder();

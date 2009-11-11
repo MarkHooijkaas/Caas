@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 abstract public class CompositeCommand implements Command {
 	private class HelpCommand extends CommandBase {
 		HelpCommand() {super("[<subcmd> ...]","show help about this command or one of it's subcommands"); }
-		public void run(String[] args) { 
+		@Override public void run(String[] args) { 
 			Command cmd=CompositeCommand.this;
 			String prefix=CompositeCommand.this.prefix;
 			int index=0;

@@ -30,7 +30,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 public abstract class LdapObject extends CordysObject {
 	public abstract class AbstractProperty {
 		abstract public Object get();
-		public String toString() { return ""+get(); }
+		@Override public String toString() { return ""+get(); }
 	}
 	public class StringProperty extends AbstractProperty {
 		private final String path;
@@ -40,7 +40,7 @@ public abstract class LdapObject extends CordysObject {
 			this.startPos=startPos;
 			this.path=path+"/string";
 		}
-		public String get() { 
+		@Override public String get() { 
 			String s= getEntry().getChildText(path);
 			if (s!=null && startPos>0)
 				return s.substring(startPos);
@@ -65,7 +65,7 @@ public abstract class LdapObject extends CordysObject {
 			this.xml=xml;
 			this.path=path;
 		}
-		public String get() {return xml.getXml().getChildText(path); }
+		@Override public String get() {return xml.getXml().getChildText(path); }
 		public void set(String value) {
 			XmlNode newnode=xml.getXml().clone();
 			newnode.setChildText(path, value);
@@ -101,7 +101,7 @@ public abstract class LdapObject extends CordysObject {
 		// TODO: cache this?
 		private final String path;
 		public StringList(String path) {this.path=path;}
-		public List<String> get() { 
+		@Override public List<String> get() { 
 			ArrayList<String> result=new ArrayList<String>();
 			XmlNode start=getEntry().getChild(path);
 			if (start!=null)

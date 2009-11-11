@@ -58,7 +58,7 @@ public class XmlNode {
 
 	}
 	
-	public XmlNode clone() { return new XmlNode((Element) this.element.clone()); }
+	@Override public XmlNode clone() { return new XmlNode((Element) this.element.clone()); }
 	public String getName() {  return element.getName(); }
 	public String getNamespace() {  return element.getNamespace().getURI(); }
 	public String getText() { return element.getText(); }
@@ -121,7 +121,7 @@ public class XmlNode {
 		return new XmlNode(e);
 	}
 	
-	public String toString() {
+	@Override public String toString() {
 		XMLOutputter out=new XMLOutputter();
 		return out.outputString(element);
 	}

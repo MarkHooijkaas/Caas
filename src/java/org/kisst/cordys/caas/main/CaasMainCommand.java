@@ -49,7 +49,7 @@ public class CaasMainCommand extends CompositeCommand {
 		commands.put("setup", new SetupCommand());
 	}
 
-	public String getSyntax() { return "[options] "+super.getSyntax();}
+	@Override public String getSyntax() { return "[options] "+super.getSyntax();}
 
 	protected static String[] subArgs(String[] args, int pos) {
 		String result[]= new String[args.length-pos];

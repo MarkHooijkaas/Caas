@@ -56,8 +56,8 @@ public abstract class LdapObjectBase extends LdapObject {
 		this.dn=dn;
 	}
 
-	public CordysSystem getSystem() { return system; }
-	public String getDn() { return dn; }
+	@Override public CordysSystem getSystem() { return system; }
+	@Override public String getDn() { return dn; }
 	
 
 

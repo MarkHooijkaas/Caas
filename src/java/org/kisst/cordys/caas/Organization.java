@@ -51,7 +51,7 @@ public class Organization extends LdapObjectBase {
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
 		soapProcessors = new CordysObjectList(parent.getSystem()) {
-			protected void retrieveList() {
+			@Override protected void retrieveList() {
 				for (SoapNode sn: soapNodes) {
 					for (SoapProcessor sp: sn.soapProcessors)
 						grow(sp);

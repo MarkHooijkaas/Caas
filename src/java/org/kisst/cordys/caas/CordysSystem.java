@@ -62,7 +62,7 @@ public class CordysSystem extends LdapObject {
 	
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<SoapProcessor> soapProcessors = new CordysObjectList(this) {
-		protected void retrieveList() {
+		@Override protected void retrieveList() {
 			for (Organization o: organizations) {
 				for (SoapProcessor sp: o.soapProcessors)
 					grow(sp);
@@ -76,7 +76,7 @@ public class CordysSystem extends LdapObject {
 	
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<Machine> machines = new CordysObjectList(this) {
-		protected void retrieveList() {
+		@Override protected void retrieveList() {
 			for (SoapProcessor sp: soapProcessors) {
 				if (sp.getName().indexOf("monitor")>=0)
 					grow(new Machine(sp));
@@ -114,7 +114,7 @@ public class CordysSystem extends LdapObject {
 		//ldapcache.clear(); rememberLdap(this);
 	}
 
-	public boolean useCache() { return useCache; }
+	@Override public boolean useCache() { return useCache; }
 
 	public LdapObject seekLdap(String dn) { return ldapcache.get(dn); }
 	public synchronized LdapObject getLdap(String dn) {
@@ -150,7 +150,7 @@ public class CordysSystem extends LdapObject {
 		return caller.call(input, org, processor); 
 	}
 	public String call(String soap) { return caller.call(soap); }
-	public XmlNode call(XmlNode method) { return caller.call(method); }
+	@Override public XmlNode call(XmlNode method) { return caller.call(method); }
 
 	public void refreshSoapProcessors() {
 		for (Machine m: machines)
@@ -162,7 +162,7 @@ public class CordysSystem extends LdapObject {
 			m.loadIsvp(filename);
 	}
 	
-	public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
+	@Override public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
 	
 	public XmlNode getXml(String key) { return getXml(key, "isv", null); }
 	public XmlNode getXml(String key, String version, String organization) {

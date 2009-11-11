@@ -24,16 +24,16 @@ import org.kisst.cordys.caas.Caas;
 
 public class PmCommand extends CompositeCommand {
 	private Command check=new CommandBase("<file.caasii|isvpname>", "validates the given install info") {
-		public void run(String[] args) {
+		@Override public void run(String[] args) {
 			boolean result=Caas.pm.p(args[0]).check(Caas.getDefaultSystem());
 			System.out.println(result);
 		}
 	};
 	private Command configure=new CommandBase("<file.caasii|isvpname>", "installs the given isvp") {
-		public void run(String[] args) { Caas.pm.p(args[0]).configure(Caas.getDefaultSystem());	}
+		@Override public void run(String[] args) { Caas.pm.p(args[0]).configure(Caas.getDefaultSystem());	}
 	};
 	private Command purge=new CommandBase("<file.caasii|isvpname>", "removes the given isvp") {
-		public void run(String[] args) { Caas.pm.p(args[0]).purge(Caas.getDefaultSystem()); 	}
+		@Override public void run(String[] args) { Caas.pm.p(args[0]).purge(Caas.getDefaultSystem()); 	}
 	};
 	
 	public PmCommand() {

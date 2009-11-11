@@ -69,7 +69,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	
 	protected abstract void retrieveList();
 	protected boolean isListAvailable() { return listAvailable; }
-	public CordysSystem getSystem() {return system; }
+	@Override public CordysSystem getSystem() {return system; }
 
 	protected void grow(T obj) {
 		list.add(obj);
@@ -109,7 +109,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	
 	
 	public int getSize() { fetchList(); return list.size(); }
-	public String toString() { return toString("[\n\t",",\n\t","\n]"); }
+	@Override public String toString() { return toString("[\n\t",",\n\t","\n]"); }
 	public String toString(String begin, String middle, String end) {
 		fetchList(); 
 		if (this.list.size()==0)
@@ -133,7 +133,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	public CordysObjectList <T> like(final String filter) {
 		return new CordysObjectList(system) {
 			final String expr=filter.toLowerCase();
-			protected void retrieveList() {
+			@Override protected void retrieveList() {
 				for(T obj: CordysObjectList.this) {
 					if (obj.getName().toLowerCase().indexOf(expr)>=0)
 						grow(obj);
@@ -146,7 +146,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 	@SuppressWarnings("unchecked")
 	public CordysObjectList<T> sort() {
 		return new CordysObjectList(system) {
-			protected void retrieveList() {
+			@Override protected void retrieveList() {
 				ArrayList<T> tmp=new ArrayList<T>();
 				for (T obj : CordysObjectList.this)
 					if (obj!=null)

@@ -31,7 +31,7 @@ public abstract class BaseCaller implements SoapCaller {
 
 	public BaseCaller(String name)
 	{
-		String url =(String) Environment.get().getProp("system."+name+".gateway.url", null);
+		String url =Environment.get().getProp("system."+name+".gateway.url", null);
 		if (url==null)
 			throw new RuntimeException("No url configured in property system."+name+".gateway.url");
 		int pos=url.indexOf("?");

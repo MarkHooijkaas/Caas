@@ -22,7 +22,7 @@ public class LogCommand extends CommandBase {
 		} catch (IOException e) { throw new RuntimeException(e); }
 	}
 	
-	public String getHelp() {
+	@Override public String getHelp() {
 		return "\nOPTIONS"
   			+"\n\t   --grep <string>         search for lines that contain the string"
 			+"\n\t-h,--no-filename           do not show the filename"
