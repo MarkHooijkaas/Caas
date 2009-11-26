@@ -35,7 +35,7 @@ public class CaasMainCommand extends CompositeCommand {
 	Cli.Flag quiet= cli.flag("q", "quiet", "don't output anything unless errors happen");
 	Cli.Flag verbose=cli.flag("v", "verbose", "be verbose about what you are doing");
 	Cli.Flag debug=cli.flag("d", "debug",  "if this option is set debug logging will be shown");
-	//options.addOption("c", "cop", true, "location of a .cop file with connection properties");
+	Cli.StringOption config=cli.stringOption("c", "config",  "location of config file with connection properties", null);
 	Cli.Flag showhelp=cli.flag("h", "help", "show this help information");
 	Cli.Flag version = cli.flag(null, "version", "show the version information");
 
@@ -67,8 +67,11 @@ public class CaasMainCommand extends CompositeCommand {
 		args=cli.parse(args);
 		Environment env=Environment.get();
 		//env.setSystem(cmdline.getOptionValue("cop"));
-		initEnvironment();
-
+		if (config.isSet())
+			Environment.get().loadProperties(config.get());
+		else
+			initEnvironment();
+		
 		if (debug.isSet())
 			env.debug=true;
 		if (verbose.isSet())
