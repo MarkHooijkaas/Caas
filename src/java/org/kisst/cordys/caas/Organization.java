@@ -46,7 +46,10 @@ public class Organization extends LdapObjectBase {
 	public final CordysObjectList<SoapProcessor> soapProcessors; 
 	public final CordysObjectList<SoapProcessor> sp; 
 	
+	public final ProcessModel.List processes=new ProcessModel.List(this); 
+	public final ProcessModel.List proc=processes; 
 
+	
 	@SuppressWarnings("unchecked")
 	protected Organization(LdapObject parent, String dn) {
 		super(parent, dn);
