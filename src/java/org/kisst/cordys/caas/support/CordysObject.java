@@ -35,12 +35,12 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	//public final static String xmlns_bpm    = "http://schemas.cordys.com/1.0/xmlstore";
 
 	abstract public CordysSystem getSystem();
-	public String getName() { return null; } 
+	abstract public String getName(); 
 	abstract public String getVarName();
+	abstract public String getKey(); 
 	protected String prefix() { return ""; }
 	@Override public String toString() { return getVarName(); }
 	
-	abstract public String getKey(); 
 
 	public int compareTo(CordysObject other) {
 		if (other==null)

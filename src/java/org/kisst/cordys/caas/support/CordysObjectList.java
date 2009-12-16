@@ -46,6 +46,7 @@ public abstract class CordysObjectList<T extends CordysObject> extends CordysObj
 		this.system=system;
 	}
 	@Override public String getVarName() { return null; }
+	@Override public String getName() { return null; } // TODO
 
 	protected ArrayList<T> fetchList() {
 		if (useCache() && listAvailable)
