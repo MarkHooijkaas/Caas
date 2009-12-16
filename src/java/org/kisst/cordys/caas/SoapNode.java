@@ -108,11 +108,11 @@ public class SoapNode extends LdapObjectBase {
 		config.add("abortTime").setText("5");
 		config.add("jreconfig").add("param").setAttribute("value","-Xmx64M");
 		config.add("loggerconfiguration");
-		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.toString());
 		XmlNode config2=config.add("configuration");
 		config2.setAttribute("implementation", conn.getData().getChildText(("step/implementation")));
 		config2.setAttribute("htmfile", conn.getData().getChildText(("step/url")));
 		config2.add(conn.getData().getChild("step/classpath").clone());
+		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.toString());
 		createInLdap(newEntry);
 		soapProcessors.clear();
 	}	
