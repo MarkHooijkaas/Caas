@@ -63,10 +63,57 @@ public class SoapNode extends LdapObjectBase {
 		}
 		XmlNode newEntry=getEntry().clone();
 		XmlNode msNode=newEntry.getChild("labeleduri");
+		if (msNode==null)
+			msNode=newEntry.add("labeleduri");
 		for (XmlNode child: msNode.getChildren())
 			msNode.remove(child);
 		for (String s: all.keySet())
 			msNode.add("string").setText(s);
 		updateLdap(newEntry);
 	}
+	
+	
+	/*
+	 &lt;configurations&gt;
+	   &lt;cancelReplyInterval&gt;30000&lt;/cancelReplyInterval&gt;
+	   &lt;gracefulCompleteTime&gt;15&lt;/gracefulCompleteTime&gt;
+	   &lt;abortTime&gt;5&lt;/abortTime&gt;
+  	   &lt;jreconfig&gt;&lt;param value="-Xmx64M"/&gt;&lt;/jreconfig&gt;
+	   &lt;routing ui_type="loadbalancing" ui_algorithm="failover"&gt;
+	     &lt;preference&gt;1&lt;/preference&gt;
+	   &lt;/routing&gt;
+	   &lt;loggerconfiguration&gt;&lt;systempolicy&gt;true&lt;/systempolicy&gt;&lt;log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j"&gt;&lt;renderer renderedClass="com.eibus.util.logger.internal.LocalizableLogMessage" renderingClass="com.eibus.util.logger.internal.TextRenderer"/&gt;&lt;renderer renderedClass="com.eibus.util.logger.internal.LogMessage" renderingClass="com.eibus.util.logger.internal.TextRenderer"/&gt;&lt;root&gt;&lt;priority value="error"/&gt;&lt;appender-ref ref="DailyRollingFileAppender"/&gt;&lt;/root&gt;&lt;category name="com.eibus.security.acl"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.license"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.directory"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.soap"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.transport.SOAPMessage"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.transport"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.tools"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="com.eibus.util"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="org.kisst.cordys.relay.RelayTrace"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="org.kisst.cordys.relay.RelayTimer"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;category name="httpclient.wire"&gt;&lt;priority value="error"/&gt;&lt;/category&gt;&lt;appender name="DailyRollingFileAppender" class="org.apache.log4j.DailyRollingFileAppender"&gt;&lt;param name="File" value="esb#relay_service2#relayconnector_processor.xml"/&gt;&lt;param name="DatePattern" value=".yyyy-MM-dd"/&gt;&lt;layout class="org.apache.log4j.xml.XMLLayout"&gt;&lt;param name="locationInfo" value="true"/&gt;&lt;/layout&gt;&lt;/appender&gt;&lt;/log4j:configuration&gt;&lt;/loggerconfiguration&gt;
+	   &lt;spyPublish&gt;false&lt;/spyPublish&gt;&lt;spyFile&gt;&lt;/spyFile&gt;&lt;spyLogger&gt;&lt;/spyLogger&gt;&lt;spyLevels&gt;&lt;/spyLevels&gt;&lt;spyCategories&gt;&lt;/spyCategories&gt;
+	   &lt;configuration implementation="org.kisst.cordys.relay.RelayConnector" htmfile="/cordys/kisst.org/RelayConnector-1.0/config.html"&gt;
+	     &lt;classpath xmlns="http://schemas.cordys.com/1.0/xmlstore"&gt;
+	       &lt;location&gt;/kisst.org/RelayConnector-1.0/commons-logging-1.0.4.jar&lt;/location&gt;
+	       &lt;location&gt;/kisst.org/RelayConnector-1.0/backport-util-concurrent.jar&lt;/location&gt;
+	       &lt;location&gt;/kisst.org/RelayConnector-1.0/ehcache-1.5.0.jar&lt;/location&gt;
+	       &lt;location&gt;/kisst.org/RelayConnector-1.0/groovy-all-1.6.2.jar&lt;/location&gt;
+	       &lt;location&gt;/kisst.org/RelayConnector-1.0/RelayConnector-1.0.jar&lt;/location&gt;
+	     &lt;/classpath&gt;
+	     &lt;ConfigLocation&gt;D:/config/RelayConnector.properties&lt;/ConfigLocation&gt;
+	   &lt;/configuration&gt;
+	 &lt;/configurations&gt;
+	 */
+	public void createSoapProcessor(String name, Connector conn) {
+		XmlNode newEntry=newEntryXml("", name,"bussoapprocessor");
+		newEntry.add("description").add("string").setText(name);
+		newEntry.add("computer").add("string").setText(getSystem().machines.get(0).getName()); // TODO
+		newEntry.add("busosprocesshost");
+		newEntry.add("automaticstart").add("string").setText("false");
+		XmlNode config=new XmlNode("configurations"); 
+		config.add("cancelReplyInterval").setText("30000");
+		config.add("gracefulCompleteTime").setText("15");
+		config.add("abortTime").setText("5");
+		config.add("jreconfig").add("param").setAttribute("value","-Xmx64M");
+		config.add("loggerconfiguration");
+		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.toString());
+		XmlNode config2=config.add("configuration");
+		config2.setAttribute("implementation", conn.getData().getChildText(("step/implementation")));
+		config2.setAttribute("htmfile", conn.getData().getChildText(("step/url")));
+		config2.add(conn.getData().getChild("step/classpath").clone());
+		createInLdap(newEntry);
+		soapProcessors.clear();
+	}	
 }

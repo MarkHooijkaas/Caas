@@ -102,6 +102,28 @@ public class Organization extends LdapObjectBase {
 		roles.clear();
 	}
 	
+	public void createSoapNode(String name, MethodSet ... allms ) {
+		XmlNode newEntry=newEntryXml("cn=soap nodes,", name,"bussoapnode");
+		newEntry.add("description").add("string").setText(name);
+		XmlNode bms = newEntry.add("busmethodsets");
+		XmlNode luri= newEntry.add("labeleduri");
+		for (MethodSet ms: allms) {
+			bms.add("string").setText(ms.getDn());
+			for (String ns:ms.namespaces.get())
+				luri.add(ns);
+		}
+		
+		XmlNode config=newEntry.add("bussoapnodeconfiguration");
+		XmlNode routing=new XmlNode("routing");
+		routing.setAttribute("ui_algorithm", "failover");
+		routing.setAttribute("ui_type", "loadbalancing");
+		routing.add("numprocessors").setText("100000");
+		routing.add("algorithm").setText("algorithm");
+		config.add("string").setText(routing.toString());
+		createInLdap(newEntry);
+		soapNodes.clear();
+	}	
+	
 	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getDn()); }
 	public XmlNode getXml(String key) { return getSystem().getXml(key, "organization", getDn()); }
 	
