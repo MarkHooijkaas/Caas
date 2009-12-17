@@ -19,6 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
@@ -28,6 +29,8 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class Organization extends LdapObjectBase {
+	private static final Environment env=Environment.get();
+	
 	public final ChildList<User> users= new ChildList<User>(this, "cn=organizational users,", User.class);
 	public final ChildList<User> user = users;
 	public final ChildList<User> u    = users;
@@ -203,14 +206,19 @@ public class Organization extends LdapObjectBase {
 		for (XmlNode node : template.getChildren()){
 			if (node.getName().equals("soapnode")) {
 				String name=node.getAttribute("name");
-				if (soapNodes.getByName(name)==null)
+				if (soapNodes.getByName(name)==null) {
+					env.info("creating soapnode "+name);
 					createSoapNode(name, node.getChild("bussoapnodeconfiguration").getChildren().get(0).clone());
+				}
+				else
+					env.info("configuring soapnode "+name);
 				SoapNode sn=soapNodes.getByName(name);
 				for (XmlNode child:node.getChildren()) {
 					if (child.getName().equals("ms")) {
 						MethodSet newms=null;
 						String isvpName=child.getAttribute("isvp");
 						String msName=child.getAttribute("name");
+						env.debug("  adding methodset "+msName);
 						String dnms=null;
 						if (isvpName==null) {
 							newms=methodSets.getByName(msName);
@@ -235,6 +243,13 @@ public class Organization extends LdapObjectBase {
 					}
 					else if (child.getName().equals("sp")) {
 						String spname=child.getAttribute("name");
+						if (sn.soapProcessors.getByName(spname)!=null) {
+							env.info("  skipping existing soap processor "+spname);
+							continue;
+						}
+						else
+							env.info("  creating soap processor "+spname);
+
 						String machine=getSystem().machines.get(0).getName();
 						boolean automatic="true".equals(child.getAttribute("automatic"));
 						XmlNode config=child.getChild("bussoapprocessorconfiguration").getChildren().get(0);
@@ -247,14 +262,19 @@ public class Organization extends LdapObjectBase {
 			}
 			else if (node.getName().equals("user")) {
 				String name=node.getAttribute("name");
-				if (users.getByName(name)==null)
+				if (users.getByName(name)==null) {
+					env.info("creating user "+name);
 					createUser(name, getSystem().authenticatedUsers.getByName(node.getAttribute("au")));
+				}
+				else
+					env.info("configuring user "+name);
 				User u=users.getByName(name);
 				for (XmlNode child:node.getChildren()) {
 					if (child.getName().equals("role")) {
 						Role r=null;
 						String isvpName=child.getAttribute("isvp");
 						String roleName=child.getAttribute("name");
+						env.debug("  adding role "+roleName);
 						String dnRole=null;
 						if (isvpName==null) {
 							r=roles.getByName(roleName);
@@ -278,14 +298,20 @@ public class Organization extends LdapObjectBase {
 			}
 			else if (node.getName().equals("role")) {
 				String name=node.getAttribute("name");
-				if (roles.getByName(name)==null)
+				if (roles.getByName(name)==null) {
+					env.info("creating role "+name);
 					createRole(name);
+				}
+				else
+					env.info("configuring role "+name);
 				Role rr=roles.getByName(name);
 				for (XmlNode child:node.getChildren()) {
 					if (child.getName().equals("role")) {
 						Role r=null;
 						String isvpName=child.getAttribute("isvp");
 						String roleName=child.getAttribute("name");
+						env.debug("  adding role "+roleName);
+
 						String dnRole=null;
 						if (isvpName==null) {
 							r=roles.getByName(roleName);
