@@ -134,7 +134,7 @@ public class Organization extends LdapObjectBase {
 	public XmlNode deduct(String isvpName) { return deduct(this, isvpName);	}
 
 	public XmlNode createTemplate(String targetIsvpName) {
-		XmlNode result=new XmlNode("caaspm");
+		XmlNode result=new XmlNode("org");
 		//result.setAttribute("isvp", isvpName);
 		result.setAttribute("org", this.getName());
 		for (SoapNode sn : this.soapNodes) {
@@ -161,29 +161,36 @@ public class Organization extends LdapObjectBase {
 		for (User u : this.users) {
 			XmlNode node=result.add("user");
 			node.setAttribute("name", u.getName());
+			node.setAttribute("au", u.au.getRef().getName());
 			for (Role r: u.roles) {
-				XmlNode child=node.add("role");
-				child.setAttribute("name", r.getName());
 				String isvpName=null;
-				if (r.getParent() instanceof Organization)
+				if (r.getParent() instanceof Organization) {
+					if (r.getName().equals("everyoneIn"+getName()))
+						continue;
 					isvpName=targetIsvpName;
+				}
 				else
 					isvpName=r.getParent().getName();
+				XmlNode child=node.add("role");
+				child.setAttribute("name", r.getName());
 				if (isvpName!=null)
-				child.setAttribute("isvp", isvpName);
+					child.setAttribute("isvp", isvpName);
 			}
 		}
 		for (Role rr : this.roles) {
 			XmlNode node=result.add("role");
 			node.setAttribute("name", rr.getName());
 			for (Role r: rr.roles) {
-				XmlNode child=node.add("role");
-				child.setAttribute("name", r.getName());
 				String isvpName=null;
-				if (r.getParent() instanceof Organization)
+				if (r.getParent() instanceof Organization) {
+					if (r.getName().equals("everyoneIn"+getName()))
+						continue;
 					isvpName=targetIsvpName;
+				}
 				else
 					isvpName=r.getParent().getName();
+				XmlNode child=node.add("role");
+				child.setAttribute("name", r.getName());
 				if (isvpName!=null)
 					child.setAttribute("isvp", isvpName);
 			}
@@ -195,38 +202,110 @@ public class Organization extends LdapObjectBase {
 		for (XmlNode node : template.getChildren()){
 			if (node.getName().equals("soapnode")) {
 				String name=node.getAttribute("name");
-				if (sn.getByName(name)!=null) // already exists
-					continue;
-				createSoapNode(name, node.getChild("bussoapnodeconfiguration").getChildren().get(0).clone());
+				if (soapNodes.getByName(name)==null)
+					createSoapNode(name, node.getChild("bussoapnodeconfiguration").getChildren().get(0).clone());
 				SoapNode sn=soapNodes.getByName(name);
 				for (XmlNode child:node.getChildren()) {
 					if (child.getName().equals("ms")) {
-						//MethodSet newms=null;
+						MethodSet newms=null;
 						String isvpName=child.getAttribute("isvp");
 						String msName=child.getAttribute("name");
 						String dnms=null;
-						if (isvpName==null)
-							//newms=ms.getByName(msName);
+						if (isvpName==null) {
+							newms=methodSets.getByName(msName);
 							dnms="cn="+msName+",cn=method sets,"+getDn();
-						else
-							//newms=getSystem().isvp.getByName(isvpName).ms.getByName(msName);
-							dnms="cn="+msName+",cn="+isvpName+","+getSystem().getDn();
-						sn.ms.add(dnms);
-						sn.namespaces.add("urn:"+msName); // TODO
+						}
+						else {
+							Isvp isvp=getSystem().isvp.getByName(isvpName);
+							if (isvp!=null)
+								newms=isvp.methodSets.getByName(msName);
+							else
+								dnms="cn="+msName+",cn="+isvpName+","+getSystem().getDn();
+						}
+						if (newms!=null) {
+							sn.ms.add(newms);
+							for (String ns: newms.namespaces.get())
+								sn.namespaces.add(ns);
+						}
+						else {
+							sn.ms.add(dnms);
+							sn.namespaces.add("urn:"+msName); // TODO
+						}
 					}
 					else if (child.getName().equals("sp")) {
 						String spname=child.getAttribute("name");
-						sn.createSoapProcessor(spname, child.getChild("bussoapprocessorconfiguration").getChildren().get(0).clone());
+						XmlNode config=child.getChild("bussoapprocessorconfiguration").getChildren().get(0);
+						sn.createSoapProcessor(spname, config.clone());
 					}
 					else if (child.getName().equals("bussoapnodeconfiguration")) {}
 					else
-						System.out.println("Unknown element "+child.getPretty());
+						System.out.println("Unknown soapnode subelement "+child.getPretty());
 				}
 			}
-			else if (node.getName().equals("user")) {}
-			else if (node.getName().equals("role")) {}
+			else if (node.getName().equals("user")) {
+				String name=node.getAttribute("name");
+				if (users.getByName(name)==null)
+					createUser(name, getSystem().authenticatedUsers.getByName(node.getAttribute("au")));
+				User u=users.getByName(name);
+				for (XmlNode child:node.getChildren()) {
+					if (child.getName().equals("role")) {
+						Role r=null;
+						String isvpName=child.getAttribute("isvp");
+						String roleName=child.getAttribute("name");
+						String dnRole=null;
+						if (isvpName==null) {
+							r=roles.getByName(roleName);
+							dnRole="cn="+roleName+",cn=organizational roles,"+getDn();
+						}
+						else {
+							Isvp isvp=getSystem().isvp.getByName(isvpName);
+							if (isvp!=null)
+								r=isvp.roles.getByName(roleName);
+							else
+								dnRole="cn="+roleName+",cn="+isvpName+","+getSystem().getDn();
+						}
+						if (r!=null)
+							u.roles.add(r);
+						else
+							u.roles.add(dnRole);
+					}
+					else
+						System.out.println("Unknown user subelement "+child.getPretty());
+				}
+			}
+			else if (node.getName().equals("role")) {
+				String name=node.getAttribute("name");
+				if (roles.getByName(name)==null)
+					createRole(name);
+				Role rr=roles.getByName(name);
+				for (XmlNode child:node.getChildren()) {
+					if (child.getName().equals("role")) {
+						Role r=null;
+						String isvpName=child.getAttribute("isvp");
+						String roleName=child.getAttribute("name");
+						String dnRole=null;
+						if (isvpName==null) {
+							r=roles.getByName(roleName);
+							dnRole="cn="+roleName+",cn=organizational roles,"+getDn();
+						}
+						else {
+							Isvp isvp=getSystem().isvp.getByName(isvpName);
+							if (isvp!=null)
+								r=isvp.roles.getByName(roleName);
+							else
+								dnRole="cn="+roleName+",cn="+isvpName+","+getSystem().getDn();
+						}
+						if (r!=null)
+							rr.roles.add(r);
+						else
+							rr.roles.add(dnRole);
+					}
+					else
+						System.out.println("Unknown role subelement "+child.getPretty());
+				}
+			}
 			else
-				System.out.println("Unknown top element "+node.getPretty());
+				System.out.println("Unknown organization element "+node.getPretty());
 		}
 	}
 
