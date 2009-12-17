@@ -155,6 +155,7 @@ public class Organization extends LdapObjectBase {
 			for (SoapProcessor sp: sn.soapProcessors) {
 				XmlNode child=node.add("sp");
 				child.setAttribute("name", sp.getName());
+				child.setAttribute("automatic", ""+sp.automatic.getBool());
 				child.add("bussoapprocessorconfiguration").add(sp.config.getXml().clone());
 			}
 		}
@@ -234,8 +235,10 @@ public class Organization extends LdapObjectBase {
 					}
 					else if (child.getName().equals("sp")) {
 						String spname=child.getAttribute("name");
+						String machine=getSystem().machines.get(0).getName();
+						boolean automatic="true".equals(child.getAttribute("automatic"));
 						XmlNode config=child.getChild("bussoapprocessorconfiguration").getChildren().get(0);
-						sn.createSoapProcessor(spname, config.clone());
+						sn.createSoapProcessor(spname, machine, automatic, config.clone());
 					}
 					else if (child.getName().equals("bussoapnodeconfiguration")) {}
 					else

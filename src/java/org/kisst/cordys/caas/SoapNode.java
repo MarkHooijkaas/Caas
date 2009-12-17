@@ -96,12 +96,12 @@ public class SoapNode extends LdapObjectBase {
 	   &lt;/configuration&gt;
 	 &lt;/configurations&gt;
 	 */
-	public void createSoapProcessor(String name, XmlNode config) {
+	public void createSoapProcessor(String name, String machine, boolean automatic, XmlNode config) {
 		XmlNode newEntry=newEntryXml("", name,"bussoapprocessor");
 		newEntry.add("description").add("string").setText(name);
-		newEntry.add("computer").add("string").setText(getSystem().machines.get(0).getName()); // TODO
+		newEntry.add("computer").add("string").setText(machine); // TODO
 		newEntry.add("busosprocesshost");
-		newEntry.add("automaticstart").add("string").setText("false");
+		newEntry.add("automaticstart").add("string").setText(""+automatic);
 		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.toString());
 		createInLdap(newEntry);
 		soapProcessors.clear();
@@ -117,6 +117,6 @@ public class SoapNode extends LdapObjectBase {
 		config2.setAttribute("implementation", conn.getData().getChildText(("step/implementation")));
 		config2.setAttribute("htmfile", conn.getData().getChildText(("step/url")));
 		config2.add(conn.getData().getChild("step/classpath").clone());
-		createSoapProcessor(name, config);
+		createSoapProcessor(name, getSystem().machines.get(0).getName(), false, config);
 	}	
 }
