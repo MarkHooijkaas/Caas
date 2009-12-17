@@ -20,13 +20,27 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas.main;
 
 import org.kisst.cordys.caas.Caas;
+import org.kisst.cordys.caas.CordysSystem;
+import org.kisst.cordys.caas.Organization;
+import org.kisst.cordys.caas.pm.CaasPackage;
+import org.kisst.cordys.caas.util.FileUtil;
+import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class PmCommand extends CompositeCommand {
 	private abstract class HostCommand extends CommandBase {
 		public HostCommand(String usage, String summary) { super(usage, summary); }
-		Cli cli=new Cli();
-		Cli.StringOption system= cli.stringOption("s", "system", "the system to use", null);
+		protected final Cli cli=new Cli();
+		private final Cli.StringOption system= cli.stringOption("s", "system", "the system to use", null);
+		private final Cli.StringOption org= cli.stringOption("o", "organization", "the organization to use", null);
+
+		protected CordysSystem getSystem() { return Caas.getSystem(Caas.defaultSystem); }
+		protected Organization getOrg(String defaultOrg) {
+			if (org.isSet())
+				return getSystem().org.getByName(org.get());
+			else
+				return getSystem().org.getByName(defaultOrg);
+		}
 		protected String[] checkArgs(String[] args) {
 			args=cli.parse(args);
 			if (system.isSet())
@@ -38,18 +52,43 @@ public class PmCommand extends CompositeCommand {
 		}
 	}
 	
-	private Command check=new HostCommand("[options] <file.caasii|isvpname>", "validates the given install info") {
+	private Command check=new HostCommand("[options] <ccm file>", "validates the given install info") {
 		@Override public void run(String[] args) {
 			args=checkArgs(args);
-			boolean result=Caas.pm.p(args[0]).check(Caas.getDefaultSystem());
+			CaasPackage p=Caas.pm.p(args[0]);
+			boolean result=p.check(getOrg(p.getDefaultOrgName()));
 			System.out.println(result);
 		}
 	};
-	private Command configure=new HostCommand("[options] <file.caasii|isvpname>", "installs the given isvp") {
-		@Override public void run(String[] args) { Caas.pm.p(args[0]).configure(Caas.getDefaultSystem());	}
+	private Command configure=new HostCommand("[options] <ccm file>", "installs the given isvp") {
+		@Override public void run(String[] args) { 
+			args=checkArgs(args);
+			CaasPackage p=Caas.pm.p(args[0]);
+			p.configure(getOrg(p.getDefaultOrgName()));
+		}
 	};
-	private Command purge=new HostCommand("[options] <file.caasii|isvpname>", "removes the given isvp") {
-		@Override public void run(String[] args) { Caas.pm.p(args[0]).purge(Caas.getDefaultSystem()); 	}
+	private Command purge=new HostCommand("[options] <ccm file>", "removes the given isvp") {
+		@Override public void run(String[] args) { 
+			args=checkArgs(args);
+			CaasPackage p=Caas.pm.p(args[0]);
+			p.purge(getOrg(p.getDefaultOrgName())); 	
+		}
+	};
+	private Command template=new HostCommand("[options] <template file>", "create a template based on the given organization") {
+		private final Cli.StringOption isvpName= cli.stringOption("i", "isvpName", "the isvpName to use for custom content", null);
+		@Override public void run(String[] args) { 
+			args=checkArgs(args);
+			XmlNode templ = getOrg(null).createTemplate(isvpName.get());
+			templ.save(args[0]);
+		}
+	};
+
+	private Command create=new HostCommand("[options] <template file>", "create elements in an organization based on the given template") {
+		@Override public void run(String[] args) { 
+			args=checkArgs(args);
+			XmlNode templ=new XmlNode(FileUtil.loadString(args[0]));
+			getOrg(null).createFromTemplate(templ);
+		}
 	};
 	
 	public PmCommand() {
@@ -58,5 +97,7 @@ public class PmCommand extends CompositeCommand {
 		commands.put("check", check);
 		commands.put("configure", configure);
 		commands.put("purge", purge);
+		commands.put("template", template);
+		commands.put("create", create);
 	}
 }

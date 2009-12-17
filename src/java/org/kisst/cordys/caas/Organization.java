@@ -218,7 +218,7 @@ public class Organization extends LdapObjectBase {
 						MethodSet newms=null;
 						String isvpName=child.getAttribute("isvp");
 						String msName=child.getAttribute("name");
-						env.debug("  adding methodset "+msName);
+						env.info("  adding methodset "+msName);
 						String dnms=null;
 						if (isvpName==null) {
 							newms=methodSets.getByName(msName);

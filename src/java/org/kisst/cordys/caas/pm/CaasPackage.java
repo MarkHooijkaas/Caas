@@ -44,7 +44,8 @@ public class CaasPackage {
 
 		}
 	}
-
+	public String getDefaultOrgName() { return orgName; }
+	
 	public boolean check(CordysSystem system) { return check(system.org.getByName(orgName)); }
 	public void configure(CordysSystem system)   { configure(system.org.getByName(orgName)); }
 	public void purge(CordysSystem system)       { purge(system.org.getByName(orgName)); }
