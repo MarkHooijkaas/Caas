@@ -112,7 +112,10 @@ public abstract class LdapObject extends CordysObject {
 		public void add(String value) {
 			checkIfMayBeModified(); 
 			XmlNode newEntry=getEntry().clone();
-			newEntry.getChild(path).add("string").setText(value);
+			XmlNode n=newEntry.getChild(path);
+			if (n==null)
+				n=newEntry.add(path);
+			n.add("string").setText(value);
 			updateLdap(newEntry);
 		}
 		public void remove(String value) {

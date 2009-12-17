@@ -102,7 +102,7 @@ public class Organization extends LdapObjectBase {
 		roles.clear();
 	}
 	
-	public void createSoapNode(String name, MethodSet ... allms ) {
+	public void createSoapNode(String name, XmlNode config, MethodSet ... allms ) {
 		XmlNode newEntry=newEntryXml("cn=soap nodes,", name,"bussoapnode");
 		newEntry.add("description").add("string").setText(name);
 		XmlNode bms = newEntry.add("busmethodsets");
@@ -112,16 +112,18 @@ public class Organization extends LdapObjectBase {
 			for (String ns:ms.namespaces.get())
 				luri.add(ns);
 		}
-		
-		XmlNode config=newEntry.add("bussoapnodeconfiguration");
+		newEntry.add("bussoapnodeconfiguration").add("string").setText(config.toString());
+		createInLdap(newEntry);
+		soapNodes.clear();
+	}
+	
+	public void createSoapNode(String name, MethodSet ... allms ) {		
 		XmlNode routing=new XmlNode("routing");
 		routing.setAttribute("ui_algorithm", "failover");
 		routing.setAttribute("ui_type", "loadbalancing");
 		routing.add("numprocessors").setText("100000");
 		routing.add("algorithm").setText("algorithm");
-		config.add("string").setText(routing.toString());
-		createInLdap(newEntry);
-		soapNodes.clear();
+		createSoapNode(name, routing, allms);
 	}	
 	
 	public XmlNode getXml(String key, String version) { return getSystem().getXml(key, version, getDn()); }
@@ -130,6 +132,104 @@ public class Organization extends LdapObjectBase {
 	
 	public XmlNode deduct(Isvp isvp) { return deduct(isvp, isvp.getName());	}
 	public XmlNode deduct(String isvpName) { return deduct(this, isvpName);	}
+
+	public XmlNode createTemplate(String targetIsvpName) {
+		XmlNode result=new XmlNode("caaspm");
+		//result.setAttribute("isvp", isvpName);
+		result.setAttribute("org", this.getName());
+		for (SoapNode sn : this.soapNodes) {
+			XmlNode node=result.add("soapnode");
+			node.setAttribute("name", sn.getName());
+			node.add("bussoapnodeconfiguration").add(sn.config.getXml().clone());
+			for (MethodSet ms: sn.methodSets) {
+				XmlNode child=node.add("ms");
+				child.setAttribute("name", ms.getName());
+				String isvpName=null;
+				if (ms.getParent() instanceof Organization)
+					isvpName=targetIsvpName;
+				else
+					isvpName=ms.getParent().getName();
+				if (isvpName!=null)
+					child.setAttribute("isvp", isvpName);
+			}
+			for (SoapProcessor sp: sn.soapProcessors) {
+				XmlNode child=node.add("sp");
+				child.setAttribute("name", sp.getName());
+				child.add("bussoapprocessorconfiguration").add(sp.config.getXml().clone());
+			}
+		}
+		for (User u : this.users) {
+			XmlNode node=result.add("user");
+			node.setAttribute("name", u.getName());
+			for (Role r: u.roles) {
+				XmlNode child=node.add("role");
+				child.setAttribute("name", r.getName());
+				String isvpName=null;
+				if (r.getParent() instanceof Organization)
+					isvpName=targetIsvpName;
+				else
+					isvpName=r.getParent().getName();
+				if (isvpName!=null)
+				child.setAttribute("isvp", isvpName);
+			}
+		}
+		for (Role rr : this.roles) {
+			XmlNode node=result.add("role");
+			node.setAttribute("name", rr.getName());
+			for (Role r: rr.roles) {
+				XmlNode child=node.add("role");
+				child.setAttribute("name", r.getName());
+				String isvpName=null;
+				if (r.getParent() instanceof Organization)
+					isvpName=targetIsvpName;
+				else
+					isvpName=r.getParent().getName();
+				if (isvpName!=null)
+					child.setAttribute("isvp", isvpName);
+			}
+		}
+		return result;
+	}
+
+	public void createFromTemplate(XmlNode template) {
+		for (XmlNode node : template.getChildren()){
+			if (node.getName().equals("soapnode")) {
+				String name=node.getAttribute("name");
+				if (sn.getByName(name)!=null) // already exists
+					continue;
+				createSoapNode(name, node.getChild("bussoapnodeconfiguration").getChildren().get(0).clone());
+				SoapNode sn=soapNodes.getByName(name);
+				for (XmlNode child:node.getChildren()) {
+					if (child.getName().equals("ms")) {
+						//MethodSet newms=null;
+						String isvpName=child.getAttribute("isvp");
+						String msName=child.getAttribute("name");
+						String dnms=null;
+						if (isvpName==null)
+							//newms=ms.getByName(msName);
+							dnms="cn="+msName+",cn=method sets,"+getDn();
+						else
+							//newms=getSystem().isvp.getByName(isvpName).ms.getByName(msName);
+							dnms="cn="+msName+",cn="+isvpName+","+getSystem().getDn();
+						sn.ms.add(dnms);
+						sn.namespaces.add("urn:"+msName); // TODO
+					}
+					else if (child.getName().equals("sp")) {
+						String spname=child.getAttribute("name");
+						sn.createSoapProcessor(spname, child.getChild("bussoapprocessorconfiguration").getChildren().get(0).clone());
+					}
+					else if (child.getName().equals("bussoapnodeconfiguration")) {}
+					else
+						System.out.println("Unknown element "+child.getPretty());
+				}
+			}
+			else if (node.getName().equals("user")) {}
+			else if (node.getName().equals("role")) {}
+			else
+				System.out.println("Unknown top element "+node.getPretty());
+		}
+	}
+
 	
 	private XmlNode deduct(LdapObject parent, String isvpName) {
 		XmlNode result=new XmlNode("caaspm");
