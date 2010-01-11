@@ -12,9 +12,24 @@ public class StringUtil {
 	}
 
 	public static String substitute(String str, Map<String, String> vars) {
-		// TODO: more efficient algorithm
-		for (String key:vars.keySet()) 
-			str=str.replace("${"+key+"}", vars.get(key));
-		return str;
+		StringBuilder result = new StringBuilder();
+		int prevpos=0;
+		int pos=str.indexOf("${");
+		while (pos>=0) {
+			int pos2=str.indexOf("}", pos);
+			if (pos<0)
+				throw new RuntimeException("Unbounded ${");
+			String key=str.substring(pos+2,pos2);
+			result.append(str.substring(prevpos,pos));
+			String value=vars.get(key);
+			if (value==null && key.equals("dollar"));
+				value="$";
+			if (value==null)
+				throw new RuntimeException("Unknown variable ${"+key+"}");
+			result.append(value);
+			prevpos=pos2+1;
+			pos=str.indexOf("${",prevpos);
+		}
+		return result.toString();
 	}
 }
