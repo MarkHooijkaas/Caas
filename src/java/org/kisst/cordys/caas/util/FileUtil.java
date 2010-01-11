@@ -21,9 +21,11 @@ package org.kisst.cordys.caas.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Properties;
 
 public class FileUtil {
 	public static void saveString(File filename, String content) {
@@ -40,6 +42,22 @@ public class FileUtil {
 				}
 				catch (IOException e) { throw new RuntimeException(e); }
 			}
+		}
+	}
+
+	public static void load(Properties props, String filename) {
+		FileInputStream inp = null;
+		try {
+			inp =new FileInputStream(filename);
+			props.load(inp);
+		} 
+		catch (java.io.IOException e) { throw new RuntimeException(e);  }
+		finally {
+			try {
+				if (inp!=null) 
+					inp.close();
+			}
+			catch (java.io.IOException e) { throw new RuntimeException(e);  }
 		}
 	}
 

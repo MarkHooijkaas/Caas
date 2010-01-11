@@ -35,6 +35,8 @@ import org.kisst.cordys.caas.util.FileUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 public class Caas {
+	public static Configuration config(String filename) { return new Configuration(filename); }
+	
 	public static CordysSystem connect(String filename) {
 		String name=filename.substring(0,filename.indexOf("."));
 		int pos=name.lastIndexOf("/");

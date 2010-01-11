@@ -19,8 +19,9 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas.main;
 
-import java.io.FileInputStream;
 import java.util.Properties;
+
+import org.kisst.cordys.caas.util.FileUtil;
 
 public class Environment {
 	private final static Environment singleton=new Environment();
@@ -41,18 +42,6 @@ public class Environment {
 	public String getProp(String key, String defaultValue) { return props.getProperty(key, defaultValue); }
 	public void loadProperties(String filename) {
 		props.clear();
-		FileInputStream inp = null;
-		try {
-			inp =new FileInputStream(filename);
-			props.load(inp);
-		} 
-		catch (java.io.IOException e) { throw new RuntimeException(e);  }
-		finally {
-			try {
-				if (inp!=null) 
-					inp.close();
-			}
-			catch (java.io.IOException e) { throw new RuntimeException(e);  }
-		}
+		FileUtil.load(props, filename);
 	}
 }
