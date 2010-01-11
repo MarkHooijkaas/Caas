@@ -23,8 +23,8 @@ import org.kisst.cordys.caas.Caas;
 import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Organization;
 import org.kisst.cordys.caas.pm.CaasPackage;
+import org.kisst.cordys.caas.pm.Template;
 import org.kisst.cordys.caas.util.FileUtil;
-import org.kisst.cordys.caas.util.XmlNode;
 
 
 public class PmCommand extends CompositeCommand {
@@ -78,7 +78,7 @@ public class PmCommand extends CompositeCommand {
 		private final Cli.StringOption isvpName= cli.stringOption("i", "isvpName", "the isvpName to use for custom content", null);
 		@Override public void run(String[] args) { 
 			args=checkArgs(args);
-			XmlNode templ = getOrg(null).createTemplate(isvpName.get());
+			Template templ = new Template(getOrg(null), isvpName.get());
 			templ.save(args[0]);
 		}
 	};
@@ -86,8 +86,8 @@ public class PmCommand extends CompositeCommand {
 	private Command create=new HostCommand("[options] <template file>", "create elements in an organization based on the given template") {
 		@Override public void run(String[] args) { 
 			args=checkArgs(args);
-			XmlNode templ=new XmlNode(FileUtil.loadString(args[0]));
-			getOrg(null).createFromTemplate(templ);
+			Template templ=new Template(FileUtil.loadString(args[0]));
+			templ.apply(getOrg(null), null);
 		}
 	};
 	
