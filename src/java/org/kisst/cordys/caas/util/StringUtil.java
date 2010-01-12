@@ -22,7 +22,7 @@ public class StringUtil {
 			String key=str.substring(pos+2,pos2);
 			result.append(str.substring(prevpos,pos));
 			String value=vars.get(key);
-			if (value==null && key.equals("dollar"));
+			if (value==null && key.equals("dollar"))
 				value="$";
 			if (value==null)
 				throw new RuntimeException("Unknown variable ${"+key+"}");
@@ -30,6 +30,7 @@ public class StringUtil {
 			prevpos=pos2+1;
 			pos=str.indexOf("${",prevpos);
 		}
+		result.append(str.substring(prevpos));
 		return result.toString();
 	}
 }

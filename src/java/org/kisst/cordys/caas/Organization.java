@@ -19,6 +19,7 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import org.kisst.cordys.caas.pm.Template;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
@@ -221,5 +222,6 @@ public class Organization extends LdapObjectBase {
 			@Override public String getKey() { return Organization.this.getKey()+":seek("+target+")";}
 		};
 	}
-
+	
+	public Template createTemplate(String isvpName) { return new Template(this, isvpName); } 
 }

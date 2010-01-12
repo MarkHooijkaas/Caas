@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.pm.PackageManager;
+import org.kisst.cordys.caas.pm.Template;
 import org.kisst.cordys.caas.soap.DummyCaller;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.NativeCaller;
@@ -36,6 +37,7 @@ import org.kisst.cordys.caas.util.XmlNode;
 
 public class Caas {
 	public static Configuration config(String filename) { return new Configuration(filename); }
+	public static Template template(String filename) { return new Template(FileUtil.loadString(filename)); }
 	
 	public static CordysSystem connect(String filename) {
 		String name=filename.substring(0,filename.indexOf("."));

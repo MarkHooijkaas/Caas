@@ -3,6 +3,8 @@ package org.kisst.cordys.caas.pm;
 import java.io.File;
 import java.util.Map;
 
+import org.kisst.cordys.caas.AuthenticatedUser;
+import org.kisst.cordys.caas.Configuration;
 import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.MethodSet;
 import org.kisst.cordys.caas.Organization;
@@ -87,12 +89,16 @@ public class Template {
 		this.template=str.replace("$", "${dollar}");
 	}
 
-	public void apply(Organization org, Map<String, String> vars) {
+	public XmlNode xml( Map<String, String> vars) {
 		String str=template;
 		if (vars!=null)
 			str=StringUtil.substitute(str, vars);
 		str=str.replace("${dollar}", "$");
-		XmlNode template=new XmlNode(str);
+		return new XmlNode(str);
+	}
+	public void apply(Organization org, Configuration conf) { apply(org, conf.getProps()); }
+	public void apply(Organization org, Map<String, String> vars) {
+		XmlNode template=xml(vars);
 		for (XmlNode node : template.getChildren()){
 			if (node.getName().equals("soapnode")) {
 				String name=node.getAttribute("name");
@@ -109,17 +115,17 @@ public class Template {
 						String isvpName=child.getAttribute("isvp");
 						String msName=child.getAttribute("name");
 						env.info("  adding methodset "+msName);
-						String dnms=null;
+						//String dnms=null;
 						if (isvpName==null) {
 							newms=org.methodSets.getByName(msName);
-							dnms="cn="+msName+",cn=method sets,"+org.getDn();
+							//dnms="cn="+msName+",cn=method sets,"+org.getDn();
 						}
 						else {
 							Isvp isvp=org.getSystem().isvp.getByName(isvpName);
 							if (isvp!=null)
 								newms=isvp.methodSets.getByName(msName);
-							else
-								dnms="cn="+msName+",cn="+isvpName+","+org.getSystem().getDn();
+							//else
+								//dnms="cn="+msName+",cn="+isvpName+","+org.getSystem().getDn();
 						}
 						if (newms!=null) {
 							sn.ms.add(newms);
@@ -127,8 +133,9 @@ public class Template {
 								sn.namespaces.add(ns);
 						}
 						else {
-							sn.ms.add(dnms);
-							sn.namespaces.add("urn:"+msName); // TODO
+							env.error("  skipping unknownn methodset "+msName);
+							//sn.ms.add(dnms);
+							//sn.namespaces.add("urn:"+msName); // TODO
 						}
 					}
 					else if (child.getName().equals("sp")) {
@@ -153,8 +160,15 @@ public class Template {
 			else if (node.getName().equals("user")) {
 				String name=node.getAttribute("name");
 				if (org.users.getByName(name)==null) {
-					env.info("creating user "+name);
-					org.createUser(name, org.getSystem().authenticatedUsers.getByName(node.getAttribute("au")));
+					AuthenticatedUser au=org.getSystem().authenticatedUsers.getByName(node.getAttribute("au"));
+					if (au==null) {
+						env.error("could not create user "+name+" could not find authenticated user "+node.getAttribute("au"));
+						continue;
+					}
+					else {
+						env.info("creating user "+name);
+						org.createUser(name, au);
+					}
 				}
 				else
 					env.info("configuring user "+name);

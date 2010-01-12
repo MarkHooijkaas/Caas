@@ -87,7 +87,7 @@ public class PmCommand extends CompositeCommand {
 		@Override public void run(String[] args) { 
 			args=checkArgs(args);
 			Template templ=new Template(FileUtil.loadString(args[0]));
-			templ.apply(getOrg(null), null);
+			//TODO: templ.apply(getOrg(null), null);
 		}
 	};
 	

@@ -9,7 +9,7 @@ import org.kisst.cordys.caas.util.FileUtil;
 
 public class Configuration {
 	private final Organization org;
-	private final Map<String,String>props=new LinkedHashMap<String,String>();
+	private final LinkedHashMap<String,String>props=new LinkedHashMap<String,String>();
 	
 	public Configuration(String filename) {
 		Properties p=new Properties();
@@ -24,4 +24,6 @@ public class Configuration {
 	public String get(String key) { return props.get(key); }
 	public void put(String key, String value) { props.put(key, value); }
 	public void apply(Template templ) { templ.apply(org, props); }
+	@SuppressWarnings("unchecked")
+	public Map<String,String> getProps() { return (Map<String, String>) props.clone(); } // T
 }
