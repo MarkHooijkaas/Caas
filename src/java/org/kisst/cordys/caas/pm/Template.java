@@ -114,20 +114,16 @@ public class Template {
 						MethodSet newms=null;
 						String isvpName=child.getAttribute("isvp");
 						String msName=child.getAttribute("name");
-						env.info("  adding methodset "+msName);
-						//String dnms=null;
 						if (isvpName==null) {
 							newms=org.methodSets.getByName(msName);
-							//dnms="cn="+msName+",cn=method sets,"+org.getDn();
 						}
 						else {
 							Isvp isvp=org.getSystem().isvp.getByName(isvpName);
 							if (isvp!=null)
 								newms=isvp.methodSets.getByName(msName);
-							//else
-								//dnms="cn="+msName+",cn="+isvpName+","+org.getSystem().getDn();
 						}
 						if (newms!=null) {
+							env.info("  adding methodset "+msName);
 							sn.ms.add(newms);
 							for (String ns: newms.namespaces.get())
 								sn.namespaces.add(ns);
@@ -166,7 +162,7 @@ public class Template {
 						continue;
 					}
 					else {
-						env.info("creating user "+name);
+						env.info("creating user "+name+" with authenticated user "+au.getName());
 						org.createUser(name, au);
 					}
 				}
@@ -178,7 +174,7 @@ public class Template {
 						Role r=null;
 						String isvpName=child.getAttribute("isvp");
 						String roleName=child.getAttribute("name");
-						env.debug("  adding role "+roleName);
+						env.info("  adding role "+roleName);
 						String dnRole=null;
 						if (isvpName==null) {
 							r=org.roles.getByName(roleName);
@@ -214,7 +210,7 @@ public class Template {
 						Role r=null;
 						String isvpName=child.getAttribute("isvp");
 						String roleName=child.getAttribute("name");
-						env.debug("  adding role "+roleName);
+						env.info("  adding role "+roleName);
 
 						String dnRole=null;
 						if (isvpName==null) {
