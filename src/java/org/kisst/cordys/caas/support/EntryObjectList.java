@@ -84,6 +84,17 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 		parent.updateLdap(newEntry);
 		parent.clear();
 	}
+	public void add(String[] values) {
+		XmlNode newEntry=parent.getEntry().clone();
+		XmlNode g=newEntry.getChild(group);
+		if (g==null)
+			g=newEntry.add(group);
+		for (String s:values)
+			g.add("string").setText(s);
+		parent.updateLdap(newEntry);
+		parent.clear();
+	}
+
 	public void remove(String value) {
 		XmlNode newEntry= parent.getEntry().clone();
 		XmlNode list=newEntry.getChild(group);
