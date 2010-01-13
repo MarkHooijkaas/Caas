@@ -120,7 +120,11 @@ public class XmlNode {
 		}
 		return new XmlNode(e);
 	}
-	
+
+	public String compact() {
+		XMLOutputter out=new XMLOutputter(Format.getCompactFormat());
+		return out.outputString(element);
+	}
 	@Override public String toString() {
 		XMLOutputter out=new XMLOutputter();
 		return out.outputString(element);

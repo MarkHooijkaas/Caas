@@ -102,7 +102,7 @@ public class SoapNode extends LdapObjectBase {
 		newEntry.add("computer").add("string").setText(machine); // TODO
 		newEntry.add("busosprocesshost");
 		newEntry.add("automaticstart").add("string").setText(""+automatic);
-		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.toString());
+		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.compact());
 		createInLdap(newEntry);
 		soapProcessors.clear();
 	}

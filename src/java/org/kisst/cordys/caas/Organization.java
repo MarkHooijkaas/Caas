@@ -115,7 +115,7 @@ public class Organization extends LdapObjectBase {
 			for (String ns:ms.namespaces.get())
 				luri.add(ns);
 		}
-		newEntry.add("bussoapnodeconfiguration").add("string").setText(config.toString());
+		newEntry.add("bussoapnodeconfiguration").add("string").setText(config.compact());
 		createInLdap(newEntry);
 		soapNodes.clear();
 	}
