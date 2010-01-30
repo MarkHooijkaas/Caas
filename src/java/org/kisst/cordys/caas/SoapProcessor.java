@@ -19,6 +19,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.util.Random;
+
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
@@ -111,5 +113,31 @@ public class SoapProcessor extends LdapObjectBase {
 		XmlNode method=new XmlNode ("Restart", xmlns_monitor);
 		method.add("dn").setText(getDn());
 		call(method);
+	}
+
+	public void createConnectionPoint(String name) {
+		createConnectionPoint(name, "socket");
+	}
+
+	public void createConnectionPoint(String name, String type) {
+		String uri=type+"://"+getMachine().getName()+":"+getAvailablePort();
+		XmlNode newEntry=newEntryXml("", name,"busconnectionpoint");
+		newEntry.add("description").add("string").setText(name);
+		newEntry.add("labeleduri").add("string").setText(uri); // TODO
+		createInLdap(newEntry);
+		connectionPoints.clear();
+	}
+
+	private Machine getMachine() {
+		// TODO This hack only works on single machine installs
+		return getSystem().machines.get(0);
+	}
+	
+	private static Random random=new Random();
+	private int getAvailablePort() {
+		// TODO: check all know connection points to avoid some clashes
+		// Note that the official Cordys wizard does not seem to check this either
+		int port=random.nextInt(64*1024-10000)+10000;
+		return port;
 	}
 }

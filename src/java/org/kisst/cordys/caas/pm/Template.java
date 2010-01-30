@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.kisst.cordys.caas.AuthenticatedUser;
 import org.kisst.cordys.caas.Configuration;
+import org.kisst.cordys.caas.ConnectionPoint;
 import org.kisst.cordys.caas.Isvp;
 import org.kisst.cordys.caas.MethodSet;
 import org.kisst.cordys.caas.Organization;
@@ -47,6 +48,10 @@ public class Template {
 				child.setAttribute("name", sp.getName());
 				child.setAttribute("automatic", ""+sp.automatic.getBool());
 				child.add("bussoapprocessorconfiguration").add(sp.config.getXml().clone());
+				for (ConnectionPoint cp: sp.connectionPoints) {
+					XmlNode cpNode=node.add("cp");
+					cpNode.setAttribute("name", cp.getName());
+				}
 			}
 		}
 		for (User u : org.users) {
@@ -149,6 +154,13 @@ public class Template {
 				boolean automatic="true".equals(child.getAttribute("automatic"));
 				XmlNode config=child.getChild("bussoapprocessorconfiguration").getChildren().get(0);
 				sn.createSoapProcessor(spname, machine, automatic, config.clone());
+				for (XmlNode subchild:child.getChildren()) {
+					if (subchild.getName().equals("cp")) {
+						SoapProcessor sp=sn.sp.getByName(spname);
+						sp.createConnectionPoint(subchild.getAttribute("name"));
+					}
+						
+				}
 			}
 			else if (child.getName().equals("bussoapnodeconfiguration")) {}
 			else
