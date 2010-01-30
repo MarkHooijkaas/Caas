@@ -55,6 +55,8 @@ public class Template {
 			}
 		}
 		for (User u : org.users) {
+			if ("SYSTEM".equals(u.getName().toUpperCase()))
+				continue; // SYSTEM user should not be part of the template
 			XmlNode node=result.add("user");
 			node.setAttribute("name", u.getName());
 			node.setAttribute("au", u.au.getRef().getName());
@@ -195,6 +197,13 @@ public class Template {
 	}
 	private void processUser(Organization org, XmlNode node) {
 		String name=node.getAttribute("name");
+		if ("SYSTEM".equals(name.toUpperCase())) {
+			// Whenever I had a SYSTEM user in my template, Cordys would crash pretty hard.
+			// It would not be possible to start the monitor anymore.
+			// I had to use the CMC to remove the organization before the Monitor would start again.
+			env.error("Ignoring user "+name+" because the SYSTEM user should not be modified from a template");
+			return;
+		}
 		if (org.users.getByName(name)==null) {
 			AuthenticatedUser au=org.getSystem().authenticatedUsers.getByName(node.getAttribute("au"));
 			if (au==null) {
