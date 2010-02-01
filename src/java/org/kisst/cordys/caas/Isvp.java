@@ -65,6 +65,7 @@ public class Isvp extends LdapObjectBase {
 			// TODO: check if machine has the ISVP loaded
 			m.unloadIsvp(this, deletereferences);
 		getSystem().removeLdap(getDn());
+		getSystem().isvp.clear();
 	}
 	
 	public XmlNode getDefinition() {

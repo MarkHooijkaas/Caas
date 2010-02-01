@@ -160,6 +160,7 @@ public class CordysSystem extends LdapObject {
 	public void loadIsvp(String filename) {
 		for (Machine m: machines)
 			m.loadIsvp(filename);
+		isvp.clear();
 	}
 	
 	@Override public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
