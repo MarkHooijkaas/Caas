@@ -312,4 +312,139 @@ public class Template {
 		return result.toArray(new Role[result.size()]);
 	}
 	*/
+	
+	public void check(Organization org, Configuration conf) { check(org, conf.getProps()); }
+	public void check(Organization org, Map<String, String> vars) {
+		XmlNode template=xml(vars);
+		for (XmlNode node : template.getChildren()){
+			if (node.getName().equals("soapnode"))
+				checkSoapNode(org, node);
+			else if (node.getName().equals("user"))
+				checkUser(org, node);
+			else if (node.getName().equals("role"))
+				checkRole(org, node);
+			else
+				System.out.println("Unknown organization element "+node.getPretty());
+		}
+	}
+
+	private void checkSoapNode(Organization org, XmlNode node) {
+		String name=node.getAttribute("name");
+		SoapNode sn=org.soapNodes.getByName(name);
+		if (sn==null) {
+			env.error("missing soapnode "+name);
+			return;
+		}
+		env.info("checking configuration of soapnode "+name);
+		MethodSet[] target = getMs(org,node);
+		for (MethodSet ms : target){
+			if (! sn.methodSets.contains(ms))
+				env.error("SoapNode "+sn+" does not contain method set "+ms);
+		}
+		for (MethodSet ms : sn.methodSets){
+			boolean found=false;
+			for (MethodSet ms2: target) {
+				if (ms.getDn().equals(ms2.getDn())) 
+					found=true;
+			}
+			if (! found)
+				env.error("SoapNode "+sn+" contains method set "+ms+" that is not in template");
+		}
+		for (XmlNode child:node.getChildren()) {
+			if (child.getName().equals("ms"))
+				continue;
+			else if (child.getName().equals("sp")) {
+				String spname=child.getAttribute("name");
+				SoapProcessor sp = sn.soapProcessors.getByName(spname);
+				if (sp==null) {
+					env.error("  missing soap processor "+spname);
+					continue;
+				}
+				boolean automatic="true".equals(child.getAttribute("automatic"));
+				if (sp.automatic.getBool() != automatic)
+					env.error("  "+sp+" property automatic, template says "+automatic+" while current value is "+sp.automatic.get());
+				XmlNode config=child.getChild("bussoapprocessorconfiguration").getChildren().get(0);
+				XmlNode configsp=sp.config.getXml();
+				for (String msg: config.diff(configsp)) 
+					env.error(msg);
+			}
+			else if (child.getName().equals("bussoapnodeconfiguration")) {}
+			else
+				env.error("Unknown soapnode subelement "+child.getPretty());
+		}
+	}
+
+	private void checkUser(Organization org, XmlNode node) {
+		String name=node.getAttribute("name");
+		User u=org.users.getByName(name);
+		if (u==null) {
+			env.info("unknown user "+name);
+			return;
+		}
+		env.info("checking roles of user "+name);
+		for (XmlNode child:node.getChildren()) {
+			if (child.getName().equals("role")) {
+				Role r=null;
+				String isvpName=child.getAttribute("isvp");
+				String roleName=child.getAttribute("name");
+				env.info("  checking role "+roleName);
+				String dnRole=null;
+				if (isvpName==null) {
+					r=org.roles.getByName(roleName);
+					dnRole="cn="+roleName+",cn=organizational roles,"+org.getDn();
+				}
+				else {
+					Isvp isvp=org.getSystem().isvp.getByName(isvpName);
+					if (isvp!=null)
+						r=isvp.roles.getByName(roleName);
+					else
+						dnRole="cn="+roleName+",cn="+isvpName+","+org.getSystem().getDn();
+				}
+				if (r==null)
+					env.error("User "+u+" should have unknown role "+dnRole);
+				else if (! u.roles.contains(r))
+					env.error("User "+u+" does not have role "+r);
+			}
+			else
+				env.error("Unknown user subelement "+child.getPretty());
+		}
+	}
+
+	private void checkRole(Organization org, XmlNode node) {
+		String name=node.getAttribute("name");
+		Role rr=org.roles.getByName(name);
+		if (rr==null) {
+			env.info("Unknowm role "+name);
+			return;
+		}
+		env.info("checking roles of role "+name);
+		for (XmlNode child:node.getChildren()) {
+			if (child.getName().equals("role")) {
+				Role r=null;
+				String isvpName=child.getAttribute("isvp");
+				String roleName=child.getAttribute("name");
+				env.info("  adding role "+roleName);
+
+				String dnRole=null;
+				if (isvpName==null) {
+					r=org.roles.getByName(roleName);
+					dnRole="cn="+roleName+",cn=organizational roles,"+org.getDn();
+				}
+				else {
+					Isvp isvp=org.getSystem().isvp.getByName(isvpName);
+					if (isvp!=null)
+						r=isvp.roles.getByName(roleName);
+					else
+						dnRole="cn="+roleName+",cn="+isvpName+","+org.getSystem().getDn();
+				}
+				if (r==null)
+					env.error("Role "+rr+" should have unknown role "+dnRole);
+				else if (! rr.roles.contains(r))
+					env.error("Role "+rr+" does not have role "+r);
+			}
+			else
+				env.error("Unknown role subelement "+child.getPretty());
+		}
+	}
+
 }

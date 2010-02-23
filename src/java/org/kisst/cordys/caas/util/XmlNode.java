@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jdom.Attribute;
@@ -161,5 +163,51 @@ public class XmlNode {
 		return xml;
 	}
 	public void save(String filename) { FileUtil.saveString(new File(filename), getPretty()); }
+	
+	public List<String> diff(XmlNode other) {
+		ArrayList<String> result=new ArrayList<String>();
+		diff(result, getName(), other);
+		return result;
+	}
+
+	private void diff(List<String> result, String prefix, XmlNode other) {
+		if (getText()!=null && ! getText().equals(other.getText())) {
+			result.add("< node "+prefix+"."+getName()+" has value "+getText());
+			result.add("> node "+prefix+"."+other.getName()+" has value "+other.getText());
+		}
+		List<XmlNode> children1 = getChildren();
+		List<XmlNode> children2 = other.getChildren();
+		Comparator<XmlNode> comp= new Comparator<XmlNode>() {
+			public int compare(XmlNode o1, XmlNode o2) { return o1.getName().compareTo(o2.getName()); }
+		};
+		Collections.sort(children1, comp);
+		Collections.sort(children2, comp);
+		int i1=0;
+		int i2=0;
+		while (i1<children1.size() && i2<children2.size()) {
+			XmlNode n1=children1.get(i1);
+			XmlNode n2=children2.get(i2);
+			if (n1.getName().equals(n2.getName())) {
+				n1.diff(result,prefix+"."+n1.getName(),n2);
+				i1++; i2++;
+			}
+			else if (n1.getName().compareTo(n2.getName())<0) {
+				result.add("< has node "+prefix+"."+n1.getName());
+				i1++;
+			}
+			else {
+				result.add("> has node "+prefix+"."+n2.getName());
+				i2++;
+			}
+		}
+		while (i1<children1.size()) {
+			result.add(" < has node "+prefix+"."+children1.get(i1).getName());
+			i1++;
+		}
+		while (i2<children2.size()) {
+			result.add(" < has node "+prefix+"."+children2.get(i2).getName());
+			i2++;
+		}
+	}
 }
 
