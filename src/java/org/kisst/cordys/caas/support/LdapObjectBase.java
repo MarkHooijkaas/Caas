@@ -76,6 +76,10 @@ public abstract class LdapObjectBase extends LdapObject {
 		//System.out.println("createObject ["+newdn+"]");
 		LdapObject parent = calcParent(system, entry.getAttribute("dn"));
 		Class<?> resultClass = determineClass(system, entry);
+		if (resultClass==Isvp.class) {
+			if (newdn.startsWith("cn=licinfo,") || newdn.startsWith("cn=authenticated users,") || newdn.startsWith("cn=consortia,"))
+				return null;
+		}
 		if (resultClass==null)
 			throw new RuntimeException("could not determine class for entry "+entry);
 		Constructor<?> cons=ReflectionUtil.getConstructor(resultClass, new Class[]{LdapObject.class, String.class} );
