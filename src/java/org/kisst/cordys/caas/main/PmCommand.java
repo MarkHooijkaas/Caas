@@ -24,7 +24,6 @@ import org.kisst.cordys.caas.CordysSystem;
 import org.kisst.cordys.caas.Organization;
 import org.kisst.cordys.caas.pm.CaasPackage;
 import org.kisst.cordys.caas.pm.Template;
-import org.kisst.cordys.caas.util.FileUtil;
 
 
 public class PmCommand extends CompositeCommand {
@@ -86,7 +85,7 @@ public class PmCommand extends CompositeCommand {
 	private Command create=new HostCommand("[options] <template file>", "create elements in an organization based on the given template") {
 		@Override public void run(String[] args) { 
 			args=checkArgs(args);
-			Template templ=new Template(FileUtil.loadString(args[0]));
+			//TODO: Template templ=new Template(FileUtil.loadString(args[0]));
 			//TODO: templ.apply(getOrg(null), null);
 		}
 	};
