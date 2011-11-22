@@ -86,7 +86,7 @@ public class ReflectionUtil {
 		}
 		catch (IllegalAccessException e) { throw new RuntimeException(e); } 
 		catch (InstantiationException e) { throw new RuntimeException(e); }
-		catch (InvocationTargetException e) { throw new RuntimeException(e); }
+		catch (InvocationTargetException e) {throw new RuntimeException(e); }
 	}
 
 	public static Object createObject(String classname) {

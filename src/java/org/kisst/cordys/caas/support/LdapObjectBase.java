@@ -90,6 +90,8 @@ public abstract class LdapObjectBase extends LdapObject {
 	
 	private final static HashMap<String,Class<?>> ldapObjectTypes=new HashMap<String,Class<?>>();
 	static {
+		
+		ldapObjectTypes.put("busauthenticatedusers", AuthenticatedUser.class);
 		ldapObjectTypes.put("busauthenticationuser", AuthenticatedUser.class);
 		//ldapObjectTypes.put("groupOfNames", Isvp.class); this one is not unique
 		ldapObjectTypes.put("busmethod", Method.class);
@@ -106,6 +108,7 @@ public abstract class LdapObjectBase extends LdapObject {
 	static private Class<?> determineClass(CordysSystem system, XmlNode entry) {
 		if (entry==null)
 			return null;
+		//System.out.println("calcParent:: "+entry.getPretty());
 		XmlNode objectclass=entry.getChild("objectclass");
 		for(XmlNode o:objectclass.getChildren("string")) {
 			Class<?> c=ldapObjectTypes.get(o.getText());
@@ -129,6 +132,7 @@ public abstract class LdapObjectBase extends LdapObject {
 			XmlNode entry=retrieveEntry(system, dn);
 			if (entry==null) // could happen when restoring from a dump
 				continue;
+			
 			Class<?> resultClass = determineClass(system, entry);
 			if (resultClass!=null)
 				return createObject(system, entry);

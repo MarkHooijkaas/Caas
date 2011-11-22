@@ -132,6 +132,31 @@ public abstract class LdapObject extends CordysObject {
 			}
 			updateLdap(newEntry);
 		}
+		
+		/**
+		 * update the existing entry with the new list of values
+		 * This will clear the existing child elements and add 
+		 * the new entries to the parent. 
+		 * 
+		 * @param values
+		 */
+		public void update(List<String> values)
+		{
+			checkIfMayBeModified(); 
+			XmlNode newEntry=getEntry().clone();
+			XmlNode n=newEntry.getChild(path);
+			if (n==null)
+				n=newEntry.add(path);
+			
+			List<XmlNode> children = n.getChildren();
+			for (XmlNode xmlNode : children) {
+				n.remove(xmlNode);
+			}
+			for (String value : values) {
+				n.add("string").setText(value);	
+			}			
+			updateLdap(newEntry);
+		}
 	}
 
 	public final StringProperty description = new StringProperty("description");
@@ -226,6 +251,18 @@ public abstract class LdapObject extends CordysObject {
 		newEntry.add("cn").add("string").setText(name);
 		return newEntry;
 	}
+	//Added to create Authenticated User XML
+	protected XmlNode newAuthenticatedUserEntryXml(String prefix, String name, String ... types) {
+		XmlNode newEntry = new XmlNode("entry",xmlns_ldap);
+		newEntry.setAttribute("dn", "cn="+name+","+prefix+getSystem().getDn());
+		XmlNode child = newEntry.add("objectclass");
+		child.add("string").setText("top");
+		for (String t: types)
+			child.add("string").setText(t);
+		newEntry.add("cn").add("string").setText(name);
+		return newEntry;
+	}
+	
 	protected void createInLdap(XmlNode newEntry) { updateLdap(null, newEntry); }
 	protected void updateLdap(XmlNode newEntry) { updateLdap(entry.clone(), newEntry); }
 	protected void updateLdap(XmlNode oldEntry, XmlNode newEntry) {

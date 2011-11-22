@@ -20,7 +20,6 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas;
 
 import java.util.LinkedHashMap;
-
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.EntryObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
@@ -28,26 +27,22 @@ import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
-
-
 public class SoapNode extends LdapObjectBase {
 	public final ChildList<SoapProcessor> soapProcessors= new ChildList<SoapProcessor>(this, SoapProcessor.class);
 	public final ChildList<SoapProcessor> sp = soapProcessors;
-
 	public final EntryObjectList<MethodSet> methodSets = new EntryObjectList<MethodSet>(this, "busmethodsets","ms");
 	public final EntryObjectList<MethodSet> ms = methodSets;
-	
 	public final StringList namespaces= new StringList("labeleduri"); 
 	public final StringList ns = namespaces;
-	
 	public final XmlProperty config = new XmlProperty("bussoapnodeconfiguration");
-	
 	public final XmlSubProperty ui_algorithm = new XmlSubProperty(config, "routing/@ui_algorithm");  
 	public final XmlSubProperty ui_type = new XmlSubProperty(config, "routing/@ui_type");  
 	public final XmlSubProperty numprocessors = new XmlSubProperty(config, "routing/numprocessors");  
 	public final XmlSubProperty algorithm= new XmlSubProperty(config, "routing/algorithm");  
-
-	
+	public final XmlBoolProperty protocolValidation = new XmlBoolProperty(config, "validation/protocol",false);
+	public final XmlBoolProperty payloadValidation = new XmlBoolProperty(config, "validation/payload",false);
+	public final XmlBoolProperty payloadTrim = new XmlBoolProperty(config, "IgnoreWhiteSpaces",false);
+		
 	protected SoapNode(LdapObject parent, String dn) {
 		super(parent, dn);
 	}
@@ -97,12 +92,7 @@ public class SoapNode extends LdapObjectBase {
 	 &lt;/configurations&gt;
 	 */
 	public void createSoapProcessor(String name, String machine, boolean automatic, XmlNode config) {
-		XmlNode newEntry=newEntryXml("", name,"bussoapprocessor");
-		newEntry.add("description").add("string").setText(name);
-		newEntry.add("computer").add("string").setText(machine); // TODO
-		newEntry.add("busosprocesshost");
-		newEntry.add("automaticstart").add("string").setText(""+automatic);
-		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.compact());
+		XmlNode newEntry=createSoapProcessorEntryNode(name,machine,automatic,config);
 		createInLdap(newEntry);
 		soapProcessors.clear();
 	}
@@ -119,4 +109,32 @@ public class SoapNode extends LdapObjectBase {
 		config2.add(conn.getData().getChild("step/classpath").clone());
 		createSoapProcessor(name, getSystem().machines.get(0).getName(), false, config);
 	}	
+	
+	/**
+	 * Update the soap node with the new Soap processor details
+	 * It will also accept the old soap processor to form the update request
+	 * 
+	 * @param name
+	 * @param machine
+	 * @param automatic
+	 * @param config
+	 * @param oldSoapProcessor
+	 */
+	public void updateSoapProcessor(String name, String machine, boolean automatic, XmlNode config,SoapProcessor oldSoapProcessor)
+	{
+		XmlNode newEntry=createSoapProcessorEntryNode(name,machine,automatic,config);
+		XmlNode oldEntry = oldSoapProcessor.getEntry();
+		updateLdap(oldEntry,newEntry);
+	}
+	
+	private XmlNode createSoapProcessorEntryNode(String name, String machine, boolean automatic, XmlNode config)
+	{
+		XmlNode newEntry=newEntryXml("", name,"bussoapprocessor");
+		newEntry.add("description").add("string").setText(name);
+		newEntry.add("computer").add("string").setText(machine); // TODO
+		newEntry.add("busosprocesshost");
+		newEntry.add("automaticstart").add("string").setText(""+automatic);
+		newEntry.add("bussoapprocessorconfiguration").add("string").setText(config.compact());
+		return newEntry;
+	}
 }

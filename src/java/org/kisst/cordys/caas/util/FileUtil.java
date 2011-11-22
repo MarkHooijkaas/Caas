@@ -20,12 +20,15 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 package org.kisst.cordys.caas.util;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+
+import sun.misc.BASE64Encoder;
 
 public class FileUtil {
 	public static void saveString(File filename, String content) {
@@ -82,6 +85,44 @@ public class FileUtil {
 					inp.close();
 			}
 			catch (java.io.IOException e) { throw new RuntimeException(e);  }
+		}
+	}
+
+	/**
+	 * Checks for the existence of the given file
+	 * 
+	 * @param fileName 
+	 * @return boolean returns true if the file exists, false if it doesn't or if the fileName is null
+	 */
+	public static boolean isFileExists(String fileName){
+		if(fileName==null)
+			return false;
+		File file = new File(fileName);
+		return file.exists();
+	}
+	
+	/**
+	 * This method encodes the files content in Base64 format
+	 * 
+	 * Usage: For uploading an ISVP to a remote node in the cluster,
+	 * the isvp file has to be encoded and uploaded. This method
+	 * encodes the isvp content
+	 * 
+	 * @param filePath
+	 * @return String Base64 encoded content of the file
+	 */
+	public static String  encodeFile(String filePath)
+	{
+		try {			
+			FileInputStream fin = new FileInputStream(filePath);
+			byte[] fileContent = new byte[fin.available()];
+			DataInputStream din = new DataInputStream(fin);
+			din.readFully(fileContent);
+			BASE64Encoder encoder = new BASE64Encoder();
+			return new String(encoder.encode(fileContent));
+			
+		} catch (Exception  e) {
+			throw new RuntimeException(e);
 		}
 	}
 

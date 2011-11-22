@@ -32,6 +32,7 @@ public abstract class CordysObject implements Comparable<CordysObject> {
 	public final static String xmlns_isv    = "http://schemas.cordys.com/1.0/isvpackage";
 	public final static String xmlns_xmlstore="http://schemas.cordys.com/1.0/xmlstore";
 	public final static String xmlns_coboc  = "http://schemas.cordys.com/1.0/coboc";
+	public final static String xmlns_notification  = "http://schemas.cordys.com/1.0/notification";
 	//public final static String xmlns_bpm    = "http://schemas.cordys.com/1.0/xmlstore";
 
 	abstract public CordysSystem getSystem();

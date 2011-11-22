@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.kisst.cordys.caas.pm.Template;
+import org.kisst.cordys.caas.cm.Template;
 import org.kisst.cordys.caas.util.FileUtil;
 
 public class Configuration {

@@ -19,7 +19,8 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
-import org.kisst.cordys.caas.pm.Template;
+import org.kisst.cordys.caas.cm.Template;
+import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.support.ChildList;
 import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
@@ -66,6 +67,7 @@ public class Organization extends LdapObjectBase {
 			@Override public String getKey() { return "SoapProcessors:"+getDn(); }
 		}; 
 		sp = soapProcessors;
+
 	}
 
 	@Override protected String prefix() { return "org"; }
@@ -84,8 +86,19 @@ public class Organization extends LdapObjectBase {
 		createInLdap(newEntry);
 		methodSets.clear();
 	}
-
-	public void createUser(String name, AuthenticatedUser au) {
+	
+	public void createUser(String name){
+		createUser(name,name);
+	}
+	
+	public void createUser(String name, String auName) {
+		AuthenticatedUser au=getSystem().authenticatedUsers.getByName(auName);
+		if(au==null){
+			Environment.get().info("Cound not find authenticated user "+auName+" for organizational user '"+name+"'. Hence creating it");
+			getSystem().createAuthenticatedUser(name, this); 
+			au=getSystem().authenticatedUsers.getByName(name);
+		}
+		//Create organizational user with the given user name
 		XmlNode newEntry=newEntryXml("cn=organizational users,", name,"busorganizationaluser","busorganizationalobject");
 		newEntry.add("authenticationuser").add("string").setText(au.getDn());
 		newEntry.add("menu");
@@ -94,7 +107,7 @@ public class Organization extends LdapObjectBase {
 		createInLdap(newEntry);
 		users.clear();
 	}
-
+	
 	public void createRole(String name) {
 		XmlNode newEntry=newEntryXml("cn=organizational roles,", name,"busorganizationalrole","busorganizationalobject");
 		newEntry.add("description").add("string").setText(name);
@@ -115,6 +128,15 @@ public class Organization extends LdapObjectBase {
 			for (String ns:ms.namespaces.get())
 				luri.add("string").setText(ns);
 		}
+		
+		//remove soapnode_keystore node		
+		XmlNode soapNodeKeystore = config.getChild("soapnode_keystore");	
+		if (soapNodeKeystore!=null)
+		{
+			config.remove(soapNodeKeystore);
+		}
+		
+		
 		newEntry.add("bussoapnodeconfiguration").add("string").setText(config.compact());
 		createInLdap(newEntry);
 		soapNodes.clear();

@@ -82,11 +82,35 @@ public class Isvp extends LdapObjectBase {
 	
 	public XmlNode getDescription() { return getDefinition().getChild("description"); }
 	public XmlNode getContent() { return getDefinition().getChild("content"); }
-	public String getOwner2() { return getDescription().getChildText("owner"); }
-	public String getName2() { return getDescription().getChildText("name"); }
-	public String getVersion() { return getDescription().getChildText("version"); }
-	public String getWcpversion() { return getDescription().getChildText("wcpversion"); }
-	public String getEula() { return getDescription().getChildText("eula"); }
-	public String getSidebar() { return getDescription().getChildText("sidebar"); }
+	public String getOwner2() {
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("owner"); 
+	}
+	public String getName2() {
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("name");
+	}
+	public String getVersion() { 
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("version");
+	}
+	public String getWcpversion() {
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("wcpversion");
+	}
+	public String getEula() {
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("eula");
+	}
+	public String getSidebar() {
+		if (getDescription()==null) // TODO: why is this check necessary?
+			return null;
+		return getDescription().getChildText("sidebar");
+	}
 			
 }

@@ -19,8 +19,10 @@ along with the Caas tool.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.kisst.cordys.caas;
 
+import java.io.File;
 import java.util.HashMap;
 
+import org.kisst.cordys.caas.exception.CaasRuntimeException;
 import org.kisst.cordys.caas.main.Environment;
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.support.ChildList;
@@ -29,6 +31,7 @@ import org.kisst.cordys.caas.support.CordysObjectList;
 import org.kisst.cordys.caas.support.LdapObject;
 import org.kisst.cordys.caas.support.LdapObjectBase;
 import org.kisst.cordys.caas.support.XmlObjectList;
+import org.kisst.cordys.caas.util.StringUtil;
 import org.kisst.cordys.caas.util.XmlNode;
 
 
@@ -41,6 +44,7 @@ public class CordysSystem extends LdapObject {
 
 	public final String version;
 	public final String build;
+	public final String os; 
 	public boolean useCache=true;
 	//public int displayFormat=0;
 	
@@ -73,7 +77,6 @@ public class CordysSystem extends LdapObject {
 	public final CordysObjectList<SoapProcessor> sp = soapProcessors; 
 	@Override public String getVarName() { return name; }
 
-	
 	@SuppressWarnings("unchecked")
 	public final CordysObjectList<Machine> machines = new CordysObjectList(this) {
 		@Override protected void retrieveList() {
@@ -85,7 +88,23 @@ public class CordysSystem extends LdapObject {
 		@Override public String getKey() { return getKey()+":machine"; }
 	}; 
 	public final CordysObjectList<Machine> machine = machines;
-		
+	
+	/*
+	 *  This method creates an AuthenticatedUser entry in LDAP
+	 *  NOTE: The password of the authenticated user is same as the provided name
+	 *  
+	 */
+	public void createAuthenticatedUser(String name, Organization defaultOrg){
+		XmlNode newEntry=newAuthenticatedUserEntryXml("cn=authenticated users,", name,"busauthenticationuser");
+		newEntry.add("defaultcontext").add("string").setText(defaultOrg.getDn());
+		newEntry.add("description").add("string").setText(name);
+		newEntry.add("osidentity").add("string").setText(name);
+		newEntry.add("cn").add("string").setText(name);
+		//Set the userPassword same as the osidentity
+		//newEntry.add("userPassword").add("string").setText(PasswordHasher.encryptPassword(name));
+		createInLdap(newEntry);
+		authenticatedUsers.clear();
+	}
 	
 	public CordysSystem(String name, SoapCaller caller) {
 		super();
@@ -98,6 +117,7 @@ public class CordysSystem extends LdapObject {
 		this.dn=tmp.substring(tmp.indexOf(key)+key.length());
 		this.version=response.getChildText("tuple/old/buildinfo/version");
 		this.build=response.getChildText("tuple/old/buildinfo/build");
+		this.os=response.getChildText("tuple/old/osinfo/version");
 		rememberLdap(this);
 	}
 
@@ -149,6 +169,10 @@ public class CordysSystem extends LdapObject {
 	public String call(String input, String org, String processor) {
 		return caller.call(input, org, processor); 
 	}
+	//Added this method to call the cordys services from XMLStoreObject class
+	public XmlNode call(XmlNode method, String org, String processor) {
+		return caller.call(method, org, processor); 
+	}	
 	public String call(String soap) { return caller.call(soap); }
 	@Override public XmlNode call(XmlNode method) { return caller.call(method); }
 
@@ -156,11 +180,72 @@ public class CordysSystem extends LdapObject {
 		for (Machine m: machines)
 			m.refreshSoapProcessors();
 	}
-
-	public void loadIsvp(String filename) {
-		for (Machine m: machines)
-			m.loadIsvp(filename);
+	
+	//TODO: There should be a single method for both load/upgrade of ISVP
+	public void loadIsvp(String isvpFilePath){
+		//By default timeout value is set to 10 minutes
+		loadIsvp(isvpFilePath,10);
+	}
+	public void loadIsvp(String isvpFilePath, long timeOut) 
+	{
+		//Validate the input
+		String isvpName = validateInput(isvpFilePath);
+		//Convert the timeout value to seconds
+		timeOut = timeOut*60*1000;
+		//Iterate over the machines
+		for (Machine m: machines){
+			//Upload the ISVP on to the machine
+			//TODO: Upload the ISVP only when it is not present on the machine
+			System.out.println("Uploading Application '"+isvpName+"' to '"+m.getName()+"' Node....");
+			m.uploadIsvp(isvpFilePath);
+			//Install the ISVP
+			System.out.println("Installing Application '"+isvpName+"' on '"+m.getName()+"' Node....");
+			String status = m.loadIsvp(isvpName, timeOut);
+			System.out.println("STATUS:: "+status);
+		}
 		isvp.clear();
+	}
+	public void upgradeIsvp(String isvpFilePath){
+		//By default timeout value is set to 10 minutes and deleteReferences flag is set to false
+		upgradeIsvp(isvpFilePath,false,10);
+	}
+	//TODO: While upgrading, First upgrade the primary node and after that the secondary nodes. 
+	//The reason for this is that the isvp's for primary and distributed nodes differ.
+	public void upgradeIsvp(String isvpFilePath, boolean deleteReferences, long timeOut)
+	{
+		//Validate the input
+		String isvpName = validateInput(isvpFilePath);
+		//Convert the timeout value to seconds
+		timeOut = timeOut*60*1000;
+		//Iterate over the machines
+		for (Machine m: machines){
+			//TODO: Upload the ISVP only when it is not present on the machine
+			System.out.println("Uploading Application '"+isvpName+"' to '"+m.getName()+"' Node....");
+			m.uploadIsvp(isvpFilePath);
+			//Upgrade the ISVP
+			System.out.println("Upgrading Application '"+isvpName+"' on '"+m.getName()+"' Node....");
+			String status = m.upgradeIsvp(isvpName, deleteReferences, timeOut);
+			System.out.println("STATUS:: "+status);
+		}
+		isvp.clear();
+	}
+	private String validateInput(String isvpFilePath)
+	{
+		//Check if the ISVP file path is empty or null
+		if(StringUtil.isEmpty(isvpFilePath))
+			throw new CaasRuntimeException("ISVP file path is empty or null");
+		isvpFilePath = isvpFilePath.trim();
+		isvpFilePath = StringUtil.getUnixStyleFilePath(isvpFilePath);
+		File isvpFile = new File(isvpFilePath);
+		//Check if the ISVP file exists at the given location
+		if (!isvpFile.exists())
+			throw new CaasRuntimeException(isvpFilePath + " doesn't exist");
+		//Extract the ISVP name from the complete path of the ISVP
+		String isvpName = isvpFile.getName();
+		//Check the extension of the file
+		if (!isvpName.endsWith(".isvp"))
+			throw new CaasRuntimeException("Invalid ISVP file "+isvpName);
+		return isvpName;
 	}
 	
 	@Override public int compareTo(CordysObject o) { return dn.compareTo(o.getKey()); }
@@ -173,7 +258,7 @@ public class CordysSystem extends LdapObject {
 		if (version !=null)
 			keynode.setAttribute("version", version);
 		XmlNode response = caller.call(method, organization, null);
-		return response.getChild("tuple/old");
+		return response.getChild("tuple/old").getChildren().get(0);
 	}
 	
 	@SuppressWarnings("unchecked")

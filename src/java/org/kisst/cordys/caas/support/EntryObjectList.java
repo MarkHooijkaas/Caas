@@ -84,6 +84,32 @@ public class EntryObjectList<T extends LdapObject> extends CordysObjectList<T>  
 		parent.updateLdap(newEntry);
 		parent.clear();
 	}
+	
+	/**
+	 * update the existing entry with the new ldap objects
+	 * This will clear the existing child elements and add 
+	 * the new entries to the parent. 
+	 * 
+	 * @param newEntries
+	 */
+	public void update(LdapObject[] newEntries)
+	{
+		XmlNode newEntry=parent.getEntry().clone();
+		XmlNode g=newEntry.getChild(group);
+		if (g==null)
+			g=newEntry.add(group);
+		
+		List<XmlNode> children = g.getChildren();
+		for (XmlNode xmlNode : children) {
+			g.remove(xmlNode);
+		}	
+		for (LdapObject ldapObject : newEntries) {
+			g.add("string").setText(ldapObject.getDn());
+		}		
+		parent.updateLdap(newEntry);
+		parent.clear();
+	}
+	
 	public void add(String[] values) {
 		XmlNode newEntry=parent.getEntry().clone();
 		XmlNode g=newEntry.getChild(group);

@@ -25,12 +25,12 @@ import java.net.ConnectException;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 
+import org.kisst.cordys.caas.cm.Template;
 import org.kisst.cordys.caas.main.Environment;
-import org.kisst.cordys.caas.pm.PackageManager;
-import org.kisst.cordys.caas.pm.Template;
 import org.kisst.cordys.caas.soap.DummyCaller;
 import org.kisst.cordys.caas.soap.HttpClientCaller;
 import org.kisst.cordys.caas.soap.NativeCaller;
+import org.kisst.cordys.caas.soap.SamlClientCaller;
 import org.kisst.cordys.caas.soap.SoapCaller;
 import org.kisst.cordys.caas.util.FileUtil;
 import org.kisst.cordys.caas.util.XmlNode;
@@ -101,6 +101,8 @@ public class Caas {
 				caller = new HttpClientCaller(name);
 			else if (classname.equals("NativeCaller"))
 				caller=new NativeCaller(name);
+			else if (classname.equals("SamlClientCaller"))
+				caller=new SamlClientCaller(name);
 			else
 				throw new RuntimeException("Unknown SoapCaller class "+classname);
 			result = new CordysSystem(name, caller);
@@ -124,5 +126,5 @@ public class Caas {
 		return getSystem(defaultSystem);
 	}
 
-	public final static PackageManager pm=new PackageManager();
+	//public final static PackageManager pm=new PackageManager();
 }
